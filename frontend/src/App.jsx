@@ -1,122 +1,253 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import {
+  AuthProvider,
+  useAuth,
+} from "./context/AuthContext";
+
+import Login from "./components/auth/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+
+import DashboardLayout from "./components/common/DashboardLayout";
+
+import DoctorDashboard from "./components/dashboard/DoctorDashboard";
+import StaffDashboard from "./components/dashboard/StaffDashboard";
+
+import PatientList from "./components/patients/PatientList";
+
+import AppointmentManager from "./components/appointments/AppointmentManager";
+
+import QueueManagement from "./components/queue/QueueManagement";
+
+import ConsultationPanel from "./components/consultation/ConsultationPanel";
+
+import ReportsDashboard from "./components/reports/ReportsDashboard";
+
+const AppRoutes = () => {
+  const {
+    user,
+    isAuthenticated,
+  } = useAuth();
+
+  const getDashboardRoute = () => {
+    if (!user) {
+      return "/login";
+    }
+
+    if (user.role === "Doctor") {
+      return "/doctor/dashboard";
+    }
+
+    if (user.role === "Staff") {
+      return "/staff/dashboard";
+    }
+
+    return "/login";
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Routes>
+      {/* LOGIN */}
+      <Route
+        path="/login"
+        element={
+          isAuthenticated ? (
+            <Navigate
+              to={getDashboardRoute()}
+              replace
+            />
+          ) : (
+            <Login />
+          )
+        }
+      />
 
-      <div className="ticks"></div>
+      {/* PROTECTED CURA APPLICATION */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* ========================= */}
+        {/* DOCTOR DASHBOARD */}
+        {/* ========================= */}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <Route
+          path="/doctor/dashboard"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+              ]}
+            >
+              <DoctorDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+        {/* ========================= */}
+        {/* STAFF DASHBOARD */}
+        {/* ========================= */}
 
-export default App
+        <Route
+          path="/staff/dashboard"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Staff",
+              ]}
+            >
+              <StaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========================= */}
+        {/* PATIENT MANAGEMENT */}
+        {/* Doctor + Staff */}
+        {/* ========================= */}
+
+        <Route
+          path="/patients"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+                "Staff",
+              ]}
+            >
+              <PatientList />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========================= */}
+        {/* APPOINTMENTS */}
+        {/* Doctor + Staff */}
+        {/* ========================= */}
+
+        <Route
+          path="/appointments"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+                "Staff",
+              ]}
+            >
+              <AppointmentManager />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========================= */}
+        {/* QUEUE MANAGEMENT */}
+        {/* Doctor + Staff */}
+        {/* ========================= */}
+
+        <Route
+          path="/queue"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+                "Staff",
+              ]}
+            >
+              <QueueManagement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========================= */}
+        {/* CONSULTATION */}
+        {/* Doctor only */}
+        {/* ========================= */}
+
+        <Route
+          path="/consultation"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+              ]}
+            >
+              <ConsultationPanel />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========================= */}
+        {/* REPORTS */}
+        {/* Doctor + Staff */}
+        {/* ========================= */}
+
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute
+              allowedRoles={[
+                "Doctor",
+                "Staff",
+              ]}
+            >
+              <ReportsDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
+      {/* ========================= */}
+      {/* ROOT */}
+      {/* ========================= */}
+
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to={
+              isAuthenticated
+                ? getDashboardRoute()
+                : "/login"
+            }
+            replace
+          />
+        }
+      />
+
+      {/* ========================= */}
+      {/* UNKNOWN ROUTES */}
+      {/* ========================= */}
+
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to={
+              isAuthenticated
+                ? getDashboardRoute()
+                : "/login"
+            }
+            replace
+          />
+        }
+      />
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  );
+};
+
+export default App;
