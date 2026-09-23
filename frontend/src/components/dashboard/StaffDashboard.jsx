@@ -139,7 +139,7 @@ const StaffDashboard = () => {
                 title="Register Patient"
                 description="Create a new patient record"
                 onClick={() =>
-                  navigate("/patients")
+                  navigate("/staff-dashboard/patients")
                 }
               />
 
@@ -148,7 +148,7 @@ const StaffDashboard = () => {
                 title="Create Appointment"
                 description="Schedule a consultation"
                 onClick={() =>
-                  navigate("/appointments")
+                  navigate("/staff-dashboard/appointments")
                 }
               />
 
@@ -157,7 +157,7 @@ const StaffDashboard = () => {
                 title="Manage Queue"
                 description="View walk-ins and scheduled patients"
                 onClick={() =>
-                  navigate("/queue")
+                  navigate("/staff-dashboard/queue")
                 }
               />
             </div>
@@ -239,7 +239,7 @@ const StaffDashboard = () => {
             <button
               type="button"
               onClick={() =>
-                navigate("/queue")
+                navigate("/staff-dashboard/queue")
               }
               className="
                 mt-5

@@ -1,81 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
-/* Use .dark class instead of system dark mode */
-@custom-variant dark (&:where(.dark, .dark *));
+* {
+  box-sizing: border-box;
+}
 
 html,
 body,
 #root {
-  width: 100%;
-  min-height: 100%;
   margin: 0;
   padding: 0;
-}
-
-html {
-  min-height: 100vh;
+  width: 100%;
+  min-height: 100%;
 }
 
 body {
-  min-width: 320px;
-  min-height: 100vh;
   margin: 0;
-
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  background:
-    linear-gradient(
-      135deg,
-      #cfe8e8 0%,
-      #e7f4f3 45%,
-      #e5e8f5 100%
-    );
-
-  color: #17263f;
-
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+  background: #f4fbfa;
 }
 
-html.dark body {
-  background:
-    linear-gradient(
-      135deg,
-      #09111f 0%,
-      #0f172a 50%,
-      #111c31 100%
-    );
-
-  color: #f8fafc;
+/* Prevent React Router NavLink from using default blue link color */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-#root {
-  min-height: 100vh;
+.sidebar-navigation a {
+  color: #000;
 }
 
-/* scrollbar */
-
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+/* Make form elements use the same font */
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* Optional cleaner button behavior */
+button {
+  cursor: pointer;
+}
+.doctor-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dce6e9;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 11px;
+  outline: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.3);
-  border-radius: 999px;
+.doctor-input:focus {
+  border-color: #79d7c9;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.5);
+.staff-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #dce6e9;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 11px;
+  outline: none;
+  background: white;
+}
+
+.staff-input:focus {
+  border-color: #79d7c9;
 }

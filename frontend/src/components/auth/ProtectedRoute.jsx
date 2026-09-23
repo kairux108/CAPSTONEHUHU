@@ -1,41 +1,63 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 
-const ProtectedRoute = ({
-  children,
-  allowedRoles = [],
-}) => {
-  const {
-    user,
-    isAuthenticated,
-  } = useAuth();
+function ProtectedRoute({ children, allowedRoles }) {
+  const token = localStorage.getItem("cura_token");
+  const storedUser = localStorage.getItem("cura_user");
 
-  if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
+  if (!token || !storedUser) {
+    return <Navigate to="/" replace />;
   }
 
+  let user;
+
+  try {
+    user = JSON.parse(storedUser);
+  } catch {
+    localStorage.removeItem("cura_token");
+    localStorage.removeItem("cura_user");
+
+    return <Navigate to="/" replace />;
+  }
+
+  const role = String(user.role || "")
+    .trim()
+    .toLowerCase();
+
   if (
-    allowedRoles.length > 0 &&
-    !allowedRoles.includes(user?.role)
+    allowedRoles &&
+    !allowedRoles.includes(role)
   ) {
-    return (
-      <Navigate
-        to={
-          user?.role === "Doctor"
-            ? "/doctor/dashboard"
-            : "/staff/dashboard"
-        }
-        replace
-      />
-    );
+    if (role === "admin") {
+      return (
+        <Navigate
+          to="/admin-dashboard"
+          replace
+        />
+      );
+    }
+
+    if (role === "doctor") {
+      return (
+        <Navigate
+          to="/doctor-dashboard"
+          replace
+        />
+      );
+    }
+
+    if (role === "staff") {
+      return (
+        <Navigate
+          to="/staff-dashboard"
+          replace
+        />
+      );
+    }
+
+    return <Navigate to="/" replace />;
   }
 
   return children;
-};
+}
 
 export default ProtectedRoute;

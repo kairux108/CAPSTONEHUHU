@@ -18,7 +18,7 @@ const Navbar = ({
 
   const isDashboard =
     location.pathname === "/doctor/dashboard" ||
-    location.pathname === "/staff/dashboard";
+    location.pathname.startsWith("/staff-dashboard");
 
   const initials = (
     user?.name || "CURA User"
@@ -30,7 +30,7 @@ const Navbar = ({
     .toUpperCase();
 
   const dashboardDescription =
-    user?.role === "Doctor"
+    user?.role?.toLowerCase() === "doctor"
       ? "Overview of doctor activities and clinic performance."
       : "Overview of clinic operations and patient flow.";
 
@@ -69,7 +69,7 @@ const Navbar = ({
               Welcome back,{" "}
               <strong className="font-bold text-[#324a49] dark:text-[#d7e4e2]">
                 {user?.name ||
-                  (user?.role === "Staff"
+                  (user?.role?.toLowerCase() === "staff"
                     ? "CURA Staff"
                     : "CURA Doctor")}
               </strong>

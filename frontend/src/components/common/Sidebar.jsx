@@ -52,27 +52,27 @@ const doctorLinks = [
 const staffLinks = [
   {
     name: "Dashboard",
-    path: "/staff/dashboard",
+    path: "/staff-dashboard",
     icon: LayoutDashboard,
   },
   {
     name: "Patients",
-    path: "/patients",
+    path: "/staff-dashboard/patients",
     icon: Users,
   },
   {
     name: "Appointments",
-    path: "/appointments",
+    path: "/staff-dashboard/appointments",
     icon: CalendarDays,
   },
   {
     name: "Queue",
-    path: "/queue",
+    path: "/staff-dashboard/queue",
     icon: ListOrdered,
   },
   {
     name: "Reports",
-    path: "/reports",
+    path: "/staff-dashboard/reports",
     icon: BarChart3,
   },
 ];
@@ -86,14 +86,15 @@ const Sidebar = () => {
   const navigate =
     useNavigate();
 
+  const role = user?.role?.toLowerCase();
   const links =
-    user?.role === "Doctor"
+    role === "doctor"
       ? doctorLinks
       : staffLinks;
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    navigate("/");
   };
 
   return (

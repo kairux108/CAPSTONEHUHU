@@ -1,253 +1,117 @@
-import {
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
-
-import {
-  AuthProvider,
-  useAuth,
-} from "./context/AuthContext";
-
+import { Routes, Route } from "react-router-dom";
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-
-import DashboardLayout from "./components/common/DashboardLayout";
-
-import DoctorDashboard from "./components/dashboard/DoctorDashboard";
 import StaffDashboard from "./components/dashboard/StaffDashboard";
-
+import DashboardLayout from "./components/common/DashboardLayout";
 import PatientList from "./components/patients/PatientList";
-
 import AppointmentManager from "./components/appointments/AppointmentManager";
-
 import QueueManagement from "./components/queue/QueueManagement";
-
-import ConsultationPanel from "./components/consultation/ConsultationPanel";
-
 import ReportsDashboard from "./components/reports/ReportsDashboard";
+import AdminDashbaord from "./Components/Dashboard/AdminDashboard";
+import DashboardHome from "./Components/Dashboard/Pages/DashboardHome";
+import Appointments from "./Components/Dashboard/Pages/Appointments";
+import Doctors from "./Components/Dashboard/Pages/Doctors";
+import Staff from "./Components/Dashboard/Pages/Staff";
+import Patients from "./Components/Dashboard/Pages/Patients";
+import Clinics from "./Components/Dashboard/Pages/Clinics";
+import Reports from "./Components/Dashboard/Pages/Reports";
+import Settings from "./Components/Dashboard/Pages/Settings";
 
-const AppRoutes = () => {
-  const {
-    user,
-    isAuthenticated,
-  } = useAuth();
-
-  const getDashboardRoute = () => {
-    if (!user) {
-      return "/login";
-    }
-
-    if (user.role === "Doctor") {
-      return "/doctor/dashboard";
-    }
-
-    if (user.role === "Staff") {
-      return "/staff/dashboard";
-    }
-
-    return "/login";
-  };
-
+function App() {
   return (
     <Routes>
-      {/* LOGIN */}
-      <Route
-        path="/login"
-        element={
-          isAuthenticated ? (
-            <Navigate
-              to={getDashboardRoute()}
-              replace
-            />
-          ) : (
-            <Login />
-          )
-        }
-      />
+      {/* ==============================
+          LOGIN
+      ============================== */}
 
-      {/* PROTECTED CURA APPLICATION */}
+      <Route path="/" element={<Login />} />
+
+      {/* ==============================
+          STAFF DASHBOARD
+          Only users with role="staff"
+          can access this route.
+      ============================== */}
+
       <Route
+        path="/staff-dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["staff"]}>
             <DashboardLayout />
           </ProtectedRoute>
         }
       >
-        {/* ========================= */}
-        {/* DOCTOR DASHBOARD */}
-        {/* ========================= */}
-
-        <Route
-          path="/doctor/dashboard"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-              ]}
-            >
-              <DoctorDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* STAFF DASHBOARD */}
-        {/* ========================= */}
-
-        <Route
-          path="/staff/dashboard"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Staff",
-              ]}
-            >
-              <StaffDashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* PATIENT MANAGEMENT */}
-        {/* Doctor + Staff */}
-        {/* ========================= */}
-
-        <Route
-          path="/patients"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-                "Staff",
-              ]}
-            >
-              <PatientList />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* APPOINTMENTS */}
-        {/* Doctor + Staff */}
-        {/* ========================= */}
-
-        <Route
-          path="/appointments"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-                "Staff",
-              ]}
-            >
-              <AppointmentManager />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* QUEUE MANAGEMENT */}
-        {/* Doctor + Staff */}
-        {/* ========================= */}
-
-        <Route
-          path="/queue"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-                "Staff",
-              ]}
-            >
-              <QueueManagement />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* CONSULTATION */}
-        {/* Doctor only */}
-        {/* ========================= */}
-
-        <Route
-          path="/consultation"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-              ]}
-            >
-              <ConsultationPanel />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ========================= */}
-        {/* REPORTS */}
-        {/* Doctor + Staff */}
-        {/* ========================= */}
-
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute
-              allowedRoles={[
-                "Doctor",
-                "Staff",
-              ]}
-            >
-              <ReportsDashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Route index element={<StaffDashboard />} />
+        <Route path="patients" element={<PatientList />} />
+        <Route path="appointments" element={<AppointmentManager />} />
+        <Route path="queue" element={<QueueManagement />} />
+        <Route path="reports" element={<ReportsDashboard />} />
       </Route>
 
-      {/* ========================= */}
-      {/* ROOT */}
-      {/* ========================= */}
+
+      {/* ==============================
+          ADMIN DASHBOARD
+          Only users with role="admin"
+          can access these routes.
+      ============================== */}
 
       <Route
-        path="/"
+        path="/admin-dashboard"
         element={
-          <Navigate
-            to={
-              isAuthenticated
-                ? getDashboardRoute()
-                : "/login"
-            }
-            replace
-          />
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminDashbaord />
+          </ProtectedRoute>
         }
-      />
+      >
+        {/* DASHBOARD HOME */}
+        <Route
+          index
+          element={<DashboardHome />}
+        />
 
-      {/* ========================= */}
-      {/* UNKNOWN ROUTES */}
-      {/* ========================= */}
+        {/* APPOINTMENTS */}
+        <Route
+          path="appointments"
+          element={<Appointments />}
+        />
 
-      <Route
-        path="*"
-        element={
-          <Navigate
-            to={
-              isAuthenticated
-                ? getDashboardRoute()
-                : "/login"
-            }
-            replace
-          />
-        }
-      />
+        {/* DOCTORS */}
+        <Route
+          path="doctors"
+          element={<Doctors />}
+        />
+
+        {/* STAFF */}
+        <Route
+          path="staff"
+          element={<Staff />}
+        />
+
+        {/* PATIENTS */}
+        <Route
+          path="patients"
+          element={<Patients />}
+        />
+
+        {/* CLINICS */}
+        <Route
+          path="clinics"
+          element={<Clinics />}
+        />
+
+        {/* REPORTS */}
+        <Route
+          path="reports"
+          element={<Reports />}
+        />
+
+        {/* SETTINGS */}
+        <Route
+          path="settings"
+          element={<Settings />}
+        />
+      </Route>
     </Routes>
   );
-};
-
-const App = () => {
-  return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
-  );
-};
+}
 
 export default App;
