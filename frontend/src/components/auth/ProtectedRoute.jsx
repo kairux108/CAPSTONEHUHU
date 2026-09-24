@@ -30,7 +30,7 @@ function ProtectedRoute({ children, allowedRoles }) {
     if (role === "admin") {
       return (
         <Navigate
-          to="/admin-dashboard"
+          to="/admin/dashboard"
           replace
         />
       );
@@ -39,7 +39,7 @@ function ProtectedRoute({ children, allowedRoles }) {
     if (role === "doctor") {
       return (
         <Navigate
-          to="/doctor-dashboard"
+          to="/doctor/dashboard"
           replace
         />
       );
@@ -48,7 +48,7 @@ function ProtectedRoute({ children, allowedRoles }) {
     if (role === "staff") {
       return (
         <Navigate
-          to="/staff-dashboard"
+          to="/staff/dashboard"
           replace
         />
       );

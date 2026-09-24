@@ -275,6 +275,7 @@ const Doctors = () => {
       ============================================= */}
 
       <div className="
+        !hidden
         mb-4
         flex flex-col
         gap-4

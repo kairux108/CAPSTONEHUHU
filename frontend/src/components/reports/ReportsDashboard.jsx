@@ -6,7 +6,7 @@ import {
   UsersRound,
 } from "lucide-react";
 
-import ReportsChart from "../dashboard/ReportsChart";
+import ReportsChart from "./ReportsChart";
 
 const ReportsDashboard = () => {
   const stats = [

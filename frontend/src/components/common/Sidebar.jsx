@@ -1,12 +1,6 @@
 import {
-  BarChart3,
-  CalendarDays,
   HeartPulse,
-  LayoutDashboard,
-  ListOrdered,
   LogOut,
-  Stethoscope,
-  Users,
 } from "lucide-react";
 
 import {
@@ -16,66 +10,7 @@ import {
 
 import { useAuth } from "../../context/AuthContext";
 
-const doctorLinks = [
-  {
-    name: "Dashboard",
-    path: "/doctor/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Patients",
-    path: "/patients",
-    icon: Users,
-  },
-  {
-    name: "Appointments",
-    path: "/appointments",
-    icon: CalendarDays,
-  },
-  {
-    name: "Queue",
-    path: "/queue",
-    icon: ListOrdered,
-  },
-  {
-    name: "Consultation",
-    path: "/consultation",
-    icon: Stethoscope,
-  },
-  {
-    name: "Reports",
-    path: "/reports",
-    icon: BarChart3,
-  },
-];
-
-const staffLinks = [
-  {
-    name: "Dashboard",
-    path: "/staff-dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Patients",
-    path: "/staff-dashboard/patients",
-    icon: Users,
-  },
-  {
-    name: "Appointments",
-    path: "/staff-dashboard/appointments",
-    icon: CalendarDays,
-  },
-  {
-    name: "Queue",
-    path: "/staff-dashboard/queue",
-    icon: ListOrdered,
-  },
-  {
-    name: "Reports",
-    path: "/staff-dashboard/reports",
-    icon: BarChart3,
-  },
-];
+import { navigationConfig } from "./navigation/navigationConfig";
 
 const Sidebar = () => {
   const {
@@ -83,17 +18,26 @@ const Sidebar = () => {
     logout,
   } = useAuth();
 
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
 
+  // Standardize role:
+  // Admin -> admin
+  // Doctor -> doctor
+  // Staff -> staff
   const role = user?.role?.toLowerCase();
-  const links =
-    role === "doctor"
-      ? doctorLinks
-      : staffLinks;
+
+  // Get navigation based on logged-in role
+  const links = navigationConfig[role] || [];
+
+  const panelTitle = {
+    admin: "Admin Panel",
+    doctor: "Doctor Panel",
+    staff: "Staff Panel",
+  };
 
   const handleLogout = () => {
     logout();
+
     navigate("/");
   };
 
@@ -120,7 +64,6 @@ const Sidebar = () => {
       "
     >
       {/* LOGO */}
-
       <div className="flex items-center gap-3 px-2">
         <div
           className="
@@ -166,7 +109,6 @@ const Sidebar = () => {
       </div>
 
       {/* PANEL TITLE */}
-
       <p
         className="
           mt-10
@@ -179,13 +121,10 @@ const Sidebar = () => {
           dark:text-[#69817f]
         "
       >
-        {user?.role === "Doctor"
-          ? "Doctor Panel"
-          : "Staff Panel"}
+        {panelTitle[role] || "CURA Panel"}
       </p>
 
       {/* NAVIGATION */}
-
       <nav className="mt-4 space-y-2">
         {links.map((link) => {
           const Icon = link.icon;
@@ -234,14 +173,13 @@ const Sidebar = () => {
                 strokeWidth={2}
               />
 
-              {link.name}
+              {link.label}
             </NavLink>
           );
         })}
       </nav>
 
-      {/* LOGOUT ONLY */}
-
+      {/* LOGOUT */}
       <div className="mt-auto">
         <button
           type="button"

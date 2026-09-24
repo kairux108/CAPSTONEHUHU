@@ -1,35 +1,22 @@
 
-import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
-  Search,
-  Bell,
-  Users,
-  CalendarDays,
-  Clock3,
-  FileText,
-  MapPin,
   ArrowUp,
-  ArrowDown,
   MoreVertical,
   Stethoscope,
-  UserRoundPlus,
+  Users,
   Pill,
   ClipboardPlus,
-  UserPlus,
-  CalendarPlus,
-  BarChart3,
-  Settings,
-  Activity,
-  X,
 } from "lucide-react";
+
+import AdminHeader from "../components/AdminHeader";
+import AdminQuickActions from "../components/AdminQuickActions";
+import AdminRecentActivity from "../components/AdminRecentActivity";
+import AdminStats from "../components/AdminStats";
 
 const DashboardHome = () => {
   const navigate = useNavigate();
-
-  const [search, setSearch] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false);
 
   // =====================================================
   // AUTHENTICATION TEST
@@ -40,49 +27,6 @@ const DashboardHome = () => {
   // =====================================================
   // DUMMY DATA
   // =====================================================
-
-  const stats = [
-    {
-      title: "Patients",
-      value: "124",
-      icon: Users,
-      change: "+12%",
-      note: "from last week",
-      positive: true,
-      iconBg: "bg-[#e7f4ff]",
-      iconColor: "text-[#258cff]",
-    },
-    {
-      title: "Today's Appointments",
-      value: "32",
-      icon: CalendarDays,
-      change: "+8%",
-      note: "from yesterday",
-      positive: true,
-      iconBg: "bg-[#dcfaf4]",
-      iconColor: "text-[#00b89c]",
-    },
-    {
-      title: "Patients in Queue",
-      value: "6",
-      icon: Clock3,
-      change: "+25%",
-      note: "from yesterday",
-      positive: false,
-      iconBg: "bg-[#fff0f3]",
-      iconColor: "text-[#ff4778]",
-    },
-    {
-      title: "Prescriptions Issued",
-      value: "48",
-      icon: FileText,
-      change: "+15%",
-      note: "from last week",
-      positive: true,
-      iconBg: "bg-[#fff7e6]",
-      iconColor: "text-[#f4aa22]",
-    },
-  ];
 
   const appointments = [
     {
@@ -117,42 +61,6 @@ const DashboardHome = () => {
     },
   ];
 
-  const activities = [
-    {
-      title: "New patient registered",
-      description: "John Dela Cruz",
-      time: "10 minutes ago",
-      icon: UserRoundPlus,
-    },
-    {
-      title: "Appointment completed",
-      description: "Maria Santos",
-      time: "22 minutes ago",
-      icon: CalendarDays,
-    },
-    {
-      title: "Prescription created",
-      description: "Patient #PT-0042",
-      time: "35 minutes ago",
-      icon: FileText,
-    },
-  ];
-
-  const filteredAppointments = useMemo(() => {
-    const term = search.trim().toLowerCase();
-
-    if (!term) {
-      return appointments;
-    }
-
-    return appointments.filter((appointment) =>
-      Object.values(appointment)
-        .join(" ")
-        .toLowerCase()
-        .includes(term)
-    );
-  }, [search]);
-
   const getStatusStyle = (status) => {
     switch (status) {
       case "In Room":
@@ -168,331 +76,8 @@ const DashboardHome = () => {
 
   return (
     <div className="min-h-screen p-3 sm:p-4 lg:p-5">
-
-      {/* =====================================================
-          TOP HEADER
-      ====================================================== */}
-
-      <div className="relative mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-        {/* SEARCH */}
-
-        <div className="relative w-full lg:max-w-xl">
-          <Search
-            size={17}
-            className="
-              absolute left-4 top-1/2
-              -translate-y-1/2
-              text-[#7b8aa5]
-            "
-          />
-
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search patients, appointments, or records..."
-            className="
-              h-11
-              w-full
-              rounded-2xl
-              border border-[#dce8ec]
-              bg-white/90
-              pl-11 pr-16
-              text-[12px]
-              text-[#253653]
-              shadow-sm
-              outline-none
-
-              transition-all
-
-              placeholder:text-[#9ba8ba]
-
-              focus:border-[#91dacf]
-              focus:ring-4
-              focus:ring-[#bcefe6]/30
-            "
-          />
-
-          <span
-            className="
-              absolute right-4 top-1/2
-              -translate-y-1/2
-              text-[10px]
-              text-[#8b98aa]
-            "
-          >
-            Ctrl + K
-          </span>
-        </div>
-
-        {/* ADMIN PROFILE */}
-
-        <div className="flex items-center justify-end gap-4">
-
-          {/* Notifications */}
-
-          <div className="relative">
-
-            <button
-              onClick={() =>
-                setShowNotifications((previous) => !previous)
-              }
-              className="
-                relative
-                flex h-10 w-10
-                items-center justify-center
-                rounded-full
-                text-[#38506e]
-                transition
-
-                hover:bg-white/80
-              "
-            >
-              <Bell size={19} />
-
-              <span
-                className="
-                  absolute right-2 top-2
-                  h-2 w-2
-                  rounded-full
-                  bg-[#ff4d6d]
-                  ring-2 ring-white
-                "
-              />
-            </button>
-
-            {showNotifications && (
-              <div
-                className="
-                  absolute right-0 top-12
-                  z-30
-                  w-72
-                  rounded-2xl
-                  border border-[#dfe9eb]
-                  bg-white
-                  p-4
-                  shadow-xl
-                "
-              >
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-[#213555]">
-                    Notifications
-                  </h3>
-
-                  <button
-                    onClick={() =>
-                      setShowNotifications(false)
-                    }
-                    className="text-[#8190a5]"
-                  >
-                    <X size={17} />
-                  </button>
-                </div>
-
-                <div className="space-y-3 text-[11px] text-[#5f718a]">
-                  <div className="rounded-xl bg-[#f3fbf9] p-3">
-                    New appointment request received.
-                  </div>
-
-                  <div className="rounded-xl bg-[#f3fbf9] p-3">
-                    Dr. Santos updated availability.
-                  </div>
-
-                  <div className="rounded-xl bg-[#f3fbf9] p-3">
-                    New patient record created.
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Avatar */}
-
-          <div
-            className="
-              flex h-10 w-10
-              items-center justify-center
-              rounded-full
-              bg-[#d7f5ed]
-              text-xs
-              font-semibold
-              text-[#087c75]
-            "
-          >
-            AD
-          </div>
-
-          <div className="hidden sm:block">
-            <p className="text-[12px] font-semibold text-[#172c4b]">
-              Admin User
-            </p>
-
-            <p className="text-[10px] text-[#7e8da2]">
-              Administrator
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* =====================================================
-          GREETING
-      ====================================================== */}
-
-      <div
-        className="
-          mb-4
-          flex flex-col
-          justify-between
-          gap-3
-
-          sm:flex-row
-          sm:items-end
-        "
-      >
-        <div>
-          <h1
-            className="
-              text-[22px]
-              font-semibold
-              tracking-[-0.02em]
-              text-[#152947]
-
-              sm:text-[25px]
-            "
-          >
-            Good morning, Admin!
-          </h1>
-
-          <p className="mt-1 text-[12px] text-[#687b94]">
-            Here's an overview of your clinic today.
-          </p>
-        </div>
-
-        <div
-          className="
-            text-left
-            text-[10px]
-            text-[#687b94]
-
-            sm:text-right
-          "
-        >
-          <p>Tue, Apr 22, 2026</p>
-
-          <p className="mt-1 flex items-center gap-1 sm:justify-end">
-            <MapPin size={11} />
-            CURA Main Clinic
-          </p>
-        </div>
-      </div>
-
-      {/* =====================================================
-          STAT CARDS
-      ====================================================== */}
-
-      <div
-        className="
-          mb-4
-          grid
-          grid-cols-1
-          gap-3
-
-          sm:grid-cols-2
-          xl:grid-cols-4
-        "
-      >
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-
-          return (
-            <div
-              key={stat.title}
-              className="
-                flex
-                min-h-[102px]
-                items-center
-                gap-4
-
-                rounded-2xl
-                border border-white/60
-
-                bg-white/90
-
-                p-4
-
-                shadow-[0_4px_18px_rgba(30,90,90,0.06)]
-
-                backdrop-blur-sm
-              "
-            >
-              <div
-                className={`
-                  flex h-12 w-12
-                  shrink-0
-                  items-center justify-center
-
-                  rounded-xl
-
-                  ${stat.iconBg}
-                `}
-              >
-                <Icon
-                  size={23}
-                  strokeWidth={2}
-                  className={stat.iconColor}
-                />
-              </div>
-
-              <div>
-                <div className="flex items-end gap-2">
-                  <p className="text-2xl font-bold text-[#162947]">
-                    {stat.value}
-                  </p>
-
-                  <p className="mb-1 text-[10px] text-[#6d7c91]">
-                    {stat.title}
-                  </p>
-                </div>
-
-                <div className="mt-1 flex items-center gap-1">
-
-                  {stat.positive ? (
-                    <ArrowUp
-                      size={11}
-                      className="text-[#18b87f]"
-                    />
-                  ) : (
-                    <ArrowDown
-                      size={11}
-                      className="text-[#ff4972]"
-                    />
-                  )}
-
-                  <span
-                    className={`
-                      text-[9px]
-                      font-semibold
-
-                      ${
-                        stat.positive
-                          ? "text-[#18b87f]"
-                          : "text-[#ff4972]"
-                      }
-                    `}
-                  >
-                    {stat.change}
-                  </span>
-
-                  <span className="text-[9px] text-[#8a99aa]">
-                    {stat.note}
-                  </span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <AdminHeader />
+      <AdminStats />
 
       {/* =====================================================
           CHARTS
@@ -837,7 +422,7 @@ const DashboardHome = () => {
 
             <button
               onClick={() =>
-                navigate("/admin-dashboard/appointments")
+                navigate("/admin/appointments")
               }
               className="
                 text-[10px]
@@ -879,7 +464,7 @@ const DashboardHome = () => {
               </thead>
 
               <tbody>
-                {filteredAppointments.map((appointment) => (
+                {appointments.map((appointment) => (
                   <tr
                     key={`${appointment.time}-${appointment.patient}`}
                     className="
@@ -927,7 +512,7 @@ const DashboardHome = () => {
                   </tr>
                 ))}
 
-                {filteredAppointments.length === 0 && (
+                {appointments.length === 0 && (
                   <tr>
                     <td
                       colSpan="5"
@@ -1044,228 +629,8 @@ const DashboardHome = () => {
           xl:grid-cols-[1fr_1.05fr]
         "
       >
-        {/* SYSTEM ACTIVITY */}
-
-        <section
-          className="
-            rounded-2xl
-            border border-white/60
-            bg-white/90
-            p-4
-            shadow-[0_4px_18px_rgba(30,90,90,0.06)]
-            backdrop-blur-sm
-          "
-        >
-          <h2 className="mb-3 text-[12px] font-semibold text-[#1e3353]">
-            System Activity
-          </h2>
-
-          <div className="space-y-3">
-            {activities.map((activity) => {
-              const Icon = activity.icon;
-
-              return (
-                <div
-                  key={activity.title}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-4
-
-                    rounded-xl
-                    p-2
-
-                    transition
-
-                    hover:bg-[#f3faf9]
-                  "
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="
-                        flex h-9 w-9
-                        items-center justify-center
-                        rounded-full
-                        bg-[#e1f8f3]
-                      "
-                    >
-                      <Icon
-                        size={17}
-                        className="text-[#11aa94]"
-                      />
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] font-medium text-[#263b58]">
-                        {activity.title}
-                      </p>
-
-                      <p className="text-[9px] text-[#7a899c]">
-                        {activity.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <span className="text-[9px] text-[#8e9aac]">
-                    {activity.time}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* QUICK ACTIONS */}
-
-        <section
-          className="
-            rounded-2xl
-            border border-white/60
-            bg-white/90
-            p-4
-            shadow-[0_4px_18px_rgba(30,90,90,0.06)]
-            backdrop-blur-sm
-          "
-        >
-          <h2 className="mb-3 text-[12px] font-semibold text-[#079b8d]">
-            Quick Actions
-          </h2>
-
-          <div
-            className="
-              grid
-              grid-cols-2
-              gap-3
-
-              sm:grid-cols-4
-            "
-          >
-            <button
-              onClick={() =>
-                navigate("/admin-dashboard/patients")
-              }
-              className="
-                flex min-h-[74px]
-                flex-col
-                items-center justify-center
-                gap-2
-
-                rounded-xl
-                bg-[#effaf8]
-
-                text-[9px]
-                font-medium
-                text-[#33706b]
-
-                transition-all
-
-                hover:-translate-y-0.5
-                hover:bg-[#d9f6ef]
-                hover:shadow-md
-              "
-            >
-              <UserPlus
-                size={21}
-                className="text-[#10ad97]"
-              />
-              Add Patient
-            </button>
-
-            <button
-              onClick={() =>
-                navigate("/admin-dashboard/appointments")
-              }
-              className="
-                flex min-h-[74px]
-                flex-col
-                items-center justify-center
-                gap-2
-
-                rounded-xl
-                bg-[#effaf8]
-
-                text-[9px]
-                font-medium
-                text-[#33706b]
-
-                transition-all
-
-                hover:-translate-y-0.5
-                hover:bg-[#d9f6ef]
-                hover:shadow-md
-              "
-            >
-              <CalendarPlus
-                size={21}
-                className="text-[#10ad97]"
-              />
-              New Appointment
-            </button>
-
-            <button
-              onClick={() =>
-                navigate("/admin-dashboard/reports")
-              }
-              className="
-                flex min-h-[74px]
-                flex-col
-                items-center justify-center
-                gap-2
-
-                rounded-xl
-                bg-[#effaf8]
-
-                text-[9px]
-                font-medium
-                text-[#33706b]
-
-                transition-all
-
-                hover:-translate-y-0.5
-                hover:bg-[#d9f6ef]
-                hover:shadow-md
-              "
-            >
-              <BarChart3
-                size={21}
-                className="text-[#10ad97]"
-              />
-              Generate Report
-            </button>
-
-            <button
-              onClick={() =>
-                navigate("/admin-dashboard/settings")
-              }
-              className="
-                flex min-h-[74px]
-                flex-col
-                items-center justify-center
-                gap-2
-
-                rounded-xl
-                bg-[#effaf8]
-
-                text-[9px]
-                font-medium
-                text-[#33706b]
-
-                transition-all
-
-                hover:-translate-y-0.5
-                hover:bg-[#d9f6ef]
-                hover:shadow-md
-              "
-            >
-              <Settings
-                size={21}
-                className="text-[#10ad97]"
-              />
-              Manage System
-            </button>
-          </div>
-        </section>
+        <AdminRecentActivity />
+        <AdminQuickActions />
       </div>
     </div>
   );

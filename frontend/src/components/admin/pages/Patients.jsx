@@ -397,6 +397,7 @@ const Patients = () => {
       {/* TOP HEADER */}
 
       <div className="
+        !hidden
         mb-4
         flex flex-col gap-4
         lg:flex-row

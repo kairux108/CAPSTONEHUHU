@@ -56,33 +56,43 @@ function Login() {
       const role = String(data.user?.role || "")
         .trim()
         .toLowerCase();
+
       const user = {
         ...data.user,
         role,
       };
 
-      // Save CURA authentication information
+      // Save authentication data
       localStorage.setItem("cura_token", data.token);
+
       localStorage.setItem(
         "cura_user",
         JSON.stringify(user)
       );
+
+      // Update AuthContext
       login(user);
 
       console.log("Login successful:", user);
 
-      // Redirect according to user role
+      // Redirect according to role
       switch (role) {
         case "admin":
-          navigate("/admin-dashboard");
+          navigate("/admin/dashboard", {
+            replace: true,
+          });
           break;
 
         case "doctor":
-          navigate("/doctor-dashboard");
+          navigate("/doctor/dashboard", {
+            replace: true,
+          });
           break;
 
         case "staff":
-          navigate("/staff-dashboard");
+          navigate("/staff/dashboard", {
+            replace: true,
+          });
           break;
 
         default:
@@ -142,7 +152,6 @@ function Login() {
           <p className="priority">
             <strong>Your Health.</strong> Our Priority.
           </p>
-
         </div>
 
         {/* LOGIN CARD */}
@@ -184,13 +193,11 @@ function Login() {
 
             {/* PASSWORD */}
             <div className="field">
-
               <label htmlFor="password">
                 Password
               </label>
 
               <div className="password-field">
-
                 <input
                   id="password"
                   type={
@@ -221,13 +228,11 @@ function Login() {
                     ? "Hide"
                     : "Show"}
                 </button>
-
               </div>
             </div>
 
             {/* OPTIONS */}
             <div className="form-options">
-
               <label>
                 <input
                   type="checkbox"
@@ -246,7 +251,6 @@ function Login() {
               <a href="#forgot-password">
                 Forgot password?
               </a>
-
             </div>
 
             {/* ERROR */}
@@ -268,7 +272,6 @@ function Login() {
 
               {!loading && <span>→</span>}
             </button>
-
           </form>
 
           <div className="divider">
@@ -296,9 +299,7 @@ function Login() {
             Your data is protected with
             industry-standard security.
           </p>
-
         </section>
-
       </section>
     </main>
   );

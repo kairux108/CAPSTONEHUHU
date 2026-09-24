@@ -17,8 +17,9 @@ const Navbar = ({
   const location = useLocation();
 
   const isDashboard =
+    location.pathname === "/admin/dashboard" ||
     location.pathname === "/doctor/dashboard" ||
-    location.pathname.startsWith("/staff-dashboard");
+    location.pathname === "/staff/dashboard";
 
   const initials = (
     user?.name || "CURA User"
@@ -32,7 +33,9 @@ const Navbar = ({
   const dashboardDescription =
     user?.role?.toLowerCase() === "doctor"
       ? "Overview of doctor activities and clinic performance."
-      : "Overview of clinic operations and patient flow.";
+      : user?.role?.toLowerCase() === "admin"
+        ? "Overview of clinic operations and patient flow."
+        : "Overview of staff activities and patient flow.";
 
   return (
     <header
@@ -71,7 +74,9 @@ const Navbar = ({
                 {user?.name ||
                   (user?.role?.toLowerCase() === "staff"
                     ? "CURA Staff"
-                    : "CURA Doctor")}
+                    : user?.role?.toLowerCase() === "admin"
+                      ? "CURA Admin"
+                      : "CURA Doctor")}
               </strong>
             </span>
           </div>

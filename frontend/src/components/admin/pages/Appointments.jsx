@@ -246,7 +246,7 @@ const Appointments = () => {
 
       {/* ================= TOP BAR ================= */}
 
-      <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="!hidden mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
         <div className="relative w-full max-w-xl">
           <Search
