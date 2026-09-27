@@ -1,5 +1,4 @@
 import { MapPin } from "lucide-react";
-
 const AdminHeader = () => (
   <div
     className="

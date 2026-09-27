@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -25,7 +23,13 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = Str::random(60);
+        // Optional: remove previous tokens
+        $user->tokens()->delete();
+
+        // Create real Sanctum token
+        $token = $user
+            ->createToken('cura-web')
+            ->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',

@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import staffService from "../../../services/staffService";
 
 import {
   Search,
@@ -18,8 +19,8 @@ import {
   X,
   ShieldCheck,
   Clock3,
-  BriefcaseBusiness,
 } from "lucide-react";
+
 
 const Staff = () => {
   const [search, setSearch] = useState("");
@@ -30,133 +31,175 @@ const Staff = () => {
   const [selectedStaffId, setSelectedStaffId] = useState(1);
   const [activeTab, setActiveTab] = useState("Information");
   const [showAddStaff, setShowAddStaff] = useState(false);
+  const [staffForm, setStaffForm] = useState({
+  name: "",
+  role: "",
+  position: "",
+  department: "",
+  phone: "",
+  email: "",
+  password: "",
+  address: "",
+  date_hired: "",
+  emergency_contact_name: "",
+  emergency_contact_number: "",
+  status: "Active",
+});
+  const [submittingStaff, setSubmittingStaff] = useState(false);
+  const [staffFormError, setStaffFormError] = useState("");
 
   // =====================================================
   // DUMMY DATA
   // =====================================================
 
-  const staffMembers = [
-    {
-      id: 1,
-      name: "Maria Santos",
-      initials: "MS",
-      staffId: "ST-001",
-      position: "Clinic Staff",
-      role: "Staff",
-      department: "Front Desk",
-      phone: "0917 123 4567",
-      email: "maria.santos@clinic.com",
-      status: "Active",
-      address: "Purok 3, Tagum City",
-      dateHired: "Jan 15, 2024",
-      emergencyContact: "0917 999 8888 / Juan Santos",
-    },
-    {
-      id: 2,
-      name: "John Dela Cruz",
-      initials: "JD",
-      staffId: "ST-002",
-      position: "Nurse",
-      role: "Nurse",
-      department: "Nursing",
-      phone: "0917 234 5678",
-      email: "john.delacruz@clinic.com",
-      status: "Active",
-      address: "Apokon, Tagum City",
-      dateHired: "Mar 10, 2024",
-      emergencyContact: "0918 111 2233",
-    },
-    {
-      id: 3,
-      name: "Ana Reyes",
-      initials: "AR",
-      staffId: "ST-003",
-      position: "Pharmacist",
-      role: "Pharmacist",
-      department: "Pharmacy",
-      phone: "0917 345 6789",
-      email: "ana.reyes@clinic.com",
-      status: "Active",
-      address: "Mankilam, Tagum City",
-      dateHired: "Apr 5, 2024",
-      emergencyContact: "0918 222 3344",
-    },
-    {
-      id: 4,
-      name: "Peter Tan",
-      initials: "PT",
-      staffId: "ST-004",
-      position: "Medical Assistant",
-      role: "Assistant",
-      department: "Consultation",
-      phone: "0917 456 7890",
-      email: "peter.tan@clinic.com",
-      status: "On Leave",
-      address: "Magugpo, Tagum City",
-      dateHired: "Feb 18, 2024",
-      emergencyContact: "0919 333 4455",
-    },
-    {
-      id: 5,
-      name: "Lisa Gomez",
-      initials: "LG",
-      staffId: "ST-005",
-      position: "Encoder",
-      role: "Records Staff",
-      department: "Records",
-      phone: "0917 567 8901",
-      email: "lisa.gomez@clinic.com",
-      status: "Active",
-      address: "Visayan Village, Tagum City",
-      dateHired: "May 12, 2024",
-      emergencyContact: "0920 444 5566",
-    },
-    {
-      id: 6,
-      name: "Mark Lim",
-      initials: "ML",
-      staffId: "ST-006",
-      position: "Lab Technician",
-      role: "Technician",
-      department: "Laboratory",
-      phone: "0917 678 9012",
-      email: "mark.lim@clinic.com",
-      status: "Active",
-      address: "La Filipina, Tagum City",
-      dateHired: "Jun 8, 2024",
-      emergencyContact: "0921 555 6677",
-    },
-    {
-      id: 7,
-      name: "Jenny Park",
-      initials: "JP",
-      staffId: "ST-007",
-      position: "Billing Staff",
-      role: "Billing",
-      department: "Finance",
-      phone: "0917 789 0123",
-      email: "jenny.park@clinic.com",
-      status: "Active",
-      address: "Tagum City",
-      dateHired: "Jul 21, 2024",
-      emergencyContact: "0922 666 7788",
-    },
-    {
-      id: 8,
-      name: "Carlo Pena",
-      initials: "CP",
-      staffId: "ST-008",
-      position: "Utility Staff",
-      role: "Utility",
-      department: "Maintenance",
-      phone: "0917 890 1234",
-      email: "carlo.pena@clinic.com",
-      status: "Inactive",
-      address: "Tagum City",
-      dateHired: "Aug 3, 2024",
-      emergencyContact: "0923 777 8899",
-    },
-  ];
+  // =====================================================
+// STAFF DATA FROM LARAVEL API
+// =====================================================
+
+const [staffMembers, setStaffMembers] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
+
+const loadStaff = async () => {
+  try {
+    const data = await staffService.getAll();
+    const records = Array.isArray(data) ? data : data?.data || [];
+
+    const formattedStaff = records.map((staff) => {
+      const name = staff.user?.name || "Unknown Staff";
+
+      const initials = name
+        .split(" ")
+        .filter(Boolean)
+        .map((word) => word[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+
+      return {
+        id: staff.id,
+
+        name,
+        initials,
+
+        staffId: staff.staff_number || "N/A",
+
+        position: staff.position || "Not assigned",
+
+        // Staff sub-role/job position
+        role: staff.position || "Staff",
+
+        department:
+          staff.department || "Not assigned",
+
+        phone:
+          staff.phone || "Not provided",
+
+        email:
+          staff.user?.email || "Not provided",
+
+        status:
+          staff.status || "Active",
+
+        address:
+          staff.address || "Not provided",
+
+        dateHired: staff.date_hired
+          ? new Date(
+              staff.date_hired
+            ).toLocaleDateString()
+          : "Not provided",
+
+        emergencyContact:
+          [
+            staff.emergency_contact_name,
+            staff.emergency_contact_number,
+          ]
+            .filter(Boolean)
+            .join(" / ") ||
+          "Not provided",
+      };
+    });
+
+    setStaffMembers(formattedStaff);
+
+    if (formattedStaff.length > 0) {
+      setSelectedStaffId((currentId) => {
+        const stillExists =
+          formattedStaff.some(
+            (staff) =>
+              staff.id === currentId
+          );
+
+        return stillExists
+          ? currentId
+          : formattedStaff[0].id;
+      });
+    }
+  } catch (err) {
+    console.error(
+      "Failed to load staff:",
+      err
+    );
+
+    setError(
+      err.message ||
+        "Unable to load staff records."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  // The loader updates component state only after its awaited API request settles.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  loadStaff();
+}, []);
+
+const handleStaffFormChange = (event) => {
+  const { name, value } = event.target;
+  setStaffForm((current) => ({ ...current, [name]: value }));
+};
+
+const resetStaffForm = () => {
+  setStaffForm({
+    name: "",
+    position: "",
+    department: "",
+    phone: "",
+    email: "",
+    password: "",
+    address: "",
+    date_hired: "",
+    emergency_contact_name: "",
+    emergency_contact_number: "",
+    status: "Active",
+  });
+  setStaffFormError("");
+};
+
+const handleAddStaff = async () => {
+  try {
+    setSubmittingStaff(true);
+    setStaffFormError("");
+
+    if (!staffForm.name || !staffForm.position || !staffForm.email || !staffForm.password) {
+      setStaffFormError("Full name, position, email, and password are required.");
+      return;
+    }
+
+    await staffService.create(staffForm);
+    await loadStaff();
+    resetStaffForm();
+    setShowAddStaff(false);
+  } catch (err) {
+    console.error("Add staff error:", err);
+    setStaffFormError(err.message || "Unable to create staff account.");
+  } finally {
+    setSubmittingStaff(false);
+  }
+};
 
   // =====================================================
   // FILTERING
@@ -213,23 +256,27 @@ const Staff = () => {
     }
 
     return result;
-  }, [search, roleFilter, statusFilter, sortBy]);
+  }, [staffMembers, search, roleFilter, statusFilter, sortBy]);
 
-  const selectedStaff =
-    staffMembers.find(
-      (staff) => staff.id === selectedStaffId
-    ) || staffMembers[0];
-
-  const getStatusStyle = (status) => {
-    if (status === "Active") {
-      return "bg-[#ddf8e9] text-[#24955c]";
-    }
-
-    if (status === "On Leave") {
-      return "bg-[#fff0cb] text-[#c88920]";
-    }
-
-    return "bg-[#ffe3e6] text-[#d85764]";
+const selectedStaff =
+  staffMembers.find(
+    (staff) =>
+      staff.id === selectedStaffId
+  ) ||
+  staffMembers[0] || {
+    id: null,
+    name: "No Staff Selected",
+    initials: "--",
+    staffId: "N/A",
+    position: "No staff record",
+    role: "Staff",
+    department: "Not assigned",
+    phone: "Not provided",
+    email: "Not provided",
+    status: "Inactive",
+    address: "Not provided",
+    dateHired: "Not provided",
+    emergencyContact: "Not provided",
   };
 
   return (
@@ -360,7 +407,7 @@ const Staff = () => {
           "
         >
           <Plus size={16} />
-          Add Staff
+          Add Users
         </button>
       </div>
 
@@ -376,32 +423,47 @@ const Staff = () => {
       ">
 
         <StaffStat
-          icon={Users}
-          value="12"
-          title="Total Staff"
-          color="blue"
-        />
+  icon={Users}
+  value={staffMembers.length}
+  title="Total Staff"
+  color="blue"
+/>
 
-        <StaffStat
-          icon={UserCheck}
-          value="10"
-          title="Active Staff"
-          color="green"
-        />
+<StaffStat
+  icon={UserCheck}
+  value={
+    staffMembers.filter(
+      (staff) =>
+        staff.status === "Active"
+    ).length
+  }
+  title="Active Staff"
+  color="green"
+/>
 
-        <StaffStat
-          icon={CalendarDays}
-          value="1"
-          title="On Leave"
-          color="green"
-        />
+<StaffStat
+  icon={CalendarDays}
+  value={
+    staffMembers.filter(
+      (staff) =>
+        staff.status === "On Leave"
+    ).length
+  }
+  title="On Leave"
+  color="green"
+/>
 
-        <StaffStat
-          icon={UserX}
-          value="1"
-          title="Inactive"
-          color="red"
-        />
+<StaffStat
+  icon={UserX}
+  value={
+    staffMembers.filter(
+      (staff) =>
+        staff.status === "Inactive"
+    ).length
+  }
+  title="Inactive"
+  color="red"
+/>
 
       </div>
 
@@ -600,7 +662,27 @@ const Staff = () => {
 
               <tbody>
 
-                {filteredStaff.map((staff) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-[10px] text-[#718198]">
+                      Loading staff...
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-[10px] text-red-600">
+                      {error}
+                    </td>
+                  </tr>
+                ) : filteredStaff.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-[10px] text-[#718198]">
+                      {staffMembers.length > 0
+                        ? "No staff match your filters."
+                        : "No staff records found."}
+                    </td>
+                  </tr>
+                ) : filteredStaff.map((staff) => (
                   <tr
                     key={staff.id}
                     onClick={() =>
@@ -745,7 +827,7 @@ const Staff = () => {
           ">
 
             <p className="text-[8px] text-[#748299]">
-              Showing 1 to {filteredStaff.length} of 12 staff
+              add {filteredStaff.length} of {staffMembers.length} staff
             </p>
 
             <div className="flex items-center gap-2">
@@ -1082,149 +1164,389 @@ const Staff = () => {
 
       </div>
 
-      {/* =====================================================
-          ADD STAFF MODAL
-      ====================================================== */}
+{/* =====================================================
+    ADD STAFF MODAL
+====================================================== */}
 
-      {showAddStaff && (
-        <div className="
-          fixed inset-0
-          z-[100]
+{showAddStaff && (
+  <div
+    className="
+      fixed inset-0
+      z-[100]
+      flex
+      items-center justify-center
+      bg-black/35
+      p-4
+    "
+  >
+    <div
+      className="
+        max-h-[90vh]
+        w-full
+        max-w-xl
+        overflow-y-auto
+        rounded-2xl
+        bg-white
+        p-5
+        shadow-2xl
+      "
+    >
+      {/* HEADER */}
+
+      <div
+        className="
+          mb-5
           flex
-          items-center justify-center
-          bg-black/35
-          p-4
-        ">
+          items-center
+          justify-between
+        "
+      >
+        <div>
+          <h2
+            className="
+              text-lg
+              font-semibold
+              text-[#203652]
+            "
+          >
+            Add Users
+          </h2>
 
-          <div className="
-            w-full
-            max-w-md
-            rounded-2xl
-            bg-white
-            p-5
-            shadow-2xl
-          ">
+          <p
+            className="
+              text-[10px]
+              text-[#7c8a9e]
+            "
+          >
+            Create a CURA Users account and staff profile.
+          </p>
+        </div>
 
-            <div className="
-              mb-5
-              flex
-              items-center
-              justify-between
-            ">
+        <button
+          type="button"
+          onClick={() => {
+            resetStaffForm();
+            setShowAddStaff(false);
+          }}
+          className="
+            rounded-lg
+            p-2
+            transition
+            hover:bg-[#f1f5f5]
+          "
+        >
+          <X size={19} />
+        </button>
+      </div>
 
-              <div>
-                <h2 className="
-                  text-lg
-                  font-semibold
-                  text-[#203652]
-                ">
-                  Add Staff
-                </h2>
+      {/* ERROR MESSAGE */}
 
-                <p className="
-                  text-[10px]
-                  text-[#7c8a9e]
-                ">
-                  Create a dummy staff account.
-                </p>
-              </div>
-
-              <button
-                onClick={() =>
-                  setShowAddStaff(false)
-                }
-              >
-                <X size={19} />
-              </button>
-
-            </div>
-
-            <div className="space-y-3">
-
-              <input
-                placeholder="Full name"
-                className="staff-input"
-              />
-
-              <input
-                placeholder="Position"
-                className="staff-input"
-              />
-
-              <select className="staff-input">
-                <option>Select role</option>
-                <option>Staff</option>
-                <option>Nurse</option>
-                <option>Pharmacist</option>
-                <option>Assistant</option>
-              </select>
-
-              <input
-                placeholder="Department"
-                className="staff-input"
-              />
-
-              <input
-                placeholder="Contact number"
-                className="staff-input"
-              />
-
-              <input
-                type="email"
-                placeholder="Email"
-                className="staff-input"
-              />
-
-            </div>
-
-            <div className="
-              mt-5
-              flex
-              justify-end
-              gap-2
-            ">
-
-              <button
-                onClick={() =>
-                  setShowAddStaff(false)
-                }
-                className="
-                  rounded-lg
-                  border border-[#dce6e9]
-                  px-4 py-2
-                  text-[10px]
-                  text-[#617188]
-                "
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={() =>
-                  setShowAddStaff(false)
-                }
-                className="
-                  rounded-lg
-                  bg-[#0bad92]
-                  px-4 py-2
-                  text-[10px]
-                  text-white
-                "
-              >
-                Add Staff
-              </button>
-
-            </div>
-
-          </div>
-
+      {staffFormError && (
+        <div
+          className="
+            mb-4
+            rounded-lg
+            bg-red-50
+            px-4
+            py-3
+            text-[10px]
+            text-red-600
+          "
+        >
+          {staffFormError}
         </div>
       )}
+
+      {/* FORM */}
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+        {/* FULL NAME */}
+
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Full Name *
+          </label>
+
+          <input
+            name="name"
+            value={staffForm.name}
+            onChange={handleStaffFormChange}
+            placeholder="Enter full name"
+            className="staff-input"
+          />
+        </div>
+
+        {/* POSITION */}
+<select
+  name="role"
+  value={staffForm.role}
+  onChange={handleStaffFormChange}
+  className="staff-input"
+>
+  <option value="">
+    Select role
+  </option>
+
+  <option value="admin">
+    Admin
+  </option>
+
+  <option value="staff">
+    Staff
+  </option>
+
+  <option value="doctor">
+    Doctor
+  </option>
+</select>
+
+        {/* DEPARTMENT */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Department
+          </label>
+
+          <select
+            name="department"
+            value={staffForm.department}
+            onChange={handleStaffFormChange}
+            className="staff-input"
+          >
+            <option value="Consultation">
+              Consultation
+            </option>  
+            <option value="Maternal and Health Child">
+            Maternal and Health Child
+            </option>
+            
+             <option value="Dental">
+              Dental
+            </option>
+          <option value="Laboratory">
+              Laboratory
+            </option>
+            
+
+          </select>
+        </div>
+
+        {/* PHONE */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Contact Number
+          </label>
+
+          <input
+            name="phone"
+            value={staffForm.phone}
+            onChange={handleStaffFormChange}
+            placeholder="09XXXXXXXXX"
+            className="staff-input"
+          />
+        </div>
+
+        {/* DATE HIRED */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Date Hired
+          </label>
+
+          <input
+            type="date"
+            name="date_hired"
+            value={staffForm.date_hired}
+            onChange={handleStaffFormChange}
+            className="staff-input"
+          />
+        </div>
+
+        {/* EMAIL */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Email *
+          </label>
+
+          <input
+            type="email"
+            name="email"
+            value={staffForm.email}
+            onChange={handleStaffFormChange}
+            placeholder="staff@cura.test"
+            className="staff-input"
+          />
+        </div>
+
+        {/* PASSWORD */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Temporary Password *
+          </label>
+
+          <input
+            type="password"
+            name="password"
+            value={staffForm.password}
+            onChange={handleStaffFormChange}
+            placeholder="Minimum 8 characters"
+            className="staff-input"
+          />
+        </div>
+
+        {/* ADDRESS */}
+
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Address
+          </label>
+
+          <input
+            name="address"
+            value={staffForm.address}
+            onChange={handleStaffFormChange}
+            placeholder="Enter home address"
+            className="staff-input"
+          />
+        </div>
+
+        {/* EMERGENCY CONTACT NAME */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Emergency Contact
+          </label>
+
+          <input
+            name="emergency_contact_name"
+            value={staffForm.emergency_contact_name}
+            onChange={handleStaffFormChange}
+            placeholder="Contact person name"
+            className="staff-input"
+          />
+        </div>
+
+        {/* EMERGENCY CONTACT NUMBER */}
+
+        <div>
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Emergency Number
+          </label>
+
+          <input
+            name="emergency_contact_number"
+            value={staffForm.emergency_contact_number}
+            onChange={handleStaffFormChange}
+            placeholder="09XXXXXXXXX"
+            className="staff-input"
+          />
+        </div>
+
+        {/* STATUS */}
+
+        <div className="sm:col-span-2">
+          <label className="mb-1 block text-[9px] font-medium text-[#617188]">
+            Status
+          </label>
+
+          <select
+            name="status"
+            value={staffForm.status}
+            onChange={handleStaffFormChange}
+            className="staff-input"
+          >
+            <option value="Active">
+              Active
+            </option>
+
+            <option value="On Leave">
+              On Leave
+            </option>
+
+            <option value="Inactive">
+              Inactive
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      {/* BUTTONS */}
+
+      <div
+        className="
+          mt-5
+          flex
+          justify-end
+          gap-2
+        "
+      >
+        <button
+          type="button"
+          onClick={() => {
+            resetStaffForm();
+            setShowAddStaff(false);
+          }}
+          disabled={submittingStaff}
+          className="
+            rounded-lg
+            border border-[#dce6e9]
+            px-4
+            py-2
+            text-[10px]
+            text-[#617188]
+            transition
+            hover:bg-[#f6f9f9]
+            disabled:opacity-50
+          "
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          onClick={handleAddStaff}
+          disabled={submittingStaff}
+          className="
+            rounded-lg
+            bg-[#0bad92]
+            px-4
+            py-2
+            text-[10px]
+            font-medium
+            text-white
+            transition
+            hover:bg-[#09917d]
+            disabled:cursor-not-allowed
+            disabled:opacity-60
+          "
+        >
+          {submittingStaff
+            ? "Creating..."
+            : "Add Staff"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
     </div>
   );
 };
 
+const getStatusStyle = (status) => {
+  const styles = {
+    Active: "bg-[#e1f8f2] text-[#078b79]",
+    "On Leave": "bg-[#fff4d6] text-[#9a6a00]",
+    Inactive: "bg-[#ffe9eb] text-[#c34250]",
+  };
+
+  return styles[status] || "bg-[#edf2f3] text-[#64758c]";
+};
 
 // =====================================================
 // SMALL COMPONENTS
