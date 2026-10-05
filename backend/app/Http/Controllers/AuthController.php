@@ -10,26 +10,31 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $validated['email'])->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'message' => 'Invalid email or password.',
             ], 401);
         }
 
-        // Optional: remove previous tokens
+        if ($user->status === 'inactive') {
+            return response()->json([
+                'message' => 'This account is inactive. Please contact the administrator.',
+            ], 403);
+        }
+
+        $user->last_active_at = now();
+        $user->save();
+
         $user->tokens()->delete();
 
-        // Create real Sanctum token
-        $token = $user
-            ->createToken('cura-web')
-            ->plainTextToken;
+        $token = $user->createToken('cura-web')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',
@@ -39,6 +44,8 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'status' => $user->status,
+                'last_active_at' => $user->last_active_at,
             ],
         ]);
     }

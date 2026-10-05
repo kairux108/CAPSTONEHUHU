@@ -306,34 +306,14 @@ const QueueManagement = () => {
           "Walk-in"
       ).length + 1;
 
-    let queueNumber = "";
-
-    if (
-      form.priority ===
-      "Urgent"
-    ) {
-      queueNumber = `U-${String(
-        urgentNumber
-      ).padStart(3, "0")}`;
-    } else if (
-      form.priority ===
-      "Priority"
-    ) {
-      queueNumber = `P-${String(
-        priorityNumber
-      ).padStart(3, "0")}`;
-    } else if (
-      form.queueType ===
-      "Appointment"
-    ) {
-      queueNumber = `A-${String(
-        appointmentNumber
-      ).padStart(3, "0")}`;
-    } else {
-      queueNumber = `W-${String(
-        walkInNumber
-      ).padStart(3, "0")}`;
-    }
+    const queueNumber =
+      form.priority === "Urgent"
+        ? `U-${String(urgentNumber).padStart(3, "0")}`
+        : form.priority === "Priority"
+          ? `P-${String(priorityNumber).padStart(3, "0")}`
+          : form.queueType === "Appointment"
+            ? `A-${String(appointmentNumber).padStart(3, "0")}`
+            : `W-${String(walkInNumber).padStart(3, "0")}`;
 
     const patient = {
       id,

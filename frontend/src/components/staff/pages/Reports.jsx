@@ -1,5 +1,7 @@
 import ReportsDashboard from "../../reports/ReportsDashboard";
 
-const Reports = () => <ReportsDashboard />;
+const StaffReports = () => {
+  return <ReportsDashboard />;
+};
 
-export default Reports;
+export default StaffReports;

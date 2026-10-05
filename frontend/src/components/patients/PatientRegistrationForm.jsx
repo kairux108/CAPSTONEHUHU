@@ -4,7 +4,6 @@ import {
 } from "lucide-react";
 
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -23,37 +22,34 @@ const emptyForm = {
   emergencyNumber: "",
 };
 
+const getFormValues = (patient) => {
+  if (!patient) return emptyForm;
+
+  return {
+    firstName: patient.firstName || "",
+    middleName: patient.middleName || "",
+    lastName: patient.lastName || "",
+    sex: patient.sex || "",
+    birthDate: patient.birthDate || "",
+    contactNumber: patient.contactNumber || "",
+    email: patient.email || "",
+    address: patient.address || "",
+    bloodType: patient.bloodType || "",
+    civilStatus: patient.civilStatus || "",
+    emergencyContact: patient.emergencyContact || "",
+    emergencyNumber: patient.emergencyNumber || "",
+  };
+};
+
 const PatientRegistrationForm = ({
   patient,
   onSave,
   onCancel,
 }) => {
-  const [form, setForm] =
-    useState(emptyForm);
+  const [form, setForm] = useState(() => getFormValues(patient));
 
   const [error, setError] =
     useState("");
-
-  useEffect(() => {
-    if (patient) {
-      setForm({
-        firstName: patient.firstName || "",
-        middleName: patient.middleName || "",
-        lastName: patient.lastName || "",
-        sex: patient.sex || "",
-        birthDate: patient.birthDate || "",
-        contactNumber: patient.contactNumber || "",
-        email: patient.email || "",
-        address: patient.address || "",
-        bloodType: patient.bloodType || "",
-        civilStatus: patient.civilStatus || "",
-        emergencyContact: patient.emergencyContact || "",
-        emergencyNumber: patient.emergencyNumber || "",
-      });
-    } else {
-      setForm(emptyForm);
-    }
-  }, [patient]);
 
   const handleChange = (e) => {
     const {

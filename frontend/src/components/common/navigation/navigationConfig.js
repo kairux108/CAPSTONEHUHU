@@ -4,7 +4,6 @@ import {
   Stethoscope,
   UsersRound,
   UserRound,
-  Building2,
   ClipboardList,
   FileText,
   Settings,
@@ -23,24 +22,14 @@ export const navigationConfig = {
       icon: CalendarDays,
     },
     {
-      label: "Doctors",
-      path: "/admin/doctors",
-      icon: Stethoscope,
-    },
-    {
-      label: "Staff",
-      path: "/admin/staff",
+      label: "Users",
+      path: "/admin/users",
       icon: UsersRound,
     },
     {
       label: "Patients",
       path: "/admin/patients",
       icon: UserRound,
-    },
-    {
-      label: "Clinics",
-      path: "/admin/clinics",
-      icon: Building2,
     },
     {
       label: "Reports",
@@ -108,10 +97,6 @@ export const navigationConfig = {
       path: "/staff/queue",
       icon: ClipboardList,
     },
-    {
-      label: "Reports",
-      path: "/staff/reports",
-      icon: FileText,
-    },
+
   ],
 };

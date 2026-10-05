@@ -1,24 +1,15 @@
-import {
-  Navigate,
-  Routes,
-  Route,
-} from "react-router-dom";
-
+import { Navigate, Routes, Route,} from "react-router-dom";
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
-import { useAuth } from "./context/AuthContext";
-
 import DashboardLayout from "./components/common/DashboardLayout";
+import AdminLayout from "./components/admin/AdminLayout";
 
 // ==============================
 // ADMIN
 // ==============================
-import AdminDashboard from "./components/admin/AdminDashboard";
 import Appointments from "./components/admin/pages/Appointments";
-import Doctors from "./components/admin/pages/Doctors";
-import Staff from "./components/admin/pages/Staff";
+import Users from "./components/admin/pages/Users";
 import Patients from "./components/admin/pages/Patients";
-import Clinics from "./components/admin/pages/Clinics";
 import Reports from "./components/admin/pages/Reports";
 import Settings from "./components/admin/pages/Settings";
 
@@ -30,7 +21,7 @@ import DoctorDashboard from "./components/doctor/DoctorDashboard";
 // ==============================
 // STAFF
 // ==============================
-import StaffDashboard from "./components/staff/StaffDashboard";
+import StaffLayout from "./components/staff/StaffLayout";
 import StaffPatients from "./components/staff/pages/Patients";
 import StaffAppointments from "./components/staff/pages/Appointments";
 import StaffQueue from "./components/staff/pages/Queue";
@@ -44,26 +35,6 @@ import AppointmentManager from "./components/appointments/AppointmentManager";
 import QueueManagement from "./components/queue/QueueManagement";
 import ConsultationPanel from "./components/consultation/ConsultationPanel";
 import ReportsDashboard from "./components/reports/ReportsDashboard";
-
-const RoleFallback = () => {
-  const { user } = useAuth();
-  const role = String(user?.role || "")
-    .trim()
-    .toLowerCase();
-
-  const destinations = {
-    admin: "/admin/dashboard",
-    doctor: "/doctor/dashboard",
-    staff: "/staff/dashboard",
-  };
-
-  return (
-    <Navigate
-      to={destinations[role] || "/"}
-      replace
-    />
-  );
-};
 
 function App() {
   return (
@@ -84,7 +55,7 @@ function App() {
         path="/admin"
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
-            <DashboardLayout />
+            <AdminLayout />
           </ProtectedRoute>
         }
       >
@@ -100,7 +71,7 @@ function App() {
 
         <Route
           path="dashboard"
-          element={<AdminDashboard />}
+          element={null}
         />
 
         <Route
@@ -109,23 +80,13 @@ function App() {
         />
 
         <Route
-          path="doctors"
-          element={<Doctors />}
-        />
-
-        <Route
-          path="staff"
-          element={<Staff />}
+          path="users"
+          element={<Users />}
         />
 
         <Route
           path="patients"
           element={<Patients />}
-        />
-
-        <Route
-          path="clinics"
-          element={<Clinics />}
         />
 
         <Route
@@ -198,7 +159,7 @@ function App() {
         path="/staff"
         element={
           <ProtectedRoute allowedRoles={["staff"]}>
-            <DashboardLayout />
+            <StaffLayout />
           </ProtectedRoute>
         }
       >
@@ -214,7 +175,7 @@ function App() {
 
         <Route
           path="dashboard"
-          element={<StaffDashboard />}
+          element={null}
         />
 
         <Route
@@ -239,7 +200,6 @@ function App() {
       </Route>
 
       {/* ==============================
-          OLD ROUTE REDIRECTS
       ============================== */}
       <Route
         path="/admin-dashboard"
@@ -251,33 +211,7 @@ function App() {
         }
       />
 
-      <Route
-        path="/doctor-dashboard"
-        element={
-          <Navigate
-            to="/doctor/dashboard"
-            replace
-          />
-        }
-      />
-
-      <Route
-        path="/staff-dashboard"
-        element={
-          <Navigate
-            to="/staff/dashboard"
-            replace
-          />
-        }
-      />
-
-      {/* ==============================
-          UNKNOWN ROUTE
-      ============================== */}
-      <Route
-        path="*"
-        element={<RoleFallback />}
-      />
+     
 
     </Routes>
   );

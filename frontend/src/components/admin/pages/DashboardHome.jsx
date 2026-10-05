@@ -1,33 +1,84 @@
-import ReportsChart from "../../reports/ReportsChart";
-import AdminQuickActions from "../components/AdminQuickActions";
-import AdminRecentActivity from "../components/AdminRecentActivity";
-import AdminStats from "../components/AdminStats";
+import CuraCard from "../../common/CuraCard";
 
-const DashboardHome = () => (
-  <div className="space-y-5">
-    <AdminStats />
-    <AdminQuickActions />
+const DashboardHome = () => {
+  return (
+    <div>
+      <div className="admin-dashboard-content">
 
-    <div className="grid gap-5 xl:grid-cols-[1.35fr_0.82fr]">
-      <section
-        className="
-          rounded-[22px]
-          border
-          border-white/60
-          bg-white/68
-          p-5
-          shadow-[0_14px_32px_rgba(44,78,75,0.11)]
+        {/* ============================
+            TOP STAT CARDS
+        ============================= */}
 
-          dark:border-[#29413f]
-          dark:bg-[#172827]/85
-        "
-      >
-        <ReportsChart />
-      </section>
+        <div className="dashboard-stat-grid">
+          <CuraCard className="dashboard-stat-card" />
 
-      <AdminRecentActivity />
+          <CuraCard className="dashboard-stat-card" />
+
+          <CuraCard className="dashboard-stat-card" />
+
+          <CuraCard className="dashboard-stat-card" />
+        </div>
+
+
+        {/* ============================
+            CHART / DISTRIBUTION
+        ============================= */}
+
+        <div className="dashboard-main-grid">
+
+          <CuraCard
+            title="Patient Visits Overview"
+            className="dashboard-panel-large"
+          />
+
+          <CuraCard
+            title="Patient Distribution"
+            className="dashboard-panel-large"
+          />
+
+        </div>
+
+
+        {/* ============================
+            APPOINTMENTS / STATISTICS
+        ============================= */}
+
+        <div className="dashboard-secondary-grid">
+
+          <CuraCard
+            title="Recent Appointments"
+            className="dashboard-panel-medium"
+          />
+
+          <CuraCard
+            title="Clinic Statistics"
+            className="dashboard-panel-medium"
+          />
+
+        </div>
+
+
+        {/* ============================
+            BOTTOM
+        ============================= */}
+
+        <div className="dashboard-bottom-grid">
+
+          <CuraCard
+            title="System Activity"
+            className="dashboard-panel-bottom"
+          />
+
+          <CuraCard
+            title="Quick Actions"
+            className="dashboard-panel-bottom"
+          />
+
+        </div>
+
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default DashboardHome;

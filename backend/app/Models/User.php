@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\StaffProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,6 +16,8 @@ class User extends Authenticatable
         'name',
         'email',
         'role',
+        'status',
+        'last_active_at',
         'password',
     ];
 
@@ -27,7 +30,13 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_active_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function staffProfile()
+    {
+        return $this->hasOne(StaffProfile::class);
     }
 }

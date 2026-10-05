@@ -301,6 +301,7 @@ const PatientList = () => {
 
       {showForm && (
         <PatientRegistrationForm
+          key={editingPatient?.id ?? "new"}
           patient={
             editingPatient
           }
