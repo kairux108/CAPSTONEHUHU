@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,14 +26,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', function (Request $request) {
         return response()->json([
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     });
 
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Only
+    | Admin Only - User Management
     |--------------------------------------------------------------------------
     */
 
@@ -41,6 +42,64 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource(
             'users',
             UserController::class
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin + Staff + Doctor - View Patients
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:admin,staff,doctor')->group(function () {
+
+        Route::get(
+            '/patients',
+            [PatientController::class, 'index']
+        );
+
+        Route::get(
+            '/patients/{patient}',
+            [PatientController::class, 'show']
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Staff Only - Register Patients
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:staff')->group(function () {
+
+        Route::post(
+            '/patients',
+            [PatientController::class, 'store']
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Doctor Only - Edit Patients
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:doctor')->group(function () {
+
+        Route::put(
+            '/patients/{patient}',
+            [PatientController::class, 'update']
+        );
+
+        Route::patch(
+            '/patients/{patient}',
+            [PatientController::class, 'update']
         );
 
     });

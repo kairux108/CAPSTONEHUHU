@@ -7,7 +7,7 @@ const StaffLayout = () => {
   const { pathname } = useLocation();
   const pageDetails = {
     "/staff/dashboard": ["Dashboard", "Overview of clinic operations and patient flow."],
-    "/staff/patients": ["Patients", "Register, search, and manage patient records."],
+    "/staff/patients": ["Patients", "Search and view patient records."],
     "/staff/appointments": ["Appointments", "Schedule and manage clinic appointments."],
     "/staff/queue": ["Queue", "Manage walk-ins and scheduled patients."],
 
