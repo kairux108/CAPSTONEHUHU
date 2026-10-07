@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\UserController;
@@ -64,6 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
             '/patients/{patient}',
             [PatientController::class, 'show']
         );
+        Route::get(
+    '/appointment-doctors',
+    [AppointmentController::class, 'doctors']
+);
 
     });
 
@@ -100,6 +105,64 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch(
             '/patients/{patient}',
             [PatientController::class, 'update']
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin + Staff + Doctor - View Appointments
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:admin,staff,doctor')->group(function () {
+
+        Route::get(
+            '/appointments',
+            [AppointmentController::class, 'index']
+        );
+
+        Route::get(
+            '/appointments/{appointment}',
+            [AppointmentController::class, 'show']
+        );
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Staff Only - Manage Appointments
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:staff')->group(function () {
+
+        Route::post(
+            '/appointments',
+            [AppointmentController::class, 'store']
+        );
+
+        Route::put(
+            '/appointments/{appointment}',
+            [AppointmentController::class, 'update']
+        );
+
+        Route::patch(
+            '/appointments/{appointment}',
+            [AppointmentController::class, 'update']
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Staff Only - Patient Check-In
+        |--------------------------------------------------------------------------
+        */
+
+        Route::patch(
+            '/appointments/{appointment}/check-in',
+            [AppointmentController::class, 'checkIn']
         );
 
     });

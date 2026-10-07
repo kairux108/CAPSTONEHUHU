@@ -1,77 +1,326 @@
 import {
-  CalendarDays,
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Clock3,
-  MoreVertical,
-  Plus,
-  Search,
-  XCircle,
-} from "lucide-react";
-
-import {
-  useMemo,
+  useCallback,
+  useEffect,
   useState,
 } from "react";
 
-import CuraCard from "../../common/CuraCard";
+import { Plus } from "lucide-react";
+
+import appointmentService from "../../../services/appointmentService";
+
+import StaffAppointmentStats from "../components/appointments/StaffAppointmentStats";
+import StaffAppointmentFilters from "../components/appointments/StaffAppointmentFilters";
+import StaffAppointmentCalendar from "../components/appointments/StaffAppointmentCalendar";
+import StaffAppointmentTable from "../components/appointments/StaffAppointmentTable";
+import StaffAppointmentDetails from "../components/appointments/StaffAppointmentDetails";
+import StaffAppointmentFormModal from "../components/appointments/StaffAppointmentFormModal";
+
+
+const getLocalDate = () => {
+  const date = new Date();
+
+  const year = date.getFullYear();
+
+  const month = String(
+    date.getMonth() + 1
+  ).padStart(2, "0");
+
+  const day = String(
+    date.getDate()
+  ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 
 const Appointments = () => {
+
   /*
   |--------------------------------------------------------------------------
-  | DATA
+  | State
   |--------------------------------------------------------------------------
-  |
-  | Later replace this with Laravel API data.
-  | No fake appointments for now.
-  |
   */
 
-  const [appointments] = useState([]);
+  const [appointments, setAppointments] =
+    useState([]);
+
+  const [doctors, setDoctors] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [busy, setBusy] =
+    useState(false);
 
   const [search, setSearch] =
     useState("");
 
-  const [statusFilter, setStatusFilter] =
-    useState("all");
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] = useState("all");
 
-  const [typeFilter, setTypeFilter] =
-    useState("all");
+  const [
+    typeFilter,
+    setTypeFilter,
+  ] = useState("all");
 
-  const [doctorFilter, setDoctorFilter] =
-    useState("all");
+  const [
+    doctorFilter,
+    setDoctorFilter,
+  ] = useState("all");
 
-  const [selectedDate, setSelectedDate] =
-    useState(
-      new Date()
-        .toISOString()
-        .split("T")[0]
-    );
+  const [
+    selectedDate,
+    setSelectedDate,
+  ] = useState(
+    getLocalDate()
+  );
 
   const [
     selectedAppointment,
     setSelectedAppointment,
   ] = useState(null);
 
+  const [page, setPage] =
+    useState(1);
+
+  const [
+    formAppointment,
+    setFormAppointment,
+  ] = useState(null);
+
+  const [
+    showForm,
+    setShowForm,
+  ] = useState(false);
+
+  const [stats, setStats] =
+    useState({
+      total_today: 0,
+      scheduled_today: 0,
+      checked_in_today: 0,
+      walk_in_today: 0,
+      online_today: 0,
+    });
+
+  const [
+    pagination,
+    setPagination,
+  ] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 20,
+    total: 0,
+  });
+
+
   /*
   |--------------------------------------------------------------------------
-  | HELPERS
+  | Load Doctors
   |--------------------------------------------------------------------------
   */
 
-  const normalize = (value) =>
-    String(value || "")
-      .trim()
-      .toLowerCase();
+  const loadDoctors =
+    useCallback(async () => {
+      try {
+        const data =
+          await appointmentService.getDoctors();
 
-  const formatDate = (value) => {
+        setDoctors(
+          data.doctors || []
+        );
+      } catch (error) {
+        console.error(
+          "Failed to load doctors:",
+          error
+        );
+      }
+    }, []);
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Load Appointments
+  |--------------------------------------------------------------------------
+  */
+
+  const loadAppointments =
+    useCallback(async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data =
+          await appointmentService.getAll({
+            page,
+
+            search:
+              search.trim(),
+
+            status:
+              statusFilter === "all"
+                ? ""
+                : statusFilter,
+
+            type:
+              typeFilter === "all"
+                ? ""
+                : typeFilter,
+
+            doctor_id:
+              doctorFilter === "all"
+                ? ""
+                : doctorFilter,
+
+            date:
+              selectedDate || "",
+          });
+
+        setAppointments(
+          data.appointments || []
+        );
+
+        setStats(
+          data.stats || {}
+        );
+
+        setPagination(
+          data.pagination || {}
+        );
+      } catch (error) {
+        console.error(
+          "Failed to load appointments:",
+          error
+        );
+
+        setError(
+          error.message ||
+            "Unable to load appointments."
+        );
+      } finally {
+        setLoading(false);
+      }
+    }, [
+      page,
+      search,
+      statusFilter,
+      typeFilter,
+      doctorFilter,
+      selectedDate,
+    ]);
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Effects
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    loadDoctors();
+  }, [loadDoctors]);
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        loadAppointments();
+      },
+      300
+    );
+
+    return () =>
+      clearTimeout(timer);
+  }, [loadAppointments]);
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Filter Change
+  |--------------------------------------------------------------------------
+  */
+
+  const changeFilter =
+    (setter) => (value) => {
+      setter(value);
+
+      setPage(1);
+
+      setSelectedAppointment(
+        null
+      );
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Patient Helpers
+  |--------------------------------------------------------------------------
+  */
+
+  const getPatientName = (
+    patient
+  ) =>
+    [
+      patient?.first_name,
+      patient?.middle_name,
+      patient?.last_name,
+      patient?.suffix,
+    ]
+      .filter(Boolean)
+      .join(" ") ||
+    "Unknown Patient";
+
+
+  const getInitials = (
+    patient
+  ) =>
+    [
+      patient?.first_name,
+      patient?.last_name,
+    ]
+      .filter(Boolean)
+      .map((name) => name[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "P";
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Doctor Helper
+  |--------------------------------------------------------------------------
+  */
+
+  const getDoctorName = (
+    doctor
+  ) =>
+    doctor?.name ||
+    "Unassigned";
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Date Helpers
+  |--------------------------------------------------------------------------
+  */
+
+  const formatDate = (
+    value
+  ) => {
     if (!value) {
       return "—";
     }
 
+    const dateOnly =
+      String(value).split("T")[0];
+
     return new Date(
-      `${value}T00:00:00`
+      `${dateOnly}T00:00:00`
     ).toLocaleDateString(
       "en-PH",
       {
@@ -82,13 +331,16 @@ const Appointments = () => {
     );
   };
 
-  const formatTime = (value) => {
+
+  const formatTime = (
+    value
+  ) => {
     if (!value) {
       return "—";
     }
 
     const [hour, minute] =
-      value.split(":");
+      String(value).split(":");
 
     const date = new Date();
 
@@ -108,42 +360,106 @@ const Appointments = () => {
     );
   };
 
-  const getInitials = (name) => {
-    return String(name || "Patient")
-      .split(" ")
-      .filter(Boolean)
-      .map((word) => word[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
+
+  const formatDateTime = (
+    value
+  ) => {
+    if (!value) {
+      return "—";
+    }
+
+    return new Date(
+      value
+    ).toLocaleString(
+      "en-PH",
+      {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }
+    );
   };
 
-  const statusClass = (status) => {
-    const value =
-      normalize(status);
 
-    if (value === "completed") {
+  /*
+  |--------------------------------------------------------------------------
+  | Status Helpers
+  |--------------------------------------------------------------------------
+  */
+
+  const formatStatus = (
+    status
+  ) => {
+    const labels = {
+      scheduled:
+        "Scheduled",
+
+      checked_in:
+        "Checked In",
+
+      completed:
+        "Completed",
+
+      cancelled:
+        "Cancelled",
+
+      no_show:
+        "No Show",
+    };
+
+    return (
+      labels[status] ||
+      status ||
+      "—"
+    );
+  };
+
+
+  const formatType = (
+    type
+  ) => {
+    const labels = {
+      online:
+        "Online",
+
+      walk_in:
+        "Walk-in",
+    };
+
+    return (
+      labels[type] ||
+      type ||
+      "—"
+    );
+  };
+
+
+  const statusClass = (
+    status
+  ) => {
+    if (
+      status === "completed"
+    ) {
       return "completed";
     }
 
     if (
-      value === "in progress" ||
-      value === "ongoing"
+      status === "checked_in"
     ) {
       return "progress";
     }
 
-    if (value === "waiting") {
-      return "waiting";
-    }
-
-    if (value === "scheduled") {
+    if (
+      status === "scheduled"
+    ) {
       return "scheduled";
     }
 
     if (
-      value === "cancelled" ||
-      value === "no show"
+      status === "cancelled" ||
+      status === "no_show"
     ) {
       return "cancelled";
     }
@@ -151,1084 +467,407 @@ const Appointments = () => {
     return "default";
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | SUMMARY
-  |--------------------------------------------------------------------------
-  */
-
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
-
-  const todayAppointments =
-    appointments.filter(
-      (item) =>
-        item.date === today
-    );
-
-  const todayCount =
-    todayAppointments.length;
-
-  const ongoingCount =
-    todayAppointments.filter(
-      (item) =>
-        [
-          "ongoing",
-          "in progress",
-          "waiting",
-        ].includes(
-          normalize(item.status)
-        )
-    ).length;
-
-  const completedCount =
-    todayAppointments.filter(
-      (item) =>
-        normalize(item.status) ===
-        "completed"
-    ).length;
-
-  const cancelledCount =
-    todayAppointments.filter(
-      (item) =>
-        [
-          "cancelled",
-          "no show",
-        ].includes(
-          normalize(item.status)
-        )
-    ).length;
 
   /*
   |--------------------------------------------------------------------------
-  | FILTER OPTIONS
+  | New Appointment
   |--------------------------------------------------------------------------
   */
 
-  const doctors = [
-    ...new Set(
-      appointments
-        .map(
-          (item) =>
-            item.doctor_name
-        )
-        .filter(Boolean)
-    ),
-  ];
+  const openNewAppointment =
+    () => {
+      setFormAppointment(null);
 
-  const appointmentTypes = [
-    ...new Set(
-      appointments
-        .map(
-          (item) =>
-            item.appointment_type
-        )
-        .filter(Boolean)
-    ),
-  ];
+      setShowForm(true);
+    };
+
 
   /*
   |--------------------------------------------------------------------------
-  | FILTERED APPOINTMENTS
+  | Reschedule
   |--------------------------------------------------------------------------
   */
 
-  const filteredAppointments =
-    useMemo(() => {
-      let result =
-        [...appointments];
-
-      const keyword =
-        normalize(search);
-
-      if (selectedDate) {
-        result = result.filter(
-          (item) =>
-            item.date ===
-            selectedDate
-        );
-      }
-
-      if (keyword) {
-        result = result.filter(
-          (item) =>
-            normalize(
-              item.patient_name
-            ).includes(keyword) ||
-            normalize(
-              item.patient_number
-            ).includes(keyword) ||
-            normalize(
-              item.contact_number
-            ).includes(keyword)
-        );
-      }
-
-      if (
-        statusFilter !== "all"
-      ) {
-        result = result.filter(
-          (item) =>
-            normalize(
-              item.status
-            ) === statusFilter
-        );
-      }
-
-      if (
-        typeFilter !== "all"
-      ) {
-        result = result.filter(
-          (item) =>
-            item.appointment_type ===
-            typeFilter
-        );
-      }
-
-      if (
-        doctorFilter !== "all"
-      ) {
-        result = result.filter(
-          (item) =>
-            item.doctor_name ===
-            doctorFilter
-        );
-      }
-
-      return result.sort(
-        (a, b) =>
-          String(a.time || "")
-            .localeCompare(
-              String(
-                b.time || ""
-              )
-            )
+  const openEditAppointment =
+    (appointment) => {
+      setFormAppointment(
+        appointment
       );
-    }, [
-      appointments,
-      search,
-      statusFilter,
-      typeFilter,
-      doctorFilter,
-      selectedDate,
-    ]);
 
-  const clearFilters = () => {
-    setSearch("");
-    setStatusFilter("all");
-    setTypeFilter("all");
-    setDoctorFilter("all");
-    setSelectedDate(today);
-  };
+      setShowForm(true);
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Appointment Saved
+  |--------------------------------------------------------------------------
+  */
+
+  const handleSaved =
+    async (appointment) => {
+      setShowForm(false);
+
+      setFormAppointment(null);
+
+      setSelectedAppointment(
+        appointment
+      );
+
+      await loadAppointments();
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Check In
+  |--------------------------------------------------------------------------
+  */
+
+  const handleCheckIn =
+    async (appointment) => {
+      const patientName =
+        getPatientName(
+          appointment.patient
+        );
+
+      const confirmed =
+        window.confirm(
+          `Check in ${patientName}?`
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setBusy(true);
+
+        const data =
+          await appointmentService.checkIn(
+            appointment.id
+          );
+
+        setSelectedAppointment(
+          data.appointment ||
+            appointment
+        );
+
+        await loadAppointments();
+      } catch (error) {
+        window.alert(
+          error.message ||
+            "Unable to check in patient."
+        );
+      } finally {
+        setBusy(false);
+      }
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Cancel
+  |--------------------------------------------------------------------------
+  */
+
+  const handleCancel =
+    async (appointment) => {
+      const confirmed =
+        window.confirm(
+          "Cancel this appointment?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setBusy(true);
+
+        const data =
+          await appointmentService.update(
+            appointment.id,
+            {
+              status:
+                "cancelled",
+            }
+          );
+
+        setSelectedAppointment(
+          data.appointment ||
+            appointment
+        );
+
+        await loadAppointments();
+      } catch (error) {
+        window.alert(
+          error.message ||
+            "Unable to cancel appointment."
+        );
+      } finally {
+        setBusy(false);
+      }
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | No Show
+  |--------------------------------------------------------------------------
+  */
+
+  const handleNoShow =
+    async (appointment) => {
+      const confirmed =
+        window.confirm(
+          "Mark this patient as no-show?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setBusy(true);
+
+        const data =
+          await appointmentService.update(
+            appointment.id,
+            {
+              status:
+                "no_show",
+            }
+          );
+
+        setSelectedAppointment(
+          data.appointment ||
+            appointment
+        );
+
+        await loadAppointments();
+      } catch (error) {
+        window.alert(
+          error.message ||
+            "Unable to update appointment."
+        );
+      } finally {
+        setBusy(false);
+      }
+    };
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Render
+  |--------------------------------------------------------------------------
+  */
 
   return (
     <div className="staff-appointments-page">
 
-      {/* ===================================================
-          SUMMARY
-      ==================================================== */}
 
-      <div className="staff-appointments-summary">
+      {/* SUMMARY */}
 
-        <AppointmentStat
-          icon={
-            <CalendarDays
-              size={23}
-            />
-          }
-          variant="today"
-          value={todayCount}
-          label="Today's Appointments"
-        />
-
-        <AppointmentStat
-          icon={
-            <Clock3 size={23} />
-          }
-          variant="progress"
-          value={ongoingCount}
-          label="Ongoing / In Progress"
-        />
-
-        <AppointmentStat
-          icon={
-            <CheckCircle2
-              size={23}
-            />
-          }
-          variant="completed"
-          value={completedCount}
-          label="Completed Today"
-        />
-
-        <AppointmentStat
-          icon={
-            <XCircle size={23} />
-          }
-          variant="cancelled"
-          value={cancelledCount}
-          label="Cancelled / No Show"
-        />
-
-      </div>
+      <StaffAppointmentStats
+        stats={stats}
+      />
 
 
-      {/* ===================================================
-          FILTER BAR
-      ==================================================== */}
+      {/* FILTERS */}
 
-      <CuraCard className="staff-appointment-filter-card">
+      <StaffAppointmentFilters
+  search={search}
+  setSearch={changeFilter(setSearch)}
 
-        <div className="staff-appointment-toolbar">
+  statusFilter={statusFilter}
+  setStatusFilter={changeFilter(setStatusFilter)}
 
-          <button
-            type="button"
-            className="staff-new-appointment"
-          >
-            <Plus size={17} />
+  typeFilter={typeFilter}
+  setTypeFilter={changeFilter(setTypeFilter)}
 
-            New Appointment
-          </button>
+  doctorFilter={doctorFilter}
+  setDoctorFilter={changeFilter(setDoctorFilter)}
 
+  selectedDate={selectedDate}
+  setSelectedDate={changeFilter(setSelectedDate)}
 
-          <label className="staff-appointment-search">
-
-            <Search size={16} />
-
-            <input
-              type="search"
-              placeholder="Search by patient name, ID number, or contact..."
-              value={search}
-              onChange={(event) =>
-                setSearch(
-                  event.target.value
-                )
-              }
-            />
-
-          </label>
+  doctors={doctors}
+  onNewAppointment={openNewAppointment}
+/>
 
 
-          <select
-            value={statusFilter}
-            onChange={(event) =>
-              setStatusFilter(
-                event.target.value
-              )
-            }
-          >
-            <option value="all">
-              All Status
-            </option>
-
-            <option value="scheduled">
-              Scheduled
-            </option>
-
-            <option value="waiting">
-              Waiting
-            </option>
-
-            <option value="in progress">
-              In Progress
-            </option>
-
-            <option value="completed">
-              Completed
-            </option>
-
-            <option value="cancelled">
-              Cancelled
-            </option>
-          </select>
-
-
-          <select
-            value={typeFilter}
-            onChange={(event) =>
-              setTypeFilter(
-                event.target.value
-              )
-            }
-          >
-            <option value="all">
-              All Appointment Types
-            </option>
-
-            {appointmentTypes.map(
-              (type) => (
-                <option
-                  value={type}
-                  key={type}
-                >
-                  {type}
-                </option>
-              )
-            )}
-          </select>
-
-
-          <select
-            value={doctorFilter}
-            onChange={(event) =>
-              setDoctorFilter(
-                event.target.value
-              )
-            }
-          >
-            <option value="all">
-              All Doctors
-            </option>
-
-            {doctors.map(
-              (doctor) => (
-                <option
-                  value={doctor}
-                  key={doctor}
-                >
-                  {doctor}
-                </option>
-              )
-            )}
-          </select>
-
-
-          <input
-            type="date"
-            className="staff-appointment-date"
-            value={selectedDate}
-            onChange={(event) =>
-              setSelectedDate(
-                event.target.value
-              )
-            }
-          />
-
-
-          <button
-            type="button"
-            className="staff-appointment-clear"
-            onClick={clearFilters}
-          >
-            Clear
-          </button>
-
-        </div>
-
-      </CuraCard>
-
-
-      {/* ===================================================
-          MAIN AREA
-      ==================================================== */}
+      {/* MAIN CONTENT */}
 
       <div className="staff-appointment-main-grid">
 
-        {/* =================================================
-            CALENDAR
-        ================================================== */}
+        {/* CALENDAR */}
 
-        <AppointmentCalendar
+        <StaffAppointmentCalendar
           selectedDate={
             selectedDate
           }
+
           setSelectedDate={
-            setSelectedDate
+            changeFilter(
+              setSelectedDate
+            )
           }
+
           appointments={
             appointments
           }
         />
 
 
-        {/* =================================================
-            APPOINTMENT LIST
-        ================================================== */}
-
-        <CuraCard
-          title={`Today's Appointments (${filteredAppointments.length})`}
-          className="staff-appointment-list-card"
-        >
-
-          <div className="staff-appointment-table-wrapper">
-
-            <table className="staff-appointment-table">
-
-              <thead>
-                <tr>
-                  <th>Time</th>
-                  <th>Patient</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Doctor</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                {filteredAppointments.map(
-                  (appointment) => (
-                    <tr
-                      key={
-                        appointment.id
-                      }
-                      className={
-                        selectedAppointment
-                          ?.id ===
-                        appointment.id
-                          ? "selected"
-                          : ""
-                      }
-                      onClick={() =>
-                        setSelectedAppointment(
-                          appointment
-                        )
-                      }
-                    >
-
-                      <td>
-                        {formatTime(
-                          appointment.time
-                        )}
-                      </td>
-
-
-                      <td>
-                        <div className="staff-appointment-patient">
-
-                          <div className="staff-appointment-avatar">
-                            {getInitials(
-                              appointment.patient_name
-                            )}
-                          </div>
-
-                          <div>
-                            <strong>
-                              {
-                                appointment.patient_name
-                              }
-                            </strong>
-
-                            <span>
-                              {
-                                appointment.patient_number
-                              }
-                            </span>
-                          </div>
-
-                        </div>
-                      </td>
-
-
-                      <td>
-                        <span className="staff-appointment-type">
-                          {appointment.appointment_type ||
-                            "—"}
-                        </span>
-                      </td>
-
-
-                      <td>
-                        <span
-                          className={`staff-appointment-status ${statusClass(
-                            appointment.status
-                          )}`}
-                        >
-                          {appointment.status ||
-                            "—"}
-                        </span>
-                      </td>
-
-
-                      <td>
-                        {appointment.doctor_name ||
-                          "—"}
-                      </td>
-
-
-                      <td>
-                        <button
-                          type="button"
-                          className="staff-appointment-more"
-                          onClick={(
-                            event
-                          ) =>
-                            event.stopPropagation()
-                          }
-                        >
-                          <MoreVertical
-                            size={16}
-                          />
-                        </button>
-                      </td>
-
-                    </tr>
-                  )
-                )}
-
-              </tbody>
-
-            </table>
-
-
-            {filteredAppointments.length ===
-              0 && (
-              <div className="staff-appointment-empty">
-
-                <CalendarDays
-                  size={35}
-                />
-
-                <p>
-                  No appointments found
-                </p>
-
-                <span>
-                  Appointments for the
-                  selected date will
-                  appear here.
-                </span>
-
-              </div>
-            )}
-
-          </div>
-
-
-          {/* PAGINATION */}
-
-          <div className="staff-appointment-pagination">
-
-            <span>
-              Showing{" "}
-              {
-                filteredAppointments.length
-              }{" "}
-              appointments
-            </span>
-
-            <div>
-              <button>
-                <ChevronLeft
-                  size={15}
-                />
-              </button>
-
-              <button className="active">
-                1
-              </button>
-
-              <button>
-                <ChevronRight
-                  size={15}
-                />
-              </button>
-            </div>
-
-            <select defaultValue="10">
-              <option value="10">
-                10 / page
-              </option>
-
-              <option value="20">
-                20 / page
-              </option>
-
-              <option value="50">
-                50 / page
-              </option>
-            </select>
-
-          </div>
-
-        </CuraCard>
-
-
-        {/* =================================================
-            APPOINTMENT DETAILS
-        ================================================== */}
-
-        <CuraCard
-          title="Appointment Details"
-          className="staff-appointment-detail-card"
-        >
-
-          {!selectedAppointment ? (
-
-            <div className="staff-appointment-detail-empty">
-
-              <CalendarDays
-                size={40}
-              />
-
-              <h3>
-                No appointment selected
-              </h3>
-
-              <p>
-                Select an appointment
-                from the list to view
-                its details.
-              </p>
-
-            </div>
-
-          ) : (
-
-            <div className="staff-appointment-details">
-
-              {/* PATIENT */}
-
-              <div className="staff-appointment-detail-profile">
-
-                <div className="staff-appointment-detail-avatar">
-                  {getInitials(
-                    selectedAppointment.patient_name
-                  )}
-                </div>
-
-                <div>
-                  <h3>
-                    {
-                      selectedAppointment.patient_name
-                    }
-                  </h3>
-
-                  <p>
-                    {
-                      selectedAppointment.patient_number
-                    }
-                  </p>
-                </div>
-
-                <span
-                  className={`staff-appointment-status ${statusClass(
-                    selectedAppointment.status
-                  )}`}
-                >
-                  {selectedAppointment.status}
-                </span>
-
-              </div>
-
-
-              {/* DETAILS */}
-
-              <div className="staff-appointment-detail-list">
-
-                <AppointmentDetail
-                  label="Date"
-                  value={formatDate(
-                    selectedAppointment.date
-                  )}
-                />
-
-                <AppointmentDetail
-                  label="Time"
-                  value={formatTime(
-                    selectedAppointment.time
-                  )}
-                />
-
-                <AppointmentDetail
-                  label="Appointment Type"
-                  value={
-                    selectedAppointment.appointment_type ||
-                    "—"
-                  }
-                />
-
-                <AppointmentDetail
-                  label="Status"
-                  value={
-                    selectedAppointment.status ||
-                    "—"
-                  }
-                />
-
-                <AppointmentDetail
-                  label="Doctor"
-                  value={
-                    selectedAppointment.doctor_name ||
-                    "—"
-                  }
-                />
-
-                <AppointmentDetail
-                  label="Notes"
-                  value={
-                    selectedAppointment.notes ||
-                    "—"
-                  }
-                />
-
-              </div>
-
-
-              {/* ACTIONS */}
-
-              <div className="staff-appointment-detail-actions">
-
-                <button
-                  type="button"
-                  className="complete"
-                >
-                  <CheckCircle2
-                    size={15}
-                  />
-
-                  Mark as Completed
-                </button>
-
-                <button
-                  type="button"
-                  className="reschedule"
-                >
-                  <CalendarDays
-                    size={15}
-                  />
-
-                  Reschedule
-                </button>
-
-                <button
-                  type="button"
-                  className="cancel"
-                >
-                  <XCircle
-                    size={15}
-                  />
-
-                  Cancel Appointment
-                </button>
-
-              </div>
-
-            </div>
-
-          )}
-
-        </CuraCard>
-
-      </div>
-
-    </div>
-  );
-};
-
-
-/* =========================================================
-   SUMMARY CARD
-========================================================= */
-
-const AppointmentStat = ({
-  icon,
-  value,
-  label,
-  variant,
-}) => (
-  <CuraCard className="staff-appointment-stat-card">
-
-    <div className="staff-appointment-stat-content">
-
-      <div
-        className={`staff-appointment-stat-icon ${variant}`}
-      >
-        {icon}
-      </div>
-
-      <div>
-        <strong>
-          {value}
-        </strong>
-
-        <p>
-          {label}
-        </p>
-      </div>
-
-    </div>
-
-  </CuraCard>
-);
-
-
-/* =========================================================
-   DETAIL ROW
-========================================================= */
-
-const AppointmentDetail = ({
-  label,
-  value,
-}) => (
-  <div className="staff-appointment-detail-row">
-
-    <span>
-      {label}
-    </span>
-
-    <strong>
-      {value}
-    </strong>
-
-  </div>
-);
-
-
-/* =========================================================
-   SIMPLE CALENDAR
-========================================================= */
-
-const AppointmentCalendar = ({
-  selectedDate,
-  setSelectedDate,
-  appointments,
-}) => {
-  const selected =
-    selectedDate
-      ? new Date(
-          `${selectedDate}T00:00:00`
-        )
-      : new Date();
-
-  const [viewDate, setViewDate] =
-    useState(
-      new Date(
-        selected.getFullYear(),
-        selected.getMonth(),
-        1
-      )
-    );
-
-  const year =
-    viewDate.getFullYear();
-
-  const month =
-    viewDate.getMonth();
-
-  const firstDay =
-    new Date(
-      year,
-      month,
-      1
-    ).getDay();
-
-  const daysInMonth =
-    new Date(
-      year,
-      month + 1,
-      0
-    ).getDate();
-
-  const days = [];
-
-  for (
-    let index = 0;
-    index < firstDay;
-    index++
-  ) {
-    days.push(null);
-  }
-
-  for (
-    let day = 1;
-    day <= daysInMonth;
-    day++
-  ) {
-    days.push(day);
-  }
-
-  const formatCalendarDate = (
-    day
-  ) => {
-    const date = new Date(
-      year,
-      month,
-      day
-    );
-
-    return [
-      date.getFullYear(),
-      String(
-        date.getMonth() + 1
-      ).padStart(2, "0"),
-      String(
-        date.getDate()
-      ).padStart(2, "0"),
-    ].join("-");
-  };
-
-  const appointmentDates =
-    new Set(
-      appointments.map(
-        (item) => item.date
-      )
-    );
-
-  const previousMonth = () => {
-    setViewDate(
-      new Date(
-        year,
-        month - 1,
-        1
-      )
-    );
-  };
-
-  const nextMonth = () => {
-    setViewDate(
-      new Date(
-        year,
-        month + 1,
-        1
-      )
-    );
-  };
-
-  return (
-    <CuraCard className="staff-appointment-calendar-card">
-
-      <div className="staff-calendar-header">
-
-        <h3>
-          {viewDate.toLocaleDateString(
-            "en-PH",
-            {
-              month: "long",
-              year: "numeric",
-            }
-          )}
-        </h3>
-
-        <div>
-
-          <button
-            type="button"
-            onClick={
-              previousMonth
-            }
-          >
-            <ChevronLeft
-              size={15}
-            />
-          </button>
-
-          <button
-            type="button"
-            onClick={nextMonth}
-          >
-            <ChevronRight
-              size={15}
-            />
-          </button>
-
-        </div>
-
-      </div>
-
-
-      <div className="staff-calendar-weekdays">
-
-        {[
-          "Sun",
-          "Mon",
-          "Tue",
-          "Wed",
-          "Thu",
-          "Fri",
-          "Sat",
-        ].map((day) => (
-          <span key={day}>
-            {day}
-          </span>
-        ))}
-
-      </div>
-
-
-      <div className="staff-calendar-grid">
-
-        {days.map(
-          (day, index) => {
-            if (!day) {
-              return (
-                <div
-                  key={`empty-${index}`}
-                />
-              );
-            }
-
-            const date =
-              formatCalendarDate(
-                day
-              );
-
-            const active =
-              selectedDate ===
-              date;
-
-            const hasAppointment =
-              appointmentDates.has(
-                date
-              );
-
-            return (
-              <button
-                type="button"
-                key={date}
-                className={
-                  active
-                    ? "active"
-                    : ""
-                }
-                onClick={() =>
-                  setSelectedDate(
-                    date
-                  )
-                }
-              >
-                {day}
-
-                {hasAppointment && (
-                  <i />
-                )}
-              </button>
-            );
+        {/* APPOINTMENT LIST */}
+
+        <StaffAppointmentTable
+          appointments={
+            appointments
           }
-        )}
+
+          selectedAppointment={
+            selectedAppointment
+          }
+
+          setSelectedAppointment={
+            setSelectedAppointment
+          }
+
+          loading={loading}
+
+          error={error}
+
+          pagination={
+            pagination
+          }
+
+          onPageChange={
+            setPage
+          }
+
+          getPatientName={
+            getPatientName
+          }
+
+          getInitials={
+            getInitials
+          }
+
+          getDoctorName={
+            getDoctorName
+          }
+
+          formatTime={
+            formatTime
+          }
+
+          formatStatus={
+            formatStatus
+          }
+
+          statusClass={
+            statusClass
+          }
+
+          formatType={
+            formatType
+          }
+        />
+
+
+        {/* APPOINTMENT DETAILS */}
+
+        <StaffAppointmentDetails
+          appointment={
+            selectedAppointment
+          }
+
+          getPatientName={
+            getPatientName
+          }
+
+          getInitials={
+            getInitials
+          }
+
+          getDoctorName={
+            getDoctorName
+          }
+
+          formatDate={
+            formatDate
+          }
+
+          formatTime={
+            formatTime
+          }
+
+          formatDateTime={
+            formatDateTime
+          }
+
+          formatStatus={
+            formatStatus
+          }
+
+          formatType={
+            formatType
+          }
+
+          statusClass={
+            statusClass
+          }
+
+          onCheckIn={
+            handleCheckIn
+          }
+
+          onEdit={
+            openEditAppointment
+          }
+
+          onCancel={
+            handleCancel
+          }
+
+          onNoShow={
+            handleNoShow
+          }
+
+          busy={busy}
+        />
 
       </div>
 
 
-      <div className="staff-calendar-quick">
+      {/* NEW / RESCHEDULE APPOINTMENT MODAL */}
 
-        <h4>
-          Quick Filters
-        </h4>
+      {showForm && (
+        <StaffAppointmentFormModal
+          doctors={doctors}
 
-        <button
-          type="button"
-          onClick={() => {
-            const now =
-              new Date();
+          appointment={
+            formAppointment
+          }
 
-            setSelectedDate(
-              now
-                .toISOString()
-                .split("T")[0]
+          onClose={() => {
+            setShowForm(false);
+
+            setFormAppointment(
+              null
             );
           }}
-        >
-          Today
-        </button>
 
-      </div>
+          onSaved={
+            handleSaved
+          }
+        />
+      )}
 
-    </CuraCard>
+    </div>
   );
 };
-
 
 export default Appointments;
