@@ -1,56 +1,53 @@
-import { Navigate, Routes, Route,} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+
 import Login from "./components/auth/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import DashboardLayout from "./components/common/DashboardLayout";
-import AdminLayout from "./components/admin/AdminLayout";
 
-// ==============================
+// ======================================================
 // ADMIN
-// ==============================
-import Appointments from "./components/admin/pages/Appointments";
-import Users from "./components/admin/pages/Users";
-import Patients from "./components/admin/pages/Patients";
-import Reports from "./components/admin/pages/Reports";
-import Settings from "./components/admin/pages/Settings";
+// ======================================================
 
-// ==============================
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminAppointments from "./components/admin/pages/Appointments";
+import AdminUsers from "./components/admin/pages/Users";
+import AdminPatients from "./components/admin/pages/Patients";
+import AdminReports from "./components/admin/pages/Reports";
+import AdminSettings from "./components/admin/pages/Settings";
+
+// ======================================================
 // DOCTOR
-// ==============================
-import DoctorDashboard from "./components/doctor/DoctorDashboard";
+// ======================================================
 
-// ==============================
+import DoctorDashboard from "./components/doctor/DoctorDashboard";
+import AppointmentManager from "./components/appointments/AppointmentManager";
+import QueueManagement from "./components/queue/QueueManagement";
+import ConsultationPanel from "./components/consultation/ConsultationPanel";
+import ReportsDashboard from "./components/reports/ReportsDashboard";
+
+// ======================================================
 // STAFF
-// ==============================
+// ======================================================
+
 import StaffLayout from "./components/staff/StaffLayout";
 import StaffPatients from "./components/staff/pages/Patients";
 import StaffAppointments from "./components/staff/pages/Appointments";
 import StaffQueue from "./components/staff/pages/Queue";
 import StaffReports from "./components/staff/pages/Reports";
 
-// ==============================
-// SHARED MODULES
-// ==============================
-import PatientList from "./components/patients/PatientList";
-import AppointmentManager from "./components/appointments/AppointmentManager";
-import QueueManagement from "./components/queue/QueueManagement";
-import ConsultationPanel from "./components/consultation/ConsultationPanel";
-import ReportsDashboard from "./components/reports/ReportsDashboard";
-
 function App() {
   return (
     <Routes>
-
-      {/* ==============================
+      {/* ==================================================
           LOGIN
-      ============================== */}
-      <Route
-        path="/"
-        element={<Login />}
-      />
+      ================================================== */}
 
-      {/* ==============================
+      <Route path="/" element={<Login />} />
+
+      {/* ==================================================
           ADMIN
-      ============================== */}
+      ================================================== */}
+
       <Route
         path="/admin"
         element={
@@ -59,50 +56,40 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route
-          index
-          element={
-            <Navigate
-              to="dashboard"
-              replace
-            />
-          }
-        />
+        <Route index element={<Navigate to="dashboard" replace />} />
 
-        <Route
-          path="dashboard"
-          element={null}
-        />
+        <Route path="dashboard" element={null} />
 
         <Route
           path="appointments"
-          element={<Appointments />}
+          element={<AdminAppointments />}
         />
 
         <Route
           path="users"
-          element={<Users />}
+          element={<AdminUsers />}
         />
 
         <Route
           path="patients"
-          element={<Patients />}
+          element={<AdminPatients />}
         />
 
         <Route
           path="reports"
-          element={<Reports />}
+          element={<AdminReports />}
         />
 
         <Route
           path="settings"
-          element={<Settings />}
+          element={<AdminSettings />}
         />
       </Route>
 
-      {/* ==============================
+      {/* ==================================================
           DOCTOR
-      ============================== */}
+      ================================================== */}
+
       <Route
         path="/doctor"
         element={
@@ -111,24 +98,11 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route
-          index
-          element={
-            <Navigate
-              to="dashboard"
-              replace
-            />
-          }
-        />
+        <Route index element={<Navigate to="dashboard" replace />} />
 
         <Route
           path="dashboard"
           element={<DoctorDashboard />}
-        />
-
-        <Route
-          path="patients"
-          element={<PatientList />}
         />
 
         <Route
@@ -152,9 +126,10 @@ function App() {
         />
       </Route>
 
-      {/* ==============================
+      {/* ==================================================
           STAFF
-      ============================== */}
+      ================================================== */}
+
       <Route
         path="/staff"
         element={
@@ -163,20 +138,9 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route
-          index
-          element={
-            <Navigate
-              to="dashboard"
-              replace
-            />
-          }
-        />
+        <Route index element={<Navigate to="dashboard" replace />} />
 
-        <Route
-          path="dashboard"
-          element={null}
-        />
+        <Route path="dashboard" element={null} />
 
         <Route
           path="patients"
@@ -199,20 +163,20 @@ function App() {
         />
       </Route>
 
-      {/* ==============================
-      ============================== */}
+      {/* ==================================================
+          LEGACY REDIRECTS
+      ================================================== */}
+
       <Route
         path="/admin-dashboard"
-        element={
-          <Navigate
-            to="/admin/dashboard"
-            replace
-          />
-        }
+        element={<Navigate to="/admin/dashboard" replace />}
       />
 
-     
+      {/* ==================================================
+          FALLBACK
+      ================================================== */}
 
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

@@ -20,6 +20,10 @@ const appointmentService = {
     return api(`/appointments/${id}`);
   },
 
+  getDoctors() {
+    return api("/appointment-doctors");
+  },
+
   create(data) {
     return api("/appointments", {
       method: "POST",

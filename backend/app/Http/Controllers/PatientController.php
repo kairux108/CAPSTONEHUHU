@@ -236,10 +236,12 @@ public function index(Request $request)
             ],
 
             'sex' => [
-                'required',
-                'string',
-                'max:20',
-            ],
+    'required',
+    Rule::in([
+        'male',
+        'female',
+    ]),
+],
 
             'phone_number' => [
                 'nullable',

@@ -1,149 +1,154 @@
-import CuraCard from "../../common/CuraCard";
+import useAppointments from "../../../hooks/useAppointments";
+
+import AppointmentStats from "../appointments/AppointmentStats";
+import AppointmentFilters from "../appointments/AppointmentFilters";
+import AppointmentTable from "../appointments/AppointmentTable";
+import AppointmentCalendar from "../appointments/AppointmentCalendar";
+import AppointmentDetails from "../appointments/AppointmentDetails";
 
 const Appointments = () => {
+  const {
+    appointments,
+    doctors,
+    loading,
+    error,
+    stats,
+    pagination,
+    selectedAppointment,
+    setSelectedAppointment,
+    statusFilter,
+    setStatusFilter,
+    typeFilter,
+    setTypeFilter,
+    doctorFilter,
+    setDoctorFilter,
+    selectedDate,
+    setSelectedDate,
+    setPage,
+    changeFilter,
+  } = useAppointments();
+
+  const changeTab = (status = "all", type = "all") => {
+    setStatusFilter(status);
+    setTypeFilter(type);
+    setPage(1);
+    setSelectedAppointment(null);
+  };
+
+  const changePage = (newPage) => {
+    setPage(newPage);
+    setSelectedAppointment(null);
+  };
+
   return (
-    <div>
-      <div className="appointments-page">
+    <div className="appointments-page">
+      <AppointmentStats
+        total={stats.total_today || 0}
+        scheduled={stats.scheduled_today || 0}
+        checkedIn={stats.checked_in_today || 0}
+        walkIn={stats.walk_in_today || 0}
+        online={stats.online_today || 0}
+      />
 
-        {/* =====================================
-            TOP NAVIGATION
-        ====================================== */}
-
-        <div className="appointments-topbar">
-
-          <div className="appointments-tabs">
-            <button className="appointment-tab active">
-              All Appointments
-            </button>
-
-            <button className="appointment-tab">
-              Scheduled
-            </button>
-
-            <button className="appointment-tab">
-              Walk-ins
-            </button>
-
-            <button className="appointment-tab">
-              Completed
-            </button>
-
-            <button className="appointment-tab">
-              Cancelled
-            </button>
-          </div>
-
-          <button className="appointment-add-button">
-            + New Appointment
+      {/* TABS */}
+      <div className="appointments-topbar">
+        <div className="appointments-tabs">
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "all" && typeFilter === "all" ? "active" : ""
+            }`}
+            onClick={() => changeTab("all", "all")}
+          >
+            All Appointments
           </button>
 
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "scheduled" && typeFilter === "all" ? "active" : ""
+            }`}
+            onClick={() => changeTab("scheduled", "all")}
+          >
+            Scheduled
+          </button>
+
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "all" && typeFilter === "walk_in" ? "active" : ""
+            }`}
+            onClick={() => changeTab("all", "walk_in")}
+          >
+            Walk-ins
+          </button>
+
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "all" && typeFilter === "online" ? "active" : ""
+            }`}
+            onClick={() => changeTab("all", "online")}
+          >
+            Online
+          </button>
+
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "completed" && typeFilter === "all" ? "active" : ""
+            }`}
+            onClick={() => changeTab("completed", "all")}
+          >
+            Completed
+          </button>
+
+          <button
+            type="button"
+            className={`appointment-tab ${
+              statusFilter === "cancelled" && typeFilter === "all" ? "active" : ""
+            }`}
+            onClick={() => changeTab("cancelled", "all")}
+          >
+            Cancelled
+          </button>
         </div>
+      </div>
 
+      {/* FILTERS */}
+      <AppointmentFilters
+        date={selectedDate}
+        setDate={changeFilter(setSelectedDate)}
+        doctorFilter={doctorFilter}
+        setDoctorFilter={changeFilter(setDoctorFilter)}
+        typeFilter={typeFilter}
+        setTypeFilter={changeFilter(setTypeFilter)}
+        statusFilter={statusFilter}
+        setStatusFilter={changeFilter(setStatusFilter)}
+        doctors={doctors}
+      />
 
-        {/* =====================================
-            MAIN LAYOUT
-        ====================================== */}
+      {/* CALENDAR + TABLE + DETAILS */}
+      <div className="appointments-bottom-layout">
+        <AppointmentCalendar
+          selectedDate={selectedDate}
+          setSelectedDate={changeFilter(setSelectedDate)}
+          appointments={appointments}
+        />
 
-        <div className="appointments-layout">
+        <AppointmentTable
+          appointments={appointments}
+          selectedAppointment={selectedAppointment}
+          setSelectedAppointment={setSelectedAppointment}
+          loading={loading}
+          error={error}
+          pagination={{
+            ...pagination,
+            onPageChange: changePage,
+          }}
+        />
 
-          {/* =================================
-              LEFT SIDE
-          ================================== */}
-
-          <div className="appointments-left">
-
-            {/* FILTERS */}
-
-            <CuraCard className="appointments-filter-card">
-              <div className="appointments-filters">
-
-                <select>
-                  <option>Choose Date</option>
-                </select>
-
-                <select>
-                  <option>All Doctors</option>
-                </select>
-
-                <select>
-                  <option>All Visit Types</option>
-                </select>
-
-                <select>
-                  <option>All Statuses</option>
-                </select>
-
-              </div>
-            </CuraCard>
-
-
-            {/* APPOINTMENTS TABLE */}
-
-            <CuraCard title="Appointments">
-
-              <div className="appointments-table-wrapper">
-
-                <table className="appointments-table">
-                  <thead>
-                    <tr>
-                      <th>Time</th>
-                      <th>Patient</th>
-                      <th>Doctor</th>
-                      <th>Visit Type</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {/* No data yet */}
-                  </tbody>
-                </table>
-
-                <div className="appointments-empty">
-                  No appointments available.
-                </div>
-
-              </div>
-
-            </CuraCard>
-
-          </div>
-
-
-          {/* =================================
-              RIGHT SIDE
-          ================================== */}
-
-          <div className="appointments-right">
-
-            {/* CALENDAR */}
-
-            <CuraCard
-              title="Calendar"
-              className="appointments-calendar-card"
-            >
-              <div className="appointments-empty-box">
-                Calendar
-              </div>
-            </CuraCard>
-
-
-            {/* APPOINTMENT DETAILS */}
-
-            <CuraCard
-              title="Appointment Details"
-              className="appointments-details-card"
-            >
-              <div className="appointments-empty-box">
-                Select an appointment to view details.
-              </div>
-            </CuraCard>
-
-          </div>
-
-        </div>
-
+        <AppointmentDetails appointment={selectedAppointment} />
       </div>
     </div>
   );

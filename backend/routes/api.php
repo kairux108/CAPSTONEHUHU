@@ -7,7 +7,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -15,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
-
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +29,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
     });
 
-
     /*
     |--------------------------------------------------------------------------
     | Admin Only - User Management
@@ -39,14 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin')->group(function () {
-
-        Route::apiResource(
-            'users',
-            UserController::class
-        );
-
+        Route::apiResource('users', UserController::class);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -55,23 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
-
-        Route::get(
-            '/patients',
-            [PatientController::class, 'index']
-        );
-
-        Route::get(
-            '/patients/{patient}',
-            [PatientController::class, 'show']
-        );
-        Route::get(
-    '/appointment-doctors',
-    [AppointmentController::class, 'doctors']
-);
-
+        Route::get('/patients', [PatientController::class, 'index']);
+        Route::get('/patients/{patient}', [PatientController::class, 'show']);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -80,14 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
-
-        Route::post(
-            '/patients',
-            [PatientController::class, 'store']
-        );
-
+        Route::post('/patients', [PatientController::class, 'store']);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -96,19 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:doctor')->group(function () {
-
-        Route::put(
-            '/patients/{patient}',
-            [PatientController::class, 'update']
-        );
-
-        Route::patch(
-            '/patients/{patient}',
-            [PatientController::class, 'update']
-        );
-
+        Route::put('/patients/{patient}', [PatientController::class, 'update']);
+        Route::patch('/patients/{patient}', [PatientController::class, 'update']);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -117,19 +78,10 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
-
-        Route::get(
-            '/appointments',
-            [AppointmentController::class, 'index']
-        );
-
-        Route::get(
-            '/appointments/{appointment}',
-            [AppointmentController::class, 'show']
-        );
-
+        Route::get('/appointment-doctors', [AppointmentController::class, 'doctors']);
+        Route::get('/appointments', [AppointmentController::class, 'index']);
+        Route::get('/appointments/{appointment}', [AppointmentController::class, 'show']);
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -138,33 +90,13 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
-
-        Route::post(
-            '/appointments',
-            [AppointmentController::class, 'store']
-        );
-
-        Route::put(
-            '/appointments/{appointment}',
-            [AppointmentController::class, 'update']
-        );
-
-        Route::patch(
-            '/appointments/{appointment}',
-            [AppointmentController::class, 'update']
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Staff Only - Patient Check-In
-        |--------------------------------------------------------------------------
-        */
-
+        Route::post('/appointments', [AppointmentController::class, 'store']);
+        Route::put('/appointments/{appointment}', [AppointmentController::class, 'update']);
+        Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update']);
         Route::patch(
             '/appointments/{appointment}/check-in',
             [AppointmentController::class, 'checkIn']
         );
-
     });
 
 });

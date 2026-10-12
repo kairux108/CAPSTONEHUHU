@@ -13,7 +13,6 @@ class UserController extends Controller
     private array $roles = ['admin', 'staff', 'doctor'];
     private array $statuses = ['active', 'on_leave', 'inactive'];
 
-
     /*
     |--------------------------------------------------------------------------
     | GET ALL USERS
@@ -40,7 +39,6 @@ class UserController extends Controller
             'users' => $users,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -77,9 +75,7 @@ class UserController extends Controller
             ],
 
             'position' => [
-                Rule::requiredIf(
-                    fn () => $request->role === 'staff'
-                ),
+                Rule::requiredIf(fn () => $request->role === 'staff'),
                 'nullable',
                 'string',
                 'max:255',
@@ -115,7 +111,6 @@ class UserController extends Controller
         ], 201);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | GET ONE USER
@@ -132,7 +127,6 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -171,9 +165,7 @@ class UserController extends Controller
             ],
 
             'position' => [
-                Rule::requiredIf(
-                    fn () => $request->role === 'staff'
-                ),
+                Rule::requiredIf(fn () => $request->role === 'staff'),
                 'nullable',
                 'string',
                 'max:255',
@@ -201,6 +193,8 @@ class UserController extends Controller
                         'status' => $this->staffStatus($user->status),
                     ]
                 );
+            } else {
+                StaffProfile::where('user_id', $user->id)->delete();
             }
         });
 
@@ -211,7 +205,6 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -235,7 +228,6 @@ class UserController extends Controller
             'message' => 'User deleted successfully.',
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -135,7 +136,6 @@ class AppointmentController extends Controller
         ]);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Create Appointment
@@ -153,13 +153,16 @@ class AppointmentController extends Controller
             'doctor_id' => [
                 'nullable',
                 Rule::exists('users', 'id')->where(
-                    fn ($query) => $query->where('role', 'doctor')
+                    fn ($query) => $query
+                        ->where('role', 'doctor')
+                        ->where('status', 'active')
                 ),
             ],
 
             'appointment_date' => [
                 'required',
                 'date',
+                'after_or_equal:today',
             ],
 
             'appointment_time' => [
@@ -182,23 +185,39 @@ class AppointmentController extends Controller
             ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Doctor Double Booking
+        |--------------------------------------------------------------------------
+        */
+
+        if (!empty($validated['doctor_id'])) {
+            $doctorConflict = Appointment::query()
+                ->where('doctor_id', $validated['doctor_id'])
+                ->whereDate('appointment_date', $validated['appointment_date'])
+                ->whereTime('appointment_time', $validated['appointment_time'])
+                ->whereNotIn('status', [
+                    'cancelled',
+                    'no_show',
+                ])
+                ->exists();
+
+            if ($doctorConflict) {
+                return response()->json([
+                    'message' => 'The selected doctor already has an appointment at this date and time.',
+                ], 422);
+            }
+        }
+
         $appointment = Appointment::create([
             'appointment_number' => $this->generateAppointmentNumber(),
-
             'patient_id' => $validated['patient_id'],
-
             'doctor_id' => $validated['doctor_id'] ?? null,
-
             'created_by' => $request->user()->id,
-
             'appointment_date' => $validated['appointment_date'],
-
             'appointment_time' => $validated['appointment_time'],
-
             'appointment_type' => $validated['appointment_type'],
-
             'reason_for_visit' => $validated['reason_for_visit'] ?? null,
-
             'status' => 'scheduled',
         ]);
 
@@ -213,7 +232,6 @@ class AppointmentController extends Controller
             'appointment' => $appointment,
         ], 201);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -234,7 +252,6 @@ class AppointmentController extends Controller
         ]);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Update Appointment
@@ -247,7 +264,9 @@ class AppointmentController extends Controller
             'doctor_id' => [
                 'nullable',
                 Rule::exists('users', 'id')->where(
-                    fn ($query) => $query->where('role', 'doctor')
+                    fn ($query) => $query
+                        ->where('role', 'doctor')
+                        ->where('status', 'active')
                 ),
             ],
 
@@ -255,6 +274,7 @@ class AppointmentController extends Controller
                 'sometimes',
                 'required',
                 'date',
+                'after_or_equal:today',
             ],
 
             'appointment_time' => [
@@ -280,6 +300,47 @@ class AppointmentController extends Controller
             ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Determine Updated Schedule
+        |--------------------------------------------------------------------------
+        */
+
+        $doctorId = array_key_exists('doctor_id', $validated)
+            ? $validated['doctor_id']
+            : $appointment->doctor_id;
+
+        $appointmentDate = $validated['appointment_date']
+            ?? $appointment->appointment_date;
+
+        $appointmentTime = $validated['appointment_time']
+            ?? $appointment->appointment_time;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Doctor Double Booking
+        |--------------------------------------------------------------------------
+        */
+
+        if (!empty($doctorId)) {
+            $doctorConflict = Appointment::query()
+                ->where('doctor_id', $doctorId)
+                ->whereDate('appointment_date', $appointmentDate)
+                ->whereTime('appointment_time', $appointmentTime)
+                ->where('id', '!=', $appointment->id)
+                ->whereNotIn('status', [
+                    'cancelled',
+                    'no_show',
+                ])
+                ->exists();
+
+            if ($doctorConflict) {
+                return response()->json([
+                    'message' => 'The selected doctor already has an appointment at this date and time.',
+                ], 422);
+            }
+        }
+
         $appointment->update($validated);
 
         $appointment->load([
@@ -294,7 +355,6 @@ class AppointmentController extends Controller
         ]);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Check In Patient
@@ -306,6 +366,22 @@ class AppointmentController extends Controller
         if ($appointment->status !== 'scheduled') {
             return response()->json([
                 'message' => 'Only scheduled appointments can be checked in.',
+            ], 422);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Appointment Must Be Today
+        |--------------------------------------------------------------------------
+        */
+
+        $appointmentDate = Carbon::parse(
+            $appointment->appointment_date
+        )->toDateString();
+
+        if ($appointmentDate !== now()->toDateString()) {
+            return response()->json([
+                'message' => 'Only appointments scheduled for today can be checked in.',
             ], 422);
         }
 
@@ -325,7 +401,6 @@ class AppointmentController extends Controller
             'appointment' => $appointment,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -348,7 +423,6 @@ class AppointmentController extends Controller
             'doctors' => $doctors,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------

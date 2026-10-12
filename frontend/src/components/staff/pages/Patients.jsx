@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 
 import patientService from "../../../services/patientService";
 
-import StaffPatientStats from "../components/patients/StaffPatientStats";
-import StaffPatientFilters from "../components/patients/StaffPatientFilters";
-import StaffPatientTable from "../components/patients/StaffPatientTable";
-import StaffPatientDetails from "../components/patients/StaffPatientDetails";
+import StaffPatientStats from "../patients/StaffPatientStats";
+import StaffPatientFilters from "../patients/StaffPatientFilters";
+import StaffPatientTable from "../patients/StaffPatientTable";
+import StaffPatientDetails from "../patients/StaffPatientDetails";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
