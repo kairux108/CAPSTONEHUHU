@@ -16,7 +16,7 @@ const AdminLayout = () => {
   const [title, description] = pageDetails[pathname] || pageDetails["/admin/dashboard"];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#cfe7e3] via-[#deeeec] to-[#dfe8f4] text-[#243633] dark:from-[#0d1718] dark:via-[#111d1e] dark:to-[#172129]">
+    <div className="dashboard-background dashboard-admin min-h-screen text-[#243633]">
       <div className="flex min-h-screen">
        
         <Sidebar />

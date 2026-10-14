@@ -14,11 +14,14 @@
 }
 
 html,
-body,
-#root {
-  width: 100%;
-  min-width: 0;
-  min-height: 100%;
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: url("../assets/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 html {
@@ -29,6 +32,28 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
+}
+
+.dashboard-background {
+  background-image: url("../assets/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.dashboard-sidebar {
+  background-image:
+    linear-gradient(rgba(17, 48, 48, 0.01), rgba(17, 48, 48, 0.01)),
+    url("../assets/Rightnavigation.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-right-color: rgba(255, 255, 255, 0.65);
+}
+
+.dark .dashboard-sidebar {
+  border-right-color: rgba(133, 170, 160, 0.4);
 }
 
 img,
@@ -119,6 +144,17 @@ nav {
 
   font-size: 13px;
   font-weight: 800;
+}
+
+:is(.dashboard-admin, .dashboard-staff)
+  :is(.cura-header h1, .cura-header-left > div, .cura-header-left strong, .cura-card-title) {
+  color: #000;
+}
+
+.dark
+  :is(.dashboard-admin, .dashboard-staff)
+  :is(.cura-header h1, .cura-header-left > div, .cura-header-left strong, .cura-card-title) {
+  color: #fff;
 }
 
 .cura-card-action {
@@ -1071,38 +1107,6 @@ nav {
 }
 
 /* =========================================================
-   EMPTY TABLE
-========================================================= */
-
-.users-empty {
-  min-height: 330px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  color: #91a6a3;
-}
-
-.users-empty p {
-  margin: 5px 0 0;
-
-  color: #526f6c;
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.users-empty span {
-  color: #91a6a3;
-
-  font-size: 11px;
-}
-
-/* =========================================================
    DETAILS EMPTY
 ========================================================= */
 
@@ -1570,31 +1574,6 @@ nav {
     grid-column: auto;
   }
 }
-.staff-patients-add-button {
-  height: 42px;
-  padding: 0 16px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-
-  border: none;
-  border-radius: 12px;
-
-  background: #12a99a;
-  color: #fff;
-
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.staff-patients-add-button:hover {
-  opacity: 0.92;
-}
-
 /* ---------------------------------------------------------
    ADMIN — PATIENTS
    LEVEL 4 responsive rules are kept in this module
@@ -1820,61 +1799,6 @@ nav {
 }
 
 /* =========================================================
-   PATIENT TABS
-========================================================= */
-
-.patients-tabs {
-  display: flex;
-  align-items: center;
-
-  gap: 6px;
-
-  flex-wrap: wrap;
-}
-
-.patient-tab {
-  min-height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  padding: 0 17px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: transparent;
-
-  color: #66817e;
-
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.2s ease;
-}
-
-.patient-tab:hover {
-  background:
-    rgba(255, 255, 255, 0.45);
-}
-
-.patient-tab.active {
-  background: #0fa691;
-
-  color: white;
-
-  box-shadow:
-    0 6px 16px
-    rgba(15, 166, 145, 0.16);
-}
-
-/* =========================================================
    PATIENT FILTERS
 ========================================================= */
 
@@ -1955,47 +1879,6 @@ nav {
   font-size: 11px;
 
   outline: none;
-}
-
-.patients-filter-button {
-  width: 42px;
-  height: 40px;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid #dfebe9;
-  border-radius: 10px;
-
-  background:
-    rgba(255, 255, 255, 0.75);
-
-  color: #66817e;
-
-  cursor: pointer;
-}
-
-.patients-export-button {
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  border: 1px solid #20ad9b;
-  border-radius: 10px;
-
-  background: white;
-
-  color: #149985;
-
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 700;
-
-  cursor: pointer;
 }
 
 /* =========================================================
@@ -2158,63 +2041,6 @@ nav {
 }
 
 /* =========================================================
-   MORE BUTTON
-========================================================= */
-
-.patient-more-button {
-  width: 28px;
-  height: 28px;
-
-  display: grid;
-  place-items: center;
-
-  padding: 0;
-
-  border: none;
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #6f8986;
-
-  cursor: pointer;
-}
-
-.patient-more-button:hover {
-  background: #e9f5f2;
-}
-
-/* =========================================================
-   EMPTY TABLE
-========================================================= */
-
-.patients-empty {
-  min-height: 350px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  color: #91a6a3;
-}
-
-.patients-empty p {
-  margin: 4px 0 0;
-
-  color: #526f6c;
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.patients-empty span {
-  font-size: 11px;
-}
-
-/* =========================================================
    PAGINATION
 ========================================================= */
 
@@ -2357,139 +2183,6 @@ nav {
 }
 
 /* =========================================================
-   SUMMARY TABS
-========================================================= */
-
-.patient-summary-tabs {
-  display: flex;
-  align-items: center;
-
-  gap: 28px;
-
-  border-bottom:
-    1px solid #e7efed;
-}
-
-.patient-summary-tabs button {
-  position: relative;
-
-  padding: 10px 0;
-
-  border: none;
-
-  background: transparent;
-
-  color: #7b9491;
-
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.patient-summary-tabs button.active {
-  color: #0b9b87;
-}
-
-.patient-summary-tabs button.active::after {
-  position: absolute;
-
-  right: 0;
-  bottom: -1px;
-  left: 0;
-
-  height: 2px;
-
-  border-radius: 999px;
-
-  background: #12a994;
-
-  content: "";
-}
-
-/* =========================================================
-   OVERVIEW GRID
-========================================================= */
-
-.patient-overview-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 9px;
-
-  margin-top: 13px;
-}
-
-.patient-overview-item {
-  min-height: 72px;
-
-  display: flex;
-  align-items: center;
-
-  gap: 10px;
-
-  padding: 11px;
-
-  border: 1px solid #e7efed;
-  border-radius: 10px;
-
-  background:
-    rgba(255, 255, 255, 0.65);
-}
-
-.patient-overview-icon {
-  width: 38px;
-  height: 38px;
-
-  display: grid;
-  place-items: center;
-
-  flex-shrink: 0;
-
-  border-radius: 10px;
-}
-
-.patient-overview-icon.blue {
-  background: #e6f4ff;
-
-  color: #259fe7;
-}
-
-.patient-overview-icon.green {
-  background: #e2f8f0;
-
-  color: #11a783;
-}
-
-.patient-overview-icon.orange {
-  background: #fff0e3;
-
-  color: #e97f34;
-}
-
-.patient-overview-item span {
-  display: block;
-
-  color: #8ca09d;
-
-  font-size: 9px;
-}
-
-.patient-overview-item strong {
-  display: block;
-
-  margin-top: 4px;
-
-  color: #2f4c48;
-
-  font-size: 11px;
-  font-weight: 800;
-}
-
-/* =========================================================
    CONTACT INFORMATION
 ========================================================= */
 
@@ -2617,10 +2310,6 @@ nav {
       repeat(3, 125px);
   }
 
-  .patients-filter-button,
-  .patients-export-button {
-    min-height: 40px;
-  }
 }
 
 @media (max-width: 1050px) {
@@ -2658,15 +2347,6 @@ nav {
 
   .patients-search {
     grid-column: auto;
-  }
-
-  .patients-filter-button,
-  .patients-export-button {
-    width: 100%;
-  }
-
-  .patient-overview-grid {
-    grid-template-columns: 1fr;
   }
 
   .patients-pagination {
@@ -3960,7 +3640,6 @@ nav {
   min-width: 0;
 }
 
-.appointments-calendar-card,
 .appointments-list-card,
 .appointments-details-card,
 .appointment-calendar-card {
@@ -4297,16 +3976,6 @@ nav {
   font-size: 12px;
 }
 
-.appointments-empty {
-  min-height: 350px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #83938d;
-  font-size: 12px;
-}
-
 /* PAGINATION */
 
 .appointments-pagination {
@@ -4532,7 +4201,6 @@ nav {
     grid-row: 2;
   }
 
-  .appointments-calendar-card,
   .appointments-details-card {
     min-height: 320px;
   }
@@ -4561,7 +4229,6 @@ nav {
     flex-shrink: 0;
   }
 
-  .appointments-calendar-card,
   .appointments-list-card,
   .appointments-details-card {
     grid-column: auto;
@@ -5291,37 +4958,6 @@ input::placeholder {
   border-color: #18aa96;
 }
 
-.staff-patients-clear {
-  height: 40px;
-
-  border:
-    1px solid #dfeae8;
-
-  border-radius: 10px;
-
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      0.65
-    );
-
-  color: #587572;
-
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.staff-patients-clear:hover {
-  border-color: #18aa96;
-
-  color: #0c9d89;
-}
-
 /* =========================================================
    TABLE
 ========================================================= */
@@ -5470,93 +5106,6 @@ tbody tr.selected {
 /* =========================================================
    ACTION
 ========================================================= */
-
-.staff-patient-more {
-  width: 28px;
-  height: 28px;
-
-  display: grid;
-  place-items: center;
-
-  padding: 0;
-
-  border: none;
-  border-radius: 8px;
-
-  background: transparent;
-
-  color: #718b88;
-
-  cursor: pointer;
-}
-
-.staff-patient-more:hover {
-  background: #e7f5f1;
-
-  color: #0da28e;
-}
-
-/* =========================================================
-   EMPTY PATIENT LIST
-========================================================= */
-
-.staff-patients-empty {
-  min-height: 345px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  color: #90a6a2;
-
-  text-align: center;
-}
-
-.staff-patients-empty-icon {
-  position: relative;
-
-  width: 80px;
-  height: 80px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 50%;
-
-  background: #e6f8f4;
-
-  color: #58cbb7;
-}
-
-.staff-patients-empty-icon
-svg:last-child {
-  position: absolute;
-
-  right: 10px;
-  bottom: 10px;
-
-  color: #0da990;
-}
-
-.staff-patients-empty p {
-  margin: 12px 0 0;
-
-  color: #3f5d59;
-
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.staff-patients-empty span {
-  margin-top: 5px;
-
-  max-width: 280px;
-
-  font-size: 10px;
-
-  line-height: 1.5;
-}
 
 /* =========================================================
    PAGINATION
@@ -5894,9 +5443,7 @@ h3 {
 .staff-patients-search,
 .dark
 .staff-patients-toolbar
-select,
-.dark
-.staff-patients-clear {
+select {
   border-color: #29413f;
 
   background: #192929;
@@ -5941,9 +5488,6 @@ td {
       );
   }
 
-  .staff-patients-clear {
-    width: 100%;
-  }
 }
 
 @media (max-width: 1000px) {
@@ -6009,12 +5553,6 @@ td {
 /* =========================================================
    STAFF APPOINTMENTS PAGE
 ========================================================= */
-
-.staff-appointments-page {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
 
 /* =========================================
    STAFF APPOINTMENT FILTER TOOLBAR
@@ -6182,46 +5720,6 @@ td {
   color: #30483e;
 }
 
-/* FILTER BOXES */
-
-.staff-appointment-filter-select {
-  width: 100% !important;
-  min-width: 0 !important;
-  height: 44px !important;
-
-  padding: 0 32px 0 12px !important;
-
-  box-sizing: border-box;
-
-  border: 1px solid #dce7e1;
-  border-radius: 11px;
-
-  background: #ffffff;
-
-  font-size: 12px !important;
-  color: #456157;
-
-  outline: none;
-}
-
-/* STATUS - SMALLER */
-
-.staff-appointment-filter-select.status {
-  width: 125px !important;
-}
-
-/* TYPE */
-
-.staff-appointment-filter-select.type {
-  width: 120px !important;
-}
-
-/* DOCTOR */
-
-.staff-appointment-filter-select.doctor {
-  width: 145px !important;
-}
-
 /* DATE */
 
 .staff-appointment-date {
@@ -6246,7 +5744,6 @@ td {
 /* FOCUS */
 
 .staff-appointment-search:focus-within,
-.staff-appointment-filter-select:focus,
 .staff-appointment-date:focus {
   border-color: #78aa8e;
   box-shadow: 0 0 0 3px rgba(57, 128, 87, 0.08);
@@ -6276,9 +5773,6 @@ td {
     grid-column: 1 / -1;
   }
 
-  .staff-appointment-filter-select.status,
-  .staff-appointment-filter-select.type,
-  .staff-appointment-filter-select.doctor,
   .staff-appointment-date {
     width: 100% !important;
   }
@@ -6319,13 +5813,6 @@ td {
   align-items: center;
 
   padding: 16px;
-}
-
-.staff-appointment-stat-content {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
 }
 
 .staff-appointment-stat-icon {
@@ -6406,31 +5893,6 @@ td {
   align-items: center;
 }
 
-.staff-new-appointment {
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 7px;
-
-  padding: 0 16px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: #0ca58e;
-
-  color: white;
-
-  font-family: inherit;
-  font-size: 10px;
-  font-weight: 700;
-
-  cursor: pointer;
-}
-
 .staff-appointment-search {
   height: 40px;
 
@@ -6486,22 +5948,6 @@ select,
   font-size: 10px;
 
   outline: none;
-}
-
-.staff-appointment-clear {
-  height: 40px;
-
-  border: 1px solid #dfeae8;
-  border-radius: 10px;
-
-  background:
-    rgba(255, 255, 255, 0.65);
-
-  color: #607b78;
-
-  font-size: 10px;
-
-  cursor: pointer;
 }
 
 /* =========================================================
@@ -6693,12 +6139,6 @@ button.active i {
   overflow-x: auto;
 }
 
-.staff-appointment-table {
-  width: 100%;
-
-  border-collapse: collapse;
-}
-
 .staff-appointment-table thead {
   background: #f1f7f6;
 }
@@ -6858,57 +6298,6 @@ span {
 .staff-appointment-status.default {
   background: #edf3f2;
   color: #718986;
-}
-
-/* MORE */
-
-.staff-appointment-more {
-  width: 27px;
-  height: 27px;
-
-  display: grid;
-  place-items: center;
-
-  border: 1px solid #e0ebe9;
-  border-radius: 7px;
-
-  background: white;
-
-  color: #718986;
-
-  cursor: pointer;
-}
-
-/* EMPTY */
-
-.staff-appointment-empty {
-  min-height: 330px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  color: #94a8a5;
-
-  text-align: center;
-}
-
-.staff-appointment-empty p {
-  margin: 8px 0 0;
-
-  color: #496562;
-
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.staff-appointment-empty span {
-  margin-top: 4px;
-
-  max-width: 240px;
-
-  font-size: 9px;
 }
 
 /* =========================================================
@@ -7181,9 +6570,7 @@ h3 {
 .staff-appointment-toolbar
 select,
 .dark
-.staff-appointment-date,
-.dark
-.staff-appointment-clear {
+.staff-appointment-date {
   border-color: #29413f;
 
   background: #192929;
@@ -7596,12 +6983,6 @@ td {
    CURA STAFF APPOINTMENTS - NEW DASHBOARD DESIGN
 ========================================================= */
 
-.staff-appointments-page {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
 /* =========================================================
    SUMMARY
 ========================================================= */
@@ -7704,26 +7085,6 @@ td {
   align-items: center;
 }
 
-.staff-new-appointment {
-  height: 44px;
-  padding: 0 18px;
-  border: none;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  background: #2d8059;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.staff-new-appointment:hover {
-  background: #236b49;
-}
-
 .staff-appointment-search {
   height: 44px;
   min-width: 0;
@@ -7759,17 +7120,6 @@ td {
   background: #fff;
   color: #456157;
   outline: none;
-}
-
-.staff-appointment-clear {
-  height: 44px;
-  padding: 0 18px;
-  border: 1px solid #dce7e1;
-  border-radius: 11px;
-  background: #f8faf9;
-  color: #586c63;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 /* =========================================================
@@ -8199,7 +7549,6 @@ td {
     grid-template-columns: 1fr 1fr;
   }
 
-  .staff-new-appointment,
   .staff-appointment-search {
     grid-column: 1 / -1;
   }
@@ -8219,8 +7568,7 @@ td {
     grid-template-columns: 1fr;
   }
 
-  .staff-appointment-search,
-  .staff-new-appointment {
+  .staff-appointment-search {
     grid-column: auto;
   }
 }
@@ -8245,15 +7593,8 @@ td {
 }
 
 /* Use flex so everything aligns perfectly */
-.staff-appointment-toolbar {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  width: 100% !important;
-}
-
 /* =========================================================
-   SEARCH - TAKES REMAINING SPACE
+ SEARCH - TAKES REMAINING SPACE
 ========================================================= */
 
 .staff-appointment-search {
@@ -8302,45 +7643,6 @@ td {
 }
 
 /* =========================================================
-   ALL SELECT BOXES
-========================================================= */
-
-.staff-appointment-filter-select {
-  flex: 0 0 auto !important;
-
-  height: 44px !important;
-
-  margin: 0 !important;
-  padding: 0 34px 0 13px !important;
-
-  border: 1px solid #d8e4de !important;
-  border-radius: 12px !important;
-
-  background-color: #ffffff !important;
-
-  font-size: 13px !important;
-  line-height: 44px !important;
-  color: #455f55 !important;
-
-  box-sizing: border-box !important;
-  outline: none !important;
-}
-
-/* Fit the words better */
-
-.staff-appointment-filter-select.status {
-  width: 128px !important;
-}
-
-.staff-appointment-filter-select.type {
-  width: 120px !important;
-}
-
-.staff-appointment-filter-select.doctor {
-  width: 145px !important;
-}
-
-/* =========================================================
    DATE
 ========================================================= */
 
@@ -8371,7 +7673,6 @@ td {
 ========================================================= */
 
 .staff-appointment-search:focus-within,
-.staff-appointment-filter-select:focus,
 .staff-appointment-date:focus {
   border-color: #79a98d !important;
   box-shadow: 0 0 0 2px rgba(45, 128, 89, 0.08) !important;
@@ -8381,24 +7682,8 @@ td {
    LEVEL 4 — RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1050px) {
-  .staff-appointment-toolbar {
-    flex-wrap: wrap !important;
-  }
-
-  .staff-appointment-search {
-    flex: 1 1 100% !important;
-  }
-}
-
 @media (max-width: 650px) {
-  .staff-appointment-toolbar {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
   .staff-appointment-search,
-  .staff-appointment-filter-select,
   .staff-appointment-date {
     width: 100% !important;
     flex: 1 1 auto !important;
@@ -8413,74 +7698,6 @@ td {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.staff-appointment-top-actions {
-  width: 100%;
-
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-
-  margin-top: -12px;
-  margin-bottom: -4px;
-
-  position: relative;
-  z-index: 5;
-}
-
-.staff-new-appointment-top {
-  height: 44px;
-  padding: 0 18px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  border: none;
-  border-radius: 11px;
-
-  background: #2b7d55;
-  color: #ffffff;
-
-  font-size: 13px;
-  font-weight: 700;
-
-  white-space: nowrap;
-  cursor: pointer;
-
-  box-shadow:
-    0 6px 16px rgba(43, 125, 85, 0.16);
-
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-
-.staff-new-appointment-top:hover {
-  background: #236b49;
-
-  box-shadow:
-    0 8px 20px rgba(43, 125, 85, 0.2);
-}
-
-.staff-new-appointment-top:active {
-  transform: translateY(1px);
-}
-
-@media (max-width: 850px) {
-  .staff-appointment-top-actions {
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-}
-
-@media (max-width: 560px) {
-  .staff-new-appointment-top {
-    width: 100%;
-  }
 }
 
 /* =========================================================
@@ -9587,4 +8804,614 @@ h3 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+/* =========================================================
+   STAFF - VITAL SIGNS MODAL
+========================================================= */
+
+.staff-vitals-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(10, 35, 31, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.staff-vitals-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+
+  background: #ffffff;
+  border: 1px solid #dcebe6;
+  border-radius: 20px;
+
+  box-shadow: 0 20px 60px rgba(13, 63, 52, 0.18);
+
+  color: #173f36;
+  color-scheme: light;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.staff-vitals-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 22px 24px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5efec;
+}
+
+.staff-vitals-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.staff-vitals-modal-title svg {
+  color: #15966f;
+}
+
+.staff-vitals-modal-title h2 {
+  margin: 0;
+
+  color: #173f36;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.staff-vitals-modal-header p {
+  margin: 6px 0 0;
+
+  color: #789088;
+  font-size: 13px;
+}
+
+.staff-vitals-modal-close {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #dfeae7;
+  border-radius: 10px;
+
+  background: #f7fbfa;
+  color: #6c827b;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.staff-vitals-modal-close:hover {
+  background: #edf7f4;
+  color: #167d61;
+}
+
+.staff-vitals-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.staff-vitals-form {
+  padding: 24px;
+}
+
+.staff-vitals-section {
+  margin-bottom: 20px;
+}
+
+.staff-vitals-section h3 {
+  margin: 0 0 12px;
+
+  color: #294f45;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   BLOOD PRESSURE
+========================================================= */
+
+.staff-vitals-bp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  padding: 16px;
+
+  background: #f4fbf8;
+  border: 1px solid #dceee8;
+  border-radius: 14px;
+}
+
+/* =========================================================
+   OTHER VITALS GRID
+========================================================= */
+
+.staff-vitals-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.staff-vitals-form label,
+.staff-vitals-bp-grid label {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  color: #49675f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   INPUT WITH UNIT
+========================================================= */
+
+.staff-vitals-input-unit {
+  display: flex;
+  align-items: center;
+
+  min-height: 46px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #d6e5e1;
+  border-radius: 11px;
+
+  transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-vitals-input-unit:focus-within {
+  border-color: #25a87e;
+  box-shadow: 0 0 0 3px rgba(37, 168, 126, 0.1);
+}
+
+.staff-vitals-input-unit input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #173f36;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.staff-vitals-input-unit input::placeholder {
+  color: #a5b6b1;
+}
+
+.staff-vitals-input-unit span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: stretch;
+
+  min-width: 60px;
+
+  padding: 0 10px;
+
+  background: #edf7f4;
+  border-left: 1px solid #dcebe6;
+
+  color: #548076;
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* REMOVE NUMBER INPUT ARROWS - CHROME */
+
+.staff-vitals-input-unit input::-webkit-outer-spin-button,
+.staff-vitals-input-unit input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.staff-vitals-note {
+  margin-top: 20px;
+
+  padding: 13px 15px;
+
+  background: #f7faf9;
+  border: 1px solid #e2ece9;
+  border-radius: 11px;
+
+  color: #738a83;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.staff-vitals-error {
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
+
+  background: #fff2f2;
+  border: 1px solid #f3cccc;
+  border-radius: 10px;
+
+  color: #b54d4d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.staff-vitals-loading {
+  min-height: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  color: #729088;
+  font-size: 14px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.staff-vitals-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 24px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e5efec;
+}
+
+.staff-vitals-cancel-btn,
+.staff-vitals-save-btn {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.staff-vitals-cancel-btn {
+  background: #ffffff;
+  border: 1px solid #d5e3df;
+
+  color: #5f756f;
+}
+
+.staff-vitals-cancel-btn:hover {
+  background: #f3f8f6;
+}
+
+.staff-vitals-save-btn {
+  background: #188964;
+  border: 1px solid #188964;
+
+  color: #ffffff;
+}
+
+.staff-vitals-save-btn:hover {
+  background: #147557;
+  border-color: #147557;
+}
+
+.staff-vitals-cancel-btn:disabled,
+.staff-vitals-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+  .staff-vitals-modal-overlay {
+    align-items: flex-end;
+
+    padding: 10px;
+  }
+
+  .staff-vitals-modal {
+    width: 100%;
+    max-height: 92vh;
+
+    border-radius: 18px 18px 12px 12px;
+  }
+
+  .staff-vitals-modal-header {
+    padding: 18px;
+  }
+
+  .staff-vitals-form {
+    padding: 18px;
+  }
+
+  .staff-vitals-bp-grid,
+  .staff-vitals-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-vitals-modal-overlay {
+    padding: 0;
+  }
+
+  .staff-vitals-modal {
+    max-height: 100vh;
+    min-height: 100vh;
+
+    border-radius: 0;
+  }
+
+  .staff-vitals-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .staff-vitals-cancel-btn,
+  .staff-vitals-save-btn {
+    width: 100%;
+  }
+}
+/* =========================================================
+   STAFF - APPOINTMENT VITAL SIGNS SUMMARY
+========================================================= */
+
+.staff-appointment-vitals-loading {
+  padding: 16px;
+  text-align: center;
+  color: #789088;
+  font-size: 13px;
+}
+
+.staff-appointment-vitals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 16px;
+  padding: 14px 15px;
+
+  background: #eef9f5;
+  border: 1px solid #d8ece5;
+  border-radius: 12px;
+
+  color: #17775d;
+}
+
+.staff-appointment-vitals-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.staff-appointment-vitals-icon {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #dff3eb;
+  border-radius: 10px;
+
+  color: #178463;
+}
+
+.staff-appointment-vitals-title strong {
+  display: block;
+
+  color: #24564a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.staff-appointment-vitals-title p {
+  margin: 3px 0 0;
+
+  color: #7a918a;
+  font-size: 11px;
+}
+
+.staff-appointment-vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.staff-appointment-vital-row {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+
+  padding: 11px 12px;
+
+  background: #f8fbfa;
+  border: 1px solid #e2ece9;
+  border-radius: 10px;
+}
+
+.staff-appointment-vital-row span {
+  color: #839790;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.staff-appointment-vital-row strong {
+  color: #284f45;
+  font-size: 12px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.staff-appointment-vitals-recorder {
+  margin-top: 10px;
+  padding: 10px 12px;
+
+  background: #fafcfc;
+  border: 1px solid #e6eeec;
+  border-radius: 9px;
+
+  color: #7a8e88;
+  font-size: 11px;
+}
+
+.staff-appointment-vitals-recorder strong {
+  color: #42665d;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1250px) {
+  .staff-appointment-vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .staff-appointment-vitals-header {
+    padding: 12px;
+  }
+
+  .staff-appointment-vitals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-appointment-vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   STAFF APPOINTMENTS - EQUAL MAIN CARD HEIGHT
+========================================================= */
+
+@media (min-width: 1000px) {
+  .staff-appointment-main-grid {
+    align-items: stretch;
+  }
+
+  .staff-appointment-main-grid > .cura-card {
+    height: 540px;
+    min-height: 540px;
+    max-height: 540px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+  }
+
+  .staff-appointment-main-grid > .cura-card > .cura-card-body {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Appointment details scrolls internally */
+  .staff-appointment-detail-card .cura-card-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-thumb {
+  background: #c9ddd7;
+  border-radius: 20px;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-thumb:hover {
+  background: #9fc5b9;
 }

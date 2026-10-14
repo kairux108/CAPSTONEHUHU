@@ -21,7 +21,7 @@ import AdminSettings from "./components/admin/pages/Settings";
 
 import DoctorDashboard from "./components/doctor/DoctorDashboard";
 import AppointmentManager from "./components/appointments/AppointmentManager";
-import QueueManagement from "./components/queue/QueueManagement";
+import Queue from "./components/staff/pages/Queue";
 import ConsultationPanel from "./components/consultation/ConsultationPanel";
 import ReportsDashboard from "./components/reports/ReportsDashboard";
 
@@ -112,7 +112,7 @@ function App() {
 
         <Route
           path="queue"
-          element={<QueueManagement />}
+          element={<Queue />}
         />
 
         <Route
@@ -156,7 +156,6 @@ function App() {
           path="queue"
           element={<StaffQueue />}
         />
-
         <Route
           path="reports"
           element={<StaffReports />}

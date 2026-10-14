@@ -22,15 +22,8 @@ const DashboardLayout = () => {
   return (
     <div
       className="
+        dashboard-background
         min-h-screen
-        bg-linear-to-br
-        from-[#cfe7e3]
-        via-[#deeeec]
-        to-[#dfe8f4]
-
-        dark:from-[#0d1718]
-        dark:via-[#111d1e]
-        dark:to-[#172129]
       "
     >
       <div className="flex min-h-screen">

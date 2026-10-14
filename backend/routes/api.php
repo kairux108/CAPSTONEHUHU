@@ -3,7 +3,9 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VitalSignController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -93,9 +95,64 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/appointments', [AppointmentController::class, 'store']);
         Route::put('/appointments/{appointment}', [AppointmentController::class, 'update']);
         Route::patch('/appointments/{appointment}', [AppointmentController::class, 'update']);
+
         Route::patch(
             '/appointments/{appointment}/check-in',
             [AppointmentController::class, 'checkIn']
+        );
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin + Staff + Doctor - View Vital Signs
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:admin,staff,doctor')->group(function () {
+        Route::get('/vital-signs', [VitalSignController::class, 'index']);
+        Route::get('/vital-signs/{vitalSign}', [VitalSignController::class, 'show']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Staff Only - Record and Edit Vital Signs
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:staff')->group(function () {
+        Route::post('/vital-signs', [VitalSignController::class, 'store']);
+        Route::put('/vital-signs/{vitalSign}', [VitalSignController::class, 'update']);
+        Route::patch('/vital-signs/{vitalSign}', [VitalSignController::class, 'update']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin + Staff + Doctor - View Queue
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:admin,staff,doctor')->group(function () {
+        Route::get('/queue', [QueueEntryController::class, 'index']);
+        Route::get('/queue/{queueEntry}', [QueueEntryController::class, 'show']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Staff Only - Manage Queue
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:staff')->group(function () {
+        Route::post('/queue', [QueueEntryController::class, 'store']);
+
+        Route::put(
+            '/queue/{queueEntry}',
+            [QueueEntryController::class, 'update']
+        );
+
+        Route::patch(
+            '/queue/{queueEntry}',
+            [QueueEntryController::class, 'update']
         );
     });
 

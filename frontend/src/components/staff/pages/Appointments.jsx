@@ -1,4 +1,8 @@
+import { useEffect, useState } from "react";
+
 import useStaffAppointments from "../../../hooks/useStaffAppointments";
+import useVitalSigns from "../../../hooks/useVitalSigns";
+import useQueue from "../../../hooks/useQueue";
 
 import StaffAppointmentStats from "../appointments/StaffAppointmentStats";
 import StaffAppointmentFilters from "../appointments/StaffAppointmentFilters";
@@ -6,6 +10,7 @@ import StaffAppointmentCalendar from "../appointments/StaffAppointmentCalendar";
 import StaffAppointmentTable from "../appointments/StaffAppointmentTable";
 import StaffAppointmentDetails from "../appointments/StaffAppointmentDetails";
 import StaffAppointmentFormModal from "../appointments/StaffAppointmentFormModal";
+import StaffVitalSignsModal from "../appointments/StaffVitalSignsModal";
 
 const Appointments = () => {
   const {
@@ -51,6 +56,195 @@ const Appointments = () => {
     handleNoShow,
   } = useStaffAppointments();
 
+  /*
+  |--------------------------------------------------------------------------
+  | Vital Signs
+  |--------------------------------------------------------------------------
+  */
+
+  const {
+    loadVitalSigns,
+    loading: loadingVitals,
+  } = useVitalSigns();
+
+  /*
+  |--------------------------------------------------------------------------
+  | Queue
+  |--------------------------------------------------------------------------
+  */
+
+  const {
+    loadQueue,
+    createQueueEntry,
+    saving: savingQueue,
+  } = useQueue();
+
+  /*
+  |--------------------------------------------------------------------------
+  | Local State
+  |--------------------------------------------------------------------------
+  */
+
+  const [vitalsAppointment, setVitalsAppointment] = useState(null);
+
+  const [appointmentVitalSign, setAppointmentVitalSign] =
+    useState(null);
+
+  const [appointmentQueueEntry, setAppointmentQueueEntry] =
+    useState(null);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Load Selected Appointment Vital Signs
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadAppointmentVitals = async () => {
+      if (!selectedAppointment?.id) {
+        setAppointmentVitalSign(null);
+        return;
+      }
+
+      try {
+        setAppointmentVitalSign(null);
+
+        const data = await loadVitalSigns({
+          appointment_id: selectedAppointment.id,
+        });
+
+        if (!cancelled) {
+          setAppointmentVitalSign(
+            data.vital_signs?.[0] || null
+          );
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error(
+            "Failed to load appointment vital signs:",
+            error
+          );
+
+          setAppointmentVitalSign(null);
+        }
+      }
+    };
+
+    loadAppointmentVitals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedAppointment?.id, loadVitalSigns]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Load Selected Appointment Queue Entry
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadAppointmentQueue = async () => {
+      if (
+        !selectedAppointment?.id ||
+        !selectedAppointment?.appointment_date
+      ) {
+        setAppointmentQueueEntry(null);
+        return;
+      }
+
+      try {
+        setAppointmentQueueEntry(null);
+
+        const data = await loadQueue({
+          date: selectedAppointment.appointment_date,
+        });
+
+        const queueEntry = (data.queue_entries || []).find(
+          (entry) =>
+            Number(entry.appointment_id) ===
+            Number(selectedAppointment.id)
+        );
+
+        if (!cancelled) {
+          setAppointmentQueueEntry(queueEntry || null);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error(
+            "Failed to load appointment queue entry:",
+            error
+          );
+
+          setAppointmentQueueEntry(null);
+        }
+      }
+    };
+
+    loadAppointmentQueue();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    selectedAppointment?.id,
+    selectedAppointment?.appointment_date,
+    loadQueue,
+  ]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Vital Signs Actions
+  |--------------------------------------------------------------------------
+  */
+
+  const openVitalSigns = (appointment) => {
+    setVitalsAppointment(appointment);
+  };
+
+  const closeVitalSigns = () => {
+    setVitalsAppointment(null);
+  };
+
+  const handleVitalSignsSaved = (vitalSign) => {
+    setAppointmentVitalSign(vitalSign);
+    closeVitalSigns();
+  };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Queue Actions
+  |--------------------------------------------------------------------------
+  */
+
+  const handleSendToQueue = async (appointment) => {
+    if (!appointment?.id) return;
+
+    const confirmed = window.confirm(
+      "Send this patient to the waiting queue?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const queueEntry = await createQueueEntry({
+        appointment_id: appointment.id,
+        priority: "normal",
+      });
+
+      setAppointmentQueueEntry(queueEntry);
+    } catch (error) {
+      window.alert(
+        error.message ||
+          "Unable to add patient to queue."
+      );
+    }
+  };
+
   return (
     <div className="staff-appointments-page">
       <StaffAppointmentStats stats={stats} />
@@ -89,10 +283,20 @@ const Appointments = () => {
 
         <StaffAppointmentDetails
           appointment={selectedAppointment}
+
+          vitalSign={appointmentVitalSign}
+          loadingVitals={loadingVitals}
+
+          queueEntry={appointmentQueueEntry}
+          savingQueue={savingQueue}
+
           onCheckIn={handleCheckIn}
           onEdit={openEditAppointment}
           onCancel={handleCancel}
           onNoShow={handleNoShow}
+          onRecordVitals={openVitalSigns}
+          onSendToQueue={handleSendToQueue}
+
           busy={busy}
         />
       </div>
@@ -103,6 +307,14 @@ const Appointments = () => {
           appointment={formAppointment}
           onClose={closeForm}
           onSaved={handleSaved}
+        />
+      )}
+
+      {vitalsAppointment && (
+        <StaffVitalSignsModal
+          appointment={vitalsAppointment}
+          onClose={closeVitalSigns}
+          onSaved={handleVitalSignsSaved}
         />
       )}
     </div>

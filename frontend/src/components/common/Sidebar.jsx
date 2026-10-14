@@ -44,6 +44,7 @@ const Sidebar = () => {
   return (
     <aside
       className="
+        dashboard-sidebar
         sticky
         left-0
         top-0
@@ -53,14 +54,10 @@ const Sidebar = () => {
         shrink-0
         flex-col
         border-r
-        border-white/45
-        bg-[#e9f3f1]/88
         px-5
         py-7
         backdrop-blur-xl
 
-        dark:border-[#294040]
-        dark:bg-[#132020]/95
       "
     >
       {/* LOGO */}
