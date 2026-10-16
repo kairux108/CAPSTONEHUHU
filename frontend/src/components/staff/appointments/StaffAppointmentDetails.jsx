@@ -86,16 +86,21 @@ const StaffAppointmentDetails = ({
         </div>
       ) : (
         <div className="staff-appointment-details">
+
           {/* PATIENT PROFILE */}
 
           <div className="staff-appointment-detail-profile">
             <div className="staff-appointment-detail-avatar">
-              {getAppointmentPatientInitials(appointment.patient)}
+              {getAppointmentPatientInitials(
+                appointment.patient
+              )}
             </div>
 
             <div>
               <h3>
-                {getAppointmentPatientName(appointment.patient)}
+                {getAppointmentPatientName(
+                  appointment.patient
+                )}
               </h3>
 
               <p>
@@ -108,7 +113,9 @@ const StaffAppointmentDetails = ({
                 appointment.status
               )}`}
             >
-              {formatAppointmentLabel(appointment.status)}
+              {formatAppointmentLabel(
+                appointment.status
+              )}
             </span>
           </div>
 
@@ -157,7 +164,9 @@ const StaffAppointmentDetails = ({
 
             <DetailRow
               label="Contact"
-              value={appointment.patient?.phone_number || "—"}
+              value={
+                appointment.patient?.phone_number || "—"
+              }
             />
 
             <DetailRow
@@ -187,14 +196,14 @@ const StaffAppointmentDetails = ({
 
           {appointment.status === "checked_in" && (
             <>
+              {/* VITAL SIGNS */}
+
               {loadingVitals ? (
                 <div className="staff-appointment-vitals-loading">
                   Loading vital signs...
                 </div>
               ) : vitalSign ? (
                 <>
-                  {/* VITAL SIGNS HEADER */}
-
                   <div className="staff-appointment-vitals-header">
                     <div className="staff-appointment-vitals-title">
                       <div className="staff-appointment-vitals-icon">
@@ -202,7 +211,9 @@ const StaffAppointmentDetails = ({
                       </div>
 
                       <div>
-                        <strong>Vital Signs Recorded</strong>
+                        <strong>
+                          Vital Signs Recorded
+                        </strong>
 
                         <p>
                           {formatVitalDateTime(
@@ -214,8 +225,6 @@ const StaffAppointmentDetails = ({
 
                     <CheckCircle2 size={19} />
                   </div>
-
-                  {/* VITAL SIGNS */}
 
                   <div className="staff-appointment-vitals-grid">
                     <VitalRow
@@ -277,141 +286,148 @@ const StaffAppointmentDetails = ({
                       </strong>
                     </div>
                   )}
-
-                  {/* QUEUE INFORMATION */}
-
-                  {queueEntry && (
-                    <div className="staff-appointment-queue-summary">
-                      <div className="staff-appointment-queue-header">
-                        <div className="staff-appointment-queue-title">
-                          <div className="staff-appointment-queue-icon">
-                            <ListOrdered size={17} />
-                          </div>
-
-                          <div>
-                            <strong>Patient in Queue</strong>
-
-                            <p>
-                              Waiting for the next available
-                              consultation.
-                            </p>
-                          </div>
-                        </div>
-
-                        <CheckCircle2 size={19} />
-                      </div>
-
-                      <div className="staff-appointment-queue-grid">
-                        <QueueRow
-                          label="Queue Number"
-                          value={queueEntry.queue_number}
-                        />
-
-                        <QueueRow
-                          label="Status"
-                          value={formatAppointmentLabel(
-                            queueEntry.status
-                          )}
-                        />
-
-                        <QueueRow
-                          label="Priority"
-                          value={formatAppointmentLabel(
-                            queueEntry.priority
-                          )}
-                        />
-
-                        <QueueRow
-                          label="Doctor"
-                          value={
-                            queueEntry.doctor?.name ||
-                            appointment.doctor?.name ||
-                            "Unassigned"
-                          }
-                        />
-
-                        <QueueRow
-                          label="Estimated Wait"
-                          value={
-                            queueEntry.estimated_wait_minutes != null
-                              ? `${queueEntry.estimated_wait_minutes} min`
-                              : "Not available"
-                          }
-                        />
-
-                        <QueueRow
-                          label="Queued At"
-                          value={formatAppointmentDateTime(
-                            queueEntry.queued_at
-                          )}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* AFTER VITAL SIGNS ACTIONS */}
-
-                  <div className="staff-appointment-detail-actions">
-                    <button
-                      type="button"
-                      className="reschedule"
-                      disabled={busy || savingQueue}
-                      onClick={() =>
-                        onRecordVitals(appointment)
-                      }
-                    >
-                      <Activity size={15} />
-                      Edit Vital Signs
-                    </button>
-
-                    {!queueEntry && (
-                      <button
-                        type="button"
-                        className="complete"
-                        disabled={busy || savingQueue}
-                        onClick={() =>
-                          onSendToQueue(appointment)
-                        }
-                      >
-                        <ListOrdered size={15} />
-
-                        {savingQueue
-                          ? "Sending..."
-                          : "Send to Queue"}
-                      </button>
-                    )}
-                  </div>
                 </>
               ) : (
-                <>
-                  {/* NO VITAL SIGNS YET */}
+                <div className="staff-appointment-next-step">
+                  <CheckCircle2 size={18} />
 
-                  <div className="staff-appointment-next-step">
-                    <CheckCircle2 size={18} />
+                  <div>
+                    <strong>
+                      Patient checked in
+                    </strong>
 
-                    <div>
-                      <strong>Patient checked in</strong>
+                    <p>
+                      Patient is ready for the queue.
+                      Vital signs may be recorded if
+                      needed.
+                    </p>
+                  </div>
+                </div>
+              )}
 
-                      <p>
-                        Next step: record the patient's vital signs.
-                      </p>
+              {/* QUEUE INFORMATION */}
+
+              {queueEntry && (
+                <div className="staff-appointment-queue-summary">
+                  <div className="staff-appointment-queue-header">
+                    <div className="staff-appointment-queue-title">
+                      <div className="staff-appointment-queue-icon">
+                        <ListOrdered size={17} />
+                      </div>
+
+                      <div>
+                        <strong>
+                          Patient in Queue
+                        </strong>
+
+                        <p>
+                          Waiting for the next available
+                          consultation.
+                        </p>
+                      </div>
                     </div>
+
+                    <CheckCircle2 size={19} />
                   </div>
 
-                  <div className="staff-appointment-detail-actions">
+                  <div className="staff-appointment-queue-grid">
+                    <QueueRow
+                      label="Queue Number"
+                      value={queueEntry.queue_number}
+                    />
+
+                    <QueueRow
+                      label="Status"
+                      value={formatAppointmentLabel(
+                        queueEntry.status
+                      )}
+                    />
+
+                    <QueueRow
+                      label="Priority"
+                      value={formatAppointmentLabel(
+                        queueEntry.priority
+                      )}
+                    />
+
+                    <QueueRow
+                      label="Doctor"
+                      value={
+                        queueEntry.doctor?.name ||
+                        appointment.doctor?.name ||
+                        "Unassigned"
+                      }
+                    />
+
+                    <QueueRow
+                      label="Estimated Wait"
+                      value={
+                        queueEntry.estimated_wait_minutes !=
+                        null
+                          ? `${queueEntry.estimated_wait_minutes} min`
+                          : "Not available"
+                      }
+                    />
+
+                    <QueueRow
+                      label="Queued At"
+                      value={formatAppointmentDateTime(
+                        queueEntry.queued_at
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* CHECKED-IN ACTIONS */}
+
+              {!loadingVitals && (
+                <div className="staff-appointment-detail-actions">
+
+                  {/* QUEUE IS NOW THE MAIN ACTION */}
+
+                  {!queueEntry && (
                     <button
                       type="button"
                       className="complete"
-                      disabled={busy}
+                      disabled={
+                        busy || savingQueue
+                      }
                       onClick={() =>
-                        onRecordVitals(appointment)
+                        onSendToQueue(
+                          appointment
+                        )
                       }
                     >
-                      <Activity size={15} />
-                      Record Vital Signs
+                      <ListOrdered size={15} />
+
+                      {savingQueue
+                        ? "Sending..."
+                        : "Send to Queue"}
                     </button>
-                  </div>
-                </>
+                  )}
+
+                  {/* VITAL SIGNS ARE OPTIONAL */}
+
+                  <button
+                    type="button"
+                    className="reschedule"
+                    disabled={
+                      busy || savingQueue
+                    }
+                    onClick={() =>
+                      onRecordVitals(
+                        appointment
+                      )
+                    }
+                  >
+                    <Activity size={15} />
+
+                    {vitalSign
+                      ? "Edit Vital Signs"
+                      : "Record Vital Signs"}
+                  </button>
+                </div>
               )}
             </>
           )}
@@ -424,7 +440,9 @@ const StaffAppointmentDetails = ({
                 type="button"
                 className="complete"
                 disabled={busy}
-                onClick={() => onCheckIn(appointment)}
+                onClick={() =>
+                  onCheckIn(appointment)
+                }
               >
                 <CheckCircle2 size={15} />
                 Check In
@@ -434,7 +452,9 @@ const StaffAppointmentDetails = ({
                 type="button"
                 className="reschedule"
                 disabled={busy}
-                onClick={() => onEdit(appointment)}
+                onClick={() =>
+                  onEdit(appointment)
+                }
               >
                 <Clock3 size={15} />
                 Reschedule
@@ -444,7 +464,9 @@ const StaffAppointmentDetails = ({
                 type="button"
                 className="cancel"
                 disabled={busy}
-                onClick={() => onCancel(appointment)}
+                onClick={() =>
+                  onCancel(appointment)
+                }
               >
                 <XCircle size={15} />
                 Cancel
@@ -454,7 +476,9 @@ const StaffAppointmentDetails = ({
                 type="button"
                 className="cancel"
                 disabled={busy}
-                onClick={() => onNoShow(appointment)}
+                onClick={() =>
+                  onNoShow(appointment)
+                }
               >
                 No Show
               </button>

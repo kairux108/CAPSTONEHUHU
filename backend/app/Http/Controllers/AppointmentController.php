@@ -362,45 +362,66 @@ class AppointmentController extends Controller
     */
 
     public function checkIn(Appointment $appointment)
-    {
-        if ($appointment->status !== 'scheduled') {
-            return response()->json([
-                'message' => 'Only scheduled appointments can be checked in.',
-            ], 422);
-        }
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Only Scheduled Appointments Can Check In
+    |--------------------------------------------------------------------------
+    */
 
-        /*
-        |--------------------------------------------------------------------------
-        | Appointment Must Be Today
-        |--------------------------------------------------------------------------
-        */
-
-        $appointmentDate = Carbon::parse(
-            $appointment->appointment_date
-        )->toDateString();
-
-        if ($appointmentDate !== now()->toDateString()) {
-            return response()->json([
-                'message' => 'Only appointments scheduled for today can be checked in.',
-            ], 422);
-        }
-
-        $appointment->update([
-            'status' => 'checked_in',
-            'checked_in_at' => now(),
-        ]);
-
-        $appointment->load([
-            'patient',
-            'doctor:id,name,role',
-            'creator:id,name,role',
-        ]);
-
+    if ($appointment->status !== 'scheduled') {
         return response()->json([
-            'message' => 'Patient checked in successfully.',
-            'appointment' => $appointment,
-        ]);
+            'message' => 'Only scheduled appointments can be checked in.',
+        ], 422);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Appointment Must Be Today
+    |--------------------------------------------------------------------------
+    */
+
+    $clinicTimezone = 'Asia/Manila';
+
+    $today = Carbon::now(
+        $clinicTimezone
+    )->toDateString();
+
+    $appointmentDate = Carbon::parse(
+        $appointment->appointment_date
+    )->toDateString();
+
+    if ($appointmentDate !== $today) {
+        return response()->json([
+            'message' =>
+                'This appointment cannot be checked in because it is not scheduled for today.',
+        ], 422);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Check In
+    |--------------------------------------------------------------------------
+    */
+
+    $appointment->update([
+        'status' => 'checked_in',
+        'checked_in_at' => now(),
+    ]);
+
+    $appointment->load([
+        'patient',
+        'doctor:id,name,role',
+        'creator:id,name,role',
+    ]);
+
+    return response()->json([
+        'message' =>
+            'Patient checked in successfully.',
+        'appointment' =>
+            $appointment,
+    ]);
+}
 
     /*
     |--------------------------------------------------------------------------

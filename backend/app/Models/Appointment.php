@@ -25,7 +25,7 @@ class Appointment extends Model
     protected function casts(): array
     {
         return [
-            'appointment_date' => 'date',
+            'appointment_date' => 'date:Y-m-d',
             'checked_in_at' => 'datetime',
         ];
     }
