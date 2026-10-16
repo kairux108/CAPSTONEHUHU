@@ -9415,3 +9415,241 @@ h3 {
 .staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-thumb:hover {
   background: #9fc5b9;
 }
+/* =========================================================
+   STAFF QUEUE - NEXT RECOMMENDED PATIENT
+   ========================================================= */
+
+.staff-queue-next-card {
+  margin-bottom: 16px;
+}
+
+.staff-queue-next-card .cura-card-body {
+  padding: 18px 20px;
+}
+
+/* HEADER */
+
+.staff-queue-next-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.staff-queue-next-header > div:first-child {
+  min-width: 0;
+}
+
+.staff-queue-next-label {
+  display: block;
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #13966f;
+}
+
+.staff-queue-next-header h3 {
+  margin: 0;
+
+  font-size: 19px;
+  font-weight: 750;
+  line-height: 1.25;
+
+  color: #22342f;
+  text-transform: capitalize;
+}
+
+.staff-queue-next-header p {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  color: #7d8d87;
+}
+
+/* QUEUE NUMBER */
+
+.staff-queue-next-number {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 72px;
+  padding: 10px 16px;
+
+  border: 1px solid #ccecdf;
+  border-radius: 12px;
+
+  background: #ebf9f3;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  color: #11865f;
+}
+
+/* PATIENT INFO BADGES */
+
+.staff-queue-next-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+.staff-queue-next-info > div {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  min-height: 32px;
+  padding: 6px 10px;
+
+  border: 1px solid #e2ece7;
+  border-radius: 9px;
+
+  background: #f8fbfa;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #53665f;
+}
+
+.staff-queue-next-info svg {
+  flex-shrink: 0;
+
+  width: 15px;
+  height: 15px;
+
+  color: #179a72;
+}
+
+/* REASON */
+
+.staff-queue-next-reason {
+  margin-top: 12px;
+
+  padding: 11px 13px;
+
+  border-left: 3px solid #18a77a;
+  border-radius: 8px;
+
+  background: #f6faf8;
+}
+
+.staff-queue-next-reason strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  color: #31463f;
+}
+
+.staff-queue-next-reason p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #66766f;
+}
+
+/* EMPTY STATE */
+
+.staff-queue-next-empty {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 56px;
+}
+
+.staff-queue-next-empty svg {
+  flex-shrink: 0;
+
+  width: 22px;
+  height: 22px;
+
+  color: #8ba29a;
+}
+
+.staff-queue-next-empty strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #31443e;
+}
+
+.staff-queue-next-empty p {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #82918c;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .staff-queue-next-card .cura-card-body {
+    padding: 16px;
+  }
+
+  .staff-queue-next-header {
+    align-items: flex-start;
+  }
+
+  .staff-queue-next-header h3 {
+    font-size: 17px;
+  }
+
+  .staff-queue-next-number {
+    min-width: 64px;
+    padding: 8px 12px;
+
+    font-size: 13px;
+  }
+
+  .staff-queue-next-info {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .staff-queue-next-header {
+    flex-direction: column;
+  }
+
+  .staff-queue-next-number {
+    align-self: flex-start;
+  }
+
+  .staff-queue-next-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .staff-queue-next-info > div {
+    width: 100%;
+  }
+}

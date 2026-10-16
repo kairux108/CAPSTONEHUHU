@@ -1,19 +1,15 @@
 import {
   useEffect,
-  useMemo,
   useState,
 } from "react";
 
 import useQueue from "../../../hooks/useQueue";
 
 import StaffQueueStats from "../queue/StaffQueueStats";
+import StaffQueueNextPatient from "../queue/StaffQueueNextPatient";
 import StaffQueueControls from "../queue/StaffQueueControls";
 import StaffQueueTable from "../queue/StaffQueueTable";
 import StaffQueueDetails from "../queue/StaffQueueDetails";
-
-import {
-  normalizeQueueValue,
-} from "../../../utils/queueUtils";
 
 const Queue = () => {
   /*
@@ -26,6 +22,8 @@ const Queue = () => {
     queueEntries,
     selectedQueueEntry,
     setSelectedQueueEntry,
+
+    nextRecommended,
 
     loading,
     error,
@@ -59,11 +57,19 @@ const Queue = () => {
     const timer = setTimeout(() => {
       loadQueue({
         search,
+
         status:
           statusFilter === "all"
             ? ""
             : statusFilter,
+
+        appointment_type:
+          activeTab === "all"
+            ? ""
+            : activeTab,
+
         page,
+
         per_page: perPage,
       }).catch(() => {
         // Error is already handled by useQueue.
@@ -76,6 +82,7 @@ const Queue = () => {
   }, [
     search,
     statusFilter,
+    activeTab,
     page,
     perPage,
     loadQueue,
@@ -98,34 +105,6 @@ const Queue = () => {
 
   /*
   |--------------------------------------------------------------------------
-  | Walk-in / Scheduled Filter
-  |--------------------------------------------------------------------------
-  |
-  | Search and status are handled by Laravel.
-  | Appointment type is filtered here for now.
-  |
-  */
-
-  const filteredQueue = useMemo(() => {
-    if (activeTab === "all") {
-      return queueEntries;
-    }
-
-    return queueEntries.filter((entry) => {
-      const appointmentType =
-        normalizeQueueValue(
-          entry.appointment?.appointment_type
-        );
-
-      return appointmentType === activeTab;
-    });
-  }, [
-    queueEntries,
-    activeTab,
-  ]);
-
-  /*
-  |--------------------------------------------------------------------------
   | Keep Selected Entry Updated
   |--------------------------------------------------------------------------
   */
@@ -135,12 +114,11 @@ const Queue = () => {
       return;
     }
 
-    const updatedEntry =
-      queueEntries.find(
-        (entry) =>
-          Number(entry.id) ===
-          Number(selectedQueueEntry.id)
-      );
+    const updatedEntry = queueEntries.find(
+      (entry) =>
+        Number(entry.id) ===
+        Number(selectedQueueEntry.id)
+    );
 
     if (updatedEntry) {
       setSelectedQueueEntry(
@@ -197,6 +175,14 @@ const Queue = () => {
         stats={stats}
       />
 
+      {/* NEXT RECOMMENDED PATIENT */}
+
+      <StaffQueueNextPatient
+        recommendation={
+          nextRecommended
+        }
+      />
+
       {/* MAIN QUEUE AREA */}
 
       <div className="staff-queue-main-grid">
@@ -223,7 +209,7 @@ const Queue = () => {
           />
 
           <StaffQueueTable
-            entries={filteredQueue}
+            entries={queueEntries}
 
             selectedEntry={
               selectedQueueEntry

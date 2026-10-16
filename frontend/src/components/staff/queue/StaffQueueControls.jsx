@@ -53,15 +53,15 @@ const StaffQueueControls = ({
           <button
             type="button"
             className={
-              activeTab === "scheduled"
+              activeTab === "online"
                 ? "active"
                 : ""
             }
             onClick={() =>
-              setActiveTab("scheduled")
+              setActiveTab("online")
             }
           >
-            Scheduled
+            Online / Scheduled
           </button>
         </div>
 
