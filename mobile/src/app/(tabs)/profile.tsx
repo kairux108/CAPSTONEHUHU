@@ -7,14 +7,14 @@ import {
 
 import { useState } from 'react';
 
-import EditProfileForm from '../../components/profile/EditProfileForm';
-import ProfileHeader from '../../components/profile/ProfileHeader';
-import ProfileInfo from '../../components/profile/ProfileInfo';
+import EditProfileForm from '../../features/profile/components/EditProfileForm';
+import ProfileHeader from '../../features/profile/components/ProfileHeader';
+import ProfileInfo from '../../features/profile/components/ProfileInfo';
 
 import { Colors } from '../../constants/colors';
 
 import useAuth from '../../hooks/useAuth';
-import usePatient from '../../hooks/usePatient';
+import usePatient from '../../features/profile/hooks/usePatient';
 
 export default function ProfileScreen() {
   const {

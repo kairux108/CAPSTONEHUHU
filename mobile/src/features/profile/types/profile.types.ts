@@ -53,3 +53,29 @@ export type UpdatePatientProfileResponse = {
   message: string;
   patient: PatientProfile;
 };
+
+export type ProfileFormValues = {
+  first_name: string;
+  middle_name: string;
+  last_name: string;
+  birth_date: string;
+  sex: 'male' | 'female' | '';
+  phone_number: string;
+  email: string;
+  address: string;
+  city: string;
+  province: string;
+  blood_type: string;
+  emergency_contact_name: string;
+  emergency_contact_number: string;
+};
+
+export type ProfileFieldErrors = Partial<
+  Record<keyof ProfileFormValues, string>
+>;
+
+export type ProfileSaveResult = {
+  success: boolean;
+  message: string;
+  fieldErrors?: ProfileFieldErrors;
+};

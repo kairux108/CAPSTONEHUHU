@@ -6,8 +6,8 @@ import {
   View,
 } from 'react-native';
 
-import { Colors } from '../../constants/colors';
-import { PatientProfile } from '../../types/patientProfile';
+import { Colors } from '../../../constants/colors';
+import type { PatientProfile } from '../types/profile.types';
 
 type Props = {
   patient: PatientProfile;
@@ -32,21 +32,18 @@ export default function ProfileHeader({
     <View style={styles.header}>
       <View style={styles.top}>
         <View />
-
         {!editing ? (
           <Pressable
             style={styles.editButton}
             onPress={onEdit}
+            accessibilityRole="button"
           >
             <Ionicons
               name="create-outline"
               size={17}
               color={Colors.white}
             />
-
-            <Text style={styles.editText}>
-              Edit
-            </Text>
+            <Text style={styles.editText}>Edit</Text>
           </Pressable>
         ) : null}
       </View>
@@ -59,10 +56,7 @@ export default function ProfileHeader({
         />
       </View>
 
-      <Text style={styles.name}>
-        {fullName}
-      </Text>
-
+      <Text style={styles.name}>{fullName}</Text>
       <Text style={styles.patientNumber}>
         {patient.patient_number}
       </Text>

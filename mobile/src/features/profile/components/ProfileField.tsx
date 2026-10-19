@@ -5,7 +5,7 @@ import {
   View,
 } from 'react-native';
 
-import { Colors } from '../../constants/colors';
+import { Colors } from '../../../constants/colors';
 
 type Props = {
   icon: keyof typeof Ionicons.glyphMap;
@@ -21,21 +21,11 @@ export default function ProfileField({
   return (
     <View style={styles.row}>
       <View style={styles.icon}>
-        <Ionicons
-          name={icon}
-          size={18}
-          color={Colors.primary}
-        />
+        <Ionicons name={icon} size={18} color={Colors.primary} />
       </View>
-
       <View style={styles.content}>
-        <Text style={styles.label}>
-          {label}
-        </Text>
-
-        <Text style={styles.value}>
-          {value}
-        </Text>
+        <Text style={styles.label}>{label}</Text>
+        <Text style={styles.value}>{value}</Text>
       </View>
     </View>
   );
