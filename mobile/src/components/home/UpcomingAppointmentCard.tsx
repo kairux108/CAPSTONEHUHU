@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,13 +10,22 @@ import {
 
 import { Colors } from '../../constants/colors';
 
+import {
+  formatAppointmentDate,
+  formatAppointmentLabel,
+  formatAppointmentTime,
+  getAppointmentStatusType,
+  getDoctorInitials,
+  showAppointmentCheck,
+} from '../../utils/appointmentUtils';
+
 import CuraCard from '../common/CuraCard';
 import StatusPill from '../common/StatusPill';
 
 export type UpcomingAppointment = {
   id: number;
   doctorName: string;
-  specialty: string;
+  appointmentType: string;
   appointmentDate: string;
   appointmentTime: string;
   status: string;
@@ -23,40 +33,71 @@ export type UpcomingAppointment = {
 
 type Props = {
   appointment: UpcomingAppointment | null;
+  loading?: boolean;
+  error?: string | null;
+
   onPress?: () => void;
   onBookPress: () => void;
+  onRetry?: () => void;
 };
-
-function getDoctorInitials(name: string) {
-  const cleaned = name
-    .replace(/^Dr\.?\s*/i, '')
-    .trim();
-
-  const parts = cleaned
-    .split(/\s+/)
-    .filter(Boolean);
-
-  if (parts.length === 0) {
-    return 'DR';
-  }
-
-  if (parts.length === 1) {
-    return parts[0]
-      .slice(0, 2)
-      .toUpperCase();
-  }
-
-  return (
-    parts[0].charAt(0) +
-    parts[parts.length - 1].charAt(0)
-  ).toUpperCase();
-}
 
 export default function UpcomingAppointmentCard({
   appointment,
+  loading = false,
+  error = null,
   onPress,
   onBookPress,
+  onRetry,
 }: Props) {
+  if (loading) {
+    return (
+      <CuraCard style={styles.stateCard}>
+        <ActivityIndicator
+          size="small"
+          color={Colors.primary}
+        />
+
+        <Text style={styles.stateText}>
+          Loading appointment...
+        </Text>
+      </CuraCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <CuraCard style={styles.stateCard}>
+        <View style={styles.errorIcon}>
+          <Ionicons
+            name="alert-circle-outline"
+            size={25}
+            color={Colors.danger}
+          />
+        </View>
+
+        <Text style={styles.emptyTitle}>
+          Unable to load appointment
+        </Text>
+
+        <Text style={styles.emptyText}>
+          {error}
+        </Text>
+
+        {onRetry ? (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            style={styles.retryButton}
+            onPress={onRetry}
+          >
+            <Text style={styles.retryText}>
+              Try Again
+            </Text>
+          </TouchableOpacity>
+        ) : null}
+      </CuraCard>
+    );
+  }
+
   if (!appointment) {
     return (
       <CuraCard style={styles.emptyCard}>
@@ -107,9 +148,15 @@ export default function UpcomingAppointmentCard({
         </Text>
 
         <StatusPill
-          label={appointment.status}
-          type="success"
-          showCheck
+          label={formatAppointmentLabel(
+            appointment.status
+          )}
+          type={getAppointmentStatusType(
+            appointment.status
+          )}
+          showCheck={showAppointmentCheck(
+            appointment.status
+          )}
         />
       </View>
 
@@ -130,8 +177,10 @@ export default function UpcomingAppointmentCard({
             {appointment.doctorName}
           </Text>
 
-          <Text style={styles.specialty}>
-            {appointment.specialty}
+          <Text style={styles.appointmentType}>
+            {formatAppointmentLabel(
+              appointment.appointmentType
+            )}
           </Text>
         </View>
       </View>
@@ -148,7 +197,9 @@ export default function UpcomingAppointmentCard({
             />
 
             <Text style={styles.metaText}>
-              {appointment.appointmentDate}
+              {formatAppointmentDate(
+                appointment.appointmentDate
+              )}
             </Text>
           </View>
 
@@ -160,7 +211,9 @@ export default function UpcomingAppointmentCard({
             />
 
             <Text style={styles.metaText}>
-              {appointment.appointmentTime}
+              {formatAppointmentTime(
+                appointment.appointmentTime
+              )}
             </Text>
           </View>
         </View>
@@ -178,6 +231,18 @@ export default function UpcomingAppointmentCard({
 const styles = StyleSheet.create({
   card: {
     marginTop: 20,
+  },
+
+  stateCard: {
+    marginTop: 20,
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+
+  stateText: {
+    marginTop: 10,
+    fontSize: 12.5,
+    color: Colors.muted,
   },
 
   topRow: {
@@ -225,10 +290,10 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
 
-  specialty: {
+  appointmentType: {
+    marginTop: 2,
     fontSize: 12.5,
     color: Colors.muted,
-    marginTop: 2,
   },
 
   divider: {
@@ -244,10 +309,10 @@ const styles = StyleSheet.create({
   },
 
   metaDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
     flex: 1,
+    flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'center',
     gap: 12,
   },
 
@@ -279,6 +344,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
+  errorIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    backgroundColor:
+      Colors.dangerBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+
   emptyTitle: {
     fontSize: 15,
     fontWeight: '700',
@@ -286,29 +362,45 @@ const styles = StyleSheet.create({
   },
 
   emptyText: {
+    marginTop: 5,
+    marginBottom: 16,
+    paddingHorizontal: 20,
     fontSize: 12.5,
     lineHeight: 18,
     textAlign: 'center',
     color: Colors.muted,
-    marginTop: 5,
-    marginBottom: 16,
-    paddingHorizontal: 20,
   },
 
   bookButton: {
+    height: 42,
+    paddingHorizontal: 18,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 7,
     backgroundColor: Colors.primary,
-    paddingHorizontal: 18,
-    height: 42,
-    borderRadius: 12,
   },
 
   bookButtonText: {
     fontSize: 13,
     fontWeight: '700',
     color: Colors.white,
+  },
+
+  retryButton: {
+    height: 40,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  retryText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.primary,
   },
 });

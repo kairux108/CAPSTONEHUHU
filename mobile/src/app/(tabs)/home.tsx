@@ -10,64 +10,124 @@ import HomeHeader from '../../components/home/HomeHeader';
 import UpcomingAppointmentCard from '../../components/home/UpcomingAppointmentCard';
 import TodayMedicationsCard from '../../components/home/TodayMedicationsCard';
 import QueueStatusCard from '../../components/home/QueueStatusCard';
-import { Colors } from '../../constants/colors';
-import useAuth from '../../hooks/useAuth';
 import QuickActions from '../../components/home/QuickActions';
+
+import { Colors } from '../../constants/colors';
+
+import useAuth from '../../hooks/useAuth';
+import useAppointments from '../../hooks/useAppointments';
+
 export default function PatientHomeScreen() {
   const { user } = useAuth();
+
+  const {
+    upcomingAppointment,
+    loading: appointmentLoading,
+    error: appointmentError,
+    refreshAppointments,
+  } = useAppointments();
+
+  const appointment =
+    upcomingAppointment
+      ? {
+          id: upcomingAppointment.id,
+
+          doctorName:
+            upcomingAppointment.doctor
+              ?.name ??
+            'Doctor not assigned',
+
+          appointmentType:
+            upcomingAppointment
+              .appointment_type,
+
+          appointmentDate:
+            upcomingAppointment
+              .appointment_date,
+
+          appointmentTime:
+            upcomingAppointment
+              .appointment_time,
+
+          status:
+            upcomingAppointment.status,
+        }
+      : null;
 
   return (
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={
+          styles.content
+        }
       >
         <HomeHeader
           patientName={
             user?.name ?? 'Patient'
           }
           onNotificationPress={() => {
-            // Notifications screen comes later.
+            // Notifications screen later.
           }}
           onProfilePress={() =>
-            router.push('/(tabs)/profile')
+            router.push(
+              '/(tabs)/profile'
+            )
           }
         />
 
         <View style={styles.body}>
           <UpcomingAppointmentCard
-            appointment={null}
+            appointment={appointment}
+            loading={
+              appointmentLoading
+            }
+            error={
+              appointmentError
+            }
+            onRetry={
+              refreshAppointments
+            }
             onBookPress={() =>
-              router.push('/(tabs)/book')
+              router.push(
+                '/(tabs)/book'
+              )
             }
           />
 
-          {/* Queue comes next */}
-<QueueStatusCard
-  queue={null}
-  onPress={() => {
-    // Queue tracker screen will be connected later.
-  }}
-/>
-          {/* Medicines come next */}
-<TodayMedicationsCard
-  medications={[]}
-  onSeeAllPress={() =>
-    router.push('/(tabs)/medicine')
-  }
-/>
-          {/* Quick Actions come next */}
+          <QueueStatusCard
+            queue={null}
+            onPress={() => {
+              // Queue tracker later.
+            }}
+          />
+
+          <TodayMedicationsCard
+            medications={[]}
+            onSeeAllPress={() =>
+              router.push(
+                '/(tabs)/medicine'
+              )
+            }
+          />
+
           <QuickActions
-  onBookPress={() =>
-    router.push('/(tabs)/book')
-  }
-  onPrescriptionsPress={() =>
-    router.push('/(tabs)/medicine')
-  }
-  onRecordsPress={() =>
-    router.push('/(tabs)/records')
-  }
-/>
+            onBookPress={() =>
+              router.push(
+                '/(tabs)/book'
+              )
+            }
+            onPrescriptionsPress={() =>
+              router.push(
+                '/(tabs)/medicine'
+              )
+            }
+            onRecordsPress={() =>
+              router.push(
+                '/(tabs)/records'
+              )
+            }
+          />
         </View>
       </ScrollView>
     </View>
@@ -77,7 +137,8 @@ export default function PatientHomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor:
+      Colors.background,
   },
 
   content: {

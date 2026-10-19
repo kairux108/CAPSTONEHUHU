@@ -2,22 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function __construct(
+        private AuthService $authService
+    ) {
+    }
+
+    public function register(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $result = $this->authService->registerPatient(
+            $request->validated()
+        );
 
-        $user = User::where('email', $validated['email'])->first();
+        $user = $result['user'];
+        $patient = $result['patient'];
 
-        if (!$user || !Hash::check($validated['password'], $user->password)) {
+        return response()->json([
+            'message' => 'Account created successfully.',
+
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'status' => $user->status,
+            ],
+
+            'patient' => [
+                'id' => $patient->id,
+                'patient_number' => $patient->patient_number,
+                'first_name' => $patient->first_name,
+                'middle_name' => $patient->middle_name,
+                'last_name' => $patient->last_name,
+                'birth_date' => $patient->birth_date,
+                'sex' => $patient->sex,
+                'phone_number' => $patient->phone_number,
+            ],
+        ], 201);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = $this->authService->attemptLogin(
+            $validated['email'],
+            $validated['password']
+        );
+
+        if (!$user) {
             return response()->json([
                 'message' => 'Invalid email or password.',
             ], 401);
@@ -25,7 +63,8 @@ class AuthController extends Controller
 
         if ($user->status === 'inactive') {
             return response()->json([
-                'message' => 'This account is inactive. Please contact the administrator.',
+                'message' =>
+                    'This account is inactive. Please contact the administrator.',
             ], 403);
         }
 
@@ -34,11 +73,14 @@ class AuthController extends Controller
 
         $user->tokens()->delete();
 
-        $token = $user->createToken('cura-web')->plainTextToken;
+        $token = $user
+            ->createToken('cura-web')
+            ->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',
             'token' => $token,
+
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
