@@ -1,60 +1,42 @@
-import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+
+import { useAuth } from "../../context/useAuth";
+import { getRoleLandingPath, normalizeRole } from "../../utils/authUtils";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 function ProtectedRoute({ children, allowedRoles }) {
-  const token = localStorage.getItem("cura_token");
-  const storedUser = localStorage.getItem("cura_user");
+  const { isAuthenticated, loading, logout, user } = useAuth();
+  const location = useLocation();
 
-  if (!token || !storedUser) {
+  useEffect(() => {
+    if (isAuthenticated && !getRoleLandingPath(user?.role)) {
+      logout();
+    }
+  }, [isAuthenticated, logout, user?.role]);
+
+  if (loading) {
+    return <LoadingSpinner text="Restoring your session..." />;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/"
+        replace
+        state={{ from: location.pathname }}
+      />
+    );
+  }
+
+  const role = normalizeRole(user?.role);
+
+  if (!getRoleLandingPath(role)) {
     return <Navigate to="/" replace />;
   }
 
-  let user;
-
-  try {
-    user = JSON.parse(storedUser);
-  } catch {
-    localStorage.removeItem("cura_token");
-    localStorage.removeItem("cura_user");
-
-    return <Navigate to="/" replace />;
-  }
-
-  const role = String(user.role || "")
-    .trim()
-    .toLowerCase();
-
-  if (
-    allowedRoles &&
-    !allowedRoles.includes(role)
-  ) {
-    if (role === "admin") {
-      return (
-        <Navigate
-          to="/admin/dashboard"
-          replace
-        />
-      );
-    }
-
-    if (role === "doctor") {
-      return (
-        <Navigate
-          to="/doctor/dashboard"
-          replace
-        />
-      );
-    }
-
-    if (role === "staff") {
-      return (
-        <Navigate
-          to="/staff/dashboard"
-          replace
-        />
-      );
-    }
-
-    return <Navigate to="/" replace />;
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to={getRoleLandingPath(role)} replace />;
   }
 
   return children;

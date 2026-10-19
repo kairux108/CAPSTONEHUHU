@@ -215,7 +215,7 @@ const DoctorDashboard = () => {
               </div>
 
               <button
-                onClick={() => navigate("/consultation")}
+                onClick={() => navigate("/doctor/consultation")}
                 className="
                   flex
                   items-center
@@ -295,7 +295,7 @@ const DoctorDashboard = () => {
               </div>
 
               <button
-                onClick={() => navigate("/appointments")}
+                onClick={() => navigate("/doctor/appointments")}
                 className="
                   text-[10px]
                   font-bold
@@ -521,7 +521,7 @@ const DoctorDashboard = () => {
             </div>
 
             <button
-              onClick={() => navigate("/queue")}
+              onClick={() => navigate("/doctor/queue")}
               className="
                 mt-5
                 flex

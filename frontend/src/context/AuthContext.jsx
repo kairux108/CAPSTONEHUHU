@@ -1,50 +1,94 @@
 import {
-  createContext,
-  useContext,
+  useCallback,
   useEffect,
   useState,
 } from "react";
 
-const AuthContext = createContext(null);
+import AuthContext from "./authContext";
+import authService from "../services/authService";
+import { setUnauthorizedHandler } from "../services/api";
+import { normalizeRole } from "../utils/authUtils";
 
-export const AuthProvider = ({
-  children,
-}) => {
-  const [user, setUser] = useState(() => {
-    const savedUser =
-      localStorage.getItem("cura_user");
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    if (!savedUser) {
-      return null;
+  const logout = useCallback(() => {
+    localStorage.removeItem("cura_token");
+    localStorage.removeItem("cura_user");
+    setUser(null);
+    setLoading(false);
+  }, []);
+
+  const login = useCallback((userData, token) => {
+    if (!token) {
+      throw new Error("The login response did not include an access token.");
     }
 
-    try {
-      return JSON.parse(savedUser);
-    } catch {
-      return null;
-    }
-  });
+    const authenticatedUser = {
+      ...userData,
+      role: normalizeRole(userData?.role),
+    };
+
+    localStorage.setItem("cura_token", token);
+    localStorage.setItem("cura_user", JSON.stringify(authenticatedUser));
+    setUser(authenticatedUser);
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(
-        "cura_user",
-        JSON.stringify(user)
-      );
-    } else {
-      localStorage.removeItem(
-        "cura_user"
-      );
-    }
-  }, [user]);
+    let cancelled = false;
+    const unregisterUnauthorizedHandler =
+      setUnauthorizedHandler(logout);
 
-  const login = (userData) => {
-    setUser(userData);
-  };
+    const restoreSession = async () => {
+      if (!localStorage.getItem("cura_token")) {
+        if (!cancelled) {
+          setUser(null);
+          setLoading(false);
+        }
 
-  const logout = () => {
-    setUser(null);
-  };
+        return;
+      }
+
+      try {
+        const response = await authService.getCurrentUser();
+        const restoredUser = response?.user;
+
+        if (!restoredUser || !normalizeRole(restoredUser.role)) {
+          logout();
+          return;
+        }
+
+        if (!cancelled) {
+          const authenticatedUser = {
+            ...restoredUser,
+            role: normalizeRole(restoredUser.role),
+          };
+          localStorage.setItem(
+            "cura_user",
+            JSON.stringify(authenticatedUser)
+          );
+          setUser(authenticatedUser);
+        }
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    restoreSession();
+
+    return () => {
+      cancelled = true;
+      unregisterUnauthorizedHandler();
+    };
+  }, [logout]);
 
   return (
     <AuthContext.Provider
@@ -52,6 +96,7 @@ export const AuthProvider = ({
         user,
         login,
         logout,
+        loading,
         isAuthenticated: Boolean(user),
       }}
     >
@@ -60,15 +105,4 @@ export const AuthProvider = ({
   );
 };
 
-export const useAuth = () => {
-  const context =
-    useContext(AuthContext);
-
-  if (!context) {
-    throw new Error(
-      "useAuth must be used inside AuthProvider"
-    );
-  }
-
-  return context;
-};
+export default AuthProvider;

@@ -1,7 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./Login.css";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
+import authService from "../../services/authService";
+import {
+  getRoleLandingPath,
+  normalizeRole,
+} from "../../utils/authUtils";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +17,22 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const {
+    login,
+    loading: authLoading,
+    user,
+    isAuthenticated,
+  } = useAuth();
+
+  const landingPath = getRoleLandingPath(user?.role);
+
+  if (authLoading) {
+    return null;
+  }
+
+  if (isAuthenticated && landingPath) {
+    return <Navigate to={landingPath} replace />;
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -29,86 +49,25 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-            remember,
-          }),
-        }
-      );
+      const data = await authService.login({
+        email,
+        password,
+        remember,
+      });
+      const role = normalizeRole(data?.user?.role);
+      const roleLandingPath = getRoleLandingPath(role);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Login failed. Please try again."
-        );
+      if (!roleLandingPath) {
+        setErrorMessage("Your account does not have a valid CURA role.");
+        return;
       }
 
-      const role = String(data.user?.role || "")
-        .trim()
-        .toLowerCase();
-
-      const user = {
-        ...data.user,
-        role,
-      };
-
-      // Save authentication data
-      localStorage.setItem("cura_token", data.token);
-
-      localStorage.setItem(
-        "cura_user",
-        JSON.stringify(user)
-      );
-
-      // Update AuthContext
-      login(user);
-
-      console.log("Login successful:", user);
-
-      // Redirect according to role
-      switch (role) {
-        case "admin":
-          navigate("/admin/dashboard", {
-            replace: true,
-          });
-          break;
-
-        case "doctor":
-          navigate("/doctor/dashboard", {
-            replace: true,
-          });
-          break;
-
-        case "staff":
-          navigate("/staff/dashboard", {
-            replace: true,
-          });
-          break;
-
-        default:
-          localStorage.removeItem("cura_token");
-          localStorage.removeItem("cura_user");
-
-          setErrorMessage(
-            "Your account does not have a valid CURA role."
-          );
-      }
+      login(data.user, data.token);
+      navigate(roleLandingPath, { replace: true });
     } catch (error) {
-      console.error("Login error:", error);
-
       setErrorMessage(
         error.message ||
-          "Cannot connect to Laravel. Make sure php artisan serve is running."
+          "Unable to sign in. Check your connection and try again."
       );
     } finally {
       setLoading(false);

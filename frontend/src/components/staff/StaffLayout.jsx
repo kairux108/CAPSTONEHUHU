@@ -2,7 +2,6 @@ import { Outlet, useLocation } from "react-router-dom";
 
 import Sidebar from "../common/Sidebar";
 import PageHeader from "../common/PageHeader";
-import DashboardHome from "./pages/DashboardHome";
 
 const StaffLayout = () => {
   const { pathname } = useLocation();
@@ -27,6 +26,11 @@ const StaffLayout = () => {
       "Queue",
       "Manage walk-ins and scheduled patients.",
     ],
+
+    "/staff/reports": [
+      "Reports",
+      "Review clinic activity and performance.",
+    ],
   };
 
   const [title, description] =
@@ -45,11 +49,7 @@ const StaffLayout = () => {
               description={description}
             />
 
-            {pathname === "/staff/dashboard" ? (
-              <DashboardHome />
-            ) : (
-              <Outlet />
-            )}
+            <Outlet />
           </main>
         </div>
       </div>

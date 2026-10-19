@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../common/Sidebar";
 import PageHeader from "../common/PageHeader";
-import DashboardHome from "./pages/DashboardHome";
 
 const AdminLayout = () => {
   const { pathname } = useLocation();
@@ -24,7 +23,7 @@ const AdminLayout = () => {
         <div className="min-w-0 flex-1">
           <main className="p-4 sm:p-6 lg:p-8">
             <PageHeader title={title} description={description} />
-            {pathname === "/admin/dashboard" ? <DashboardHome /> : <Outlet />}
+            <Outlet />
           </main>
         </div>
       </div>
