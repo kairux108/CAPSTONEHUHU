@@ -1,8 +1,10 @@
+
 <?php
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PatientAppointmentController;
+use App\Http\Controllers\PatientBookingController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientProfileController;
 use App\Http\Controllers\QueueEntryController;
@@ -69,6 +71,30 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Patient Mobile - Booking
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:patient')->group(function () {
+
+        Route::get(
+            '/patient/booking/doctors',
+            [PatientBookingController::class, 'doctors']
+        );
+
+        Route::get(
+            '/patient/booking/availability',
+            [PatientBookingController::class, 'availability']
+        );
+        Route::post(
+    '/patient/booking',
+    [PatientBookingController::class, 'store']
+);
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
     | Admin Only - User Management
     |--------------------------------------------------------------------------
     */
@@ -84,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
+
         Route::get(
             '/patients',
             [PatientController::class, 'index']
@@ -93,6 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/patients/{patient}',
             [PatientController::class, 'show']
         );
+
     });
 
     /*
@@ -102,10 +130,12 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
+
         Route::post(
             '/patients',
             [PatientController::class, 'store']
         );
+
     });
 
     /*
@@ -115,6 +145,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:doctor')->group(function () {
+
         Route::put(
             '/patients/{patient}',
             [PatientController::class, 'update']
@@ -124,6 +155,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/patients/{patient}',
             [PatientController::class, 'update']
         );
+
     });
 
     /*
@@ -133,6 +165,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
+
         Route::get(
             '/appointment-doctors',
             [AppointmentController::class, 'doctors']
@@ -147,6 +180,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/appointments/{appointment}',
             [AppointmentController::class, 'show']
         );
+
     });
 
     /*
@@ -156,6 +190,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
+
         Route::post(
             '/appointments',
             [AppointmentController::class, 'store']
@@ -175,6 +210,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/appointments/{appointment}/check-in',
             [AppointmentController::class, 'checkIn']
         );
+
     });
 
     /*
@@ -184,6 +220,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
+
         Route::get(
             '/vital-signs',
             [VitalSignController::class, 'index']
@@ -193,6 +230,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/vital-signs/{vitalSign}',
             [VitalSignController::class, 'show']
         );
+
     });
 
     /*
@@ -202,6 +240,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
+
         Route::post(
             '/vital-signs',
             [VitalSignController::class, 'store']
@@ -216,6 +255,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/vital-signs/{vitalSign}',
             [VitalSignController::class, 'update']
         );
+
     });
 
     /*
@@ -225,6 +265,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:admin,staff,doctor')->group(function () {
+
         Route::get(
             '/queue',
             [QueueEntryController::class, 'index']
@@ -234,6 +275,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/queue/{queueEntry}',
             [QueueEntryController::class, 'show']
         );
+
     });
 
     /*
@@ -243,6 +285,7 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::middleware('role:staff')->group(function () {
+
         Route::post(
             '/queue',
             [QueueEntryController::class, 'store']
@@ -257,5 +300,7 @@ Route::middleware('auth:sanctum')->group(function () {
             '/queue/{queueEntry}',
             [QueueEntryController::class, 'update']
         );
+
     });
+
 });

@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import { Colors } from '../constants/colors';
-import useAuth from '../hooks/useAuth';
+import useAuth from '../features/auth/hooks/useAuth';
 
 export default function Index() {
   const {

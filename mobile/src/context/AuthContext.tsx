@@ -5,11 +5,11 @@ import {
   useState,
 } from 'react';
 
-import { AuthUser } from '../types/auth';
+import { AuthUser } from '../features/auth/types/auth';
 import {
   getStoredToken,
   logout as logoutRequest,
-} from '../services/authService';
+} from '../features/auth/services/authService';
 
 import api from '../services/api';
 
