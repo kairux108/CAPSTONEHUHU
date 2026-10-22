@@ -1,9 +1,5 @@
-import {
-  useEffect,
-  useState,
-} from "react";
 
-import useQueue from "../../../hooks/useQueue";
+import useStaffQueueController from "../../../hooks/useStaffQueueController";
 
 import StaffQueueStats from "../queue/StaffQueueStats";
 import StaffQueueNextPatient from "../queue/StaffQueueNextPatient";
@@ -11,10 +7,16 @@ import StaffQueueControls from "../queue/StaffQueueControls";
 import StaffQueueTable from "../queue/StaffQueueTable";
 import StaffQueueDetails from "../queue/StaffQueueDetails";
 
+/*
+|--------------------------------------------------------------------------
+| CURA - Staff Queue Page
+|--------------------------------------------------------------------------
+*/
+
 const Queue = () => {
   /*
   |--------------------------------------------------------------------------
-  | Queue Hook
+  | Staff Queue Controller
   |--------------------------------------------------------------------------
   */
 
@@ -22,149 +24,39 @@ const Queue = () => {
     queueEntries,
     selectedQueueEntry,
     setSelectedQueueEntry,
-
     nextRecommended,
 
     loading,
+    saving,
     error,
 
     stats,
     pagination,
 
-    loadQueue,
-  } = useQueue();
-
-  /*
-  |--------------------------------------------------------------------------
-  | Filters
-  |--------------------------------------------------------------------------
-  */
-
-  const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(20);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Load Queue From Backend
-  |--------------------------------------------------------------------------
-  */
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      loadQueue({
-        search,
-
-        status:
-          statusFilter === "all"
-            ? ""
-            : statusFilter,
-
-        appointment_type:
-          activeTab === "all"
-            ? ""
-            : activeTab,
-
-        page,
-
-        per_page: perPage,
-      }).catch(() => {
-        // Error is already handled by useQueue.
-      });
-    }, 300);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [
     search,
-    statusFilter,
+    setSearch,
+
     activeTab,
-    page,
-    perPage,
-    loadQueue,
-  ]);
+    setActiveTab,
 
-  /*
-  |--------------------------------------------------------------------------
-  | Reset Page When Filters Change
-  |--------------------------------------------------------------------------
-  */
-
-  useEffect(() => {
-    setPage(1);
-  }, [
-    search,
     statusFilter,
-    activeTab,
+    setStatusFilter,
+
     perPage,
-  ]);
+
+    handlePageChange,
+    handlePerPageChange,
+
+    handleCallPatient,
+    handleStartConsultation,
+    handleCompleteConsultation,
+  } = useStaffQueueController();
 
   /*
   |--------------------------------------------------------------------------
-  | Keep Selected Entry Updated
+  | Render Staff Queue
   |--------------------------------------------------------------------------
   */
-
-  useEffect(() => {
-    if (!selectedQueueEntry) {
-      return;
-    }
-
-    const updatedEntry = queueEntries.find(
-      (entry) =>
-        Number(entry.id) ===
-        Number(selectedQueueEntry.id)
-    );
-
-    if (updatedEntry) {
-      setSelectedQueueEntry(
-        updatedEntry
-      );
-    } else {
-      setSelectedQueueEntry(null);
-    }
-  }, [
-    queueEntries,
-    selectedQueueEntry?.id,
-    setSelectedQueueEntry,
-  ]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Change Page
-  |--------------------------------------------------------------------------
-  */
-
-  const handlePageChange = (
-    newPage
-  ) => {
-    if (
-      newPage < 1 ||
-      newPage >
-        (pagination?.last_page || 1)
-    ) {
-      return;
-    }
-
-    setPage(newPage);
-  };
-
-  /*
-  |--------------------------------------------------------------------------
-  | Change Per Page
-  |--------------------------------------------------------------------------
-  */
-
-  const handlePerPageChange = (
-    value
-  ) => {
-    setPerPage(value);
-    setPage(1);
-  };
 
   return (
     <div className="staff-queue-page">
@@ -178,9 +70,7 @@ const Queue = () => {
       {/* NEXT RECOMMENDED PATIENT */}
 
       <StaffQueueNextPatient
-        recommendation={
-          nextRecommended
-        }
+        recommendation={nextRecommended}
       />
 
       {/* MAIN QUEUE AREA */}
@@ -191,29 +81,25 @@ const Queue = () => {
 
         <div className="staff-queue-left">
 
+          {/* SEARCH AND FILTERS */}
+
           <StaffQueueControls
             search={search}
             setSearch={setSearch}
 
             activeTab={activeTab}
-            setActiveTab={
-              setActiveTab
-            }
+            setActiveTab={setActiveTab}
 
-            statusFilter={
-              statusFilter
-            }
-            setStatusFilter={
-              setStatusFilter
-            }
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
           />
+
+          {/* QUEUE TABLE */}
 
           <StaffQueueTable
             entries={queueEntries}
 
-            selectedEntry={
-              selectedQueueEntry
-            }
+            selectedEntry={selectedQueueEntry}
             setSelectedEntry={
               setSelectedQueueEntry
             }
@@ -221,10 +107,7 @@ const Queue = () => {
             loading={loading}
             error={error}
 
-            pagination={
-              pagination
-            }
-
+            pagination={pagination}
             onPageChange={
               handlePageChange
             }
@@ -233,16 +116,30 @@ const Queue = () => {
             setPerPage={
               handlePerPageChange
             }
+
+            saving={saving}
+
+            onCallPatient={
+              handleCallPatient
+            }
+
+            onStartConsultation={
+              handleStartConsultation
+            }
+
+            onCompleteConsultation={
+              handleCompleteConsultation
+            }
           />
+
         </div>
 
         {/* RIGHT SIDE */}
 
         <StaffQueueDetails
-          entry={
-            selectedQueueEntry
-          }
+          entry={selectedQueueEntry}
         />
+
       </div>
     </div>
   );

@@ -1,0 +1,243 @@
+
+/*
+|--------------------------------------------------------------------------
+| CURA - Staff Queue Actions Modal
+|--------------------------------------------------------------------------
+| Dedicated component styling.
+| Does not modify global dashboard styles.
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Modal Overlay
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Modal Container
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-modal {
+  box-sizing: border-box;
+
+  width: 100%;
+  max-width: 380px;
+  max-height: calc(100vh - 32px);
+
+  overflow-y: auto;
+
+  padding: 24px;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Modal Header
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 16px;
+}
+
+.cura-queue-actions-header h3 {
+  margin: 0;
+
+  color: #174c43;
+  font-size: 18px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Close Icon
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+  color: #607d76;
+
+  cursor: pointer;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Patient Information
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-patient {
+  margin-bottom: 18px;
+
+  padding: 14px;
+  border-radius: 10px;
+
+  background: #f1f8f5;
+}
+
+.cura-queue-actions-patient strong {
+  display: block;
+
+  color: #174c43;
+  font-size: 14px;
+}
+
+.cura-queue-actions-patient span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #6a8580;
+  font-size: 12px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Action Button Container
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-buttons {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Queue Action Buttons
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-primary {
+  display: flex;
+
+  width: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  box-sizing: border-box;
+
+  padding: 13px 16px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #13866d;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Start Consultation Button
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-start {
+  background: #287f6a;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Disabled Buttons
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-primary:disabled,
+.cura-queue-actions-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Status Information
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-message {
+  margin: 14px 0 0;
+
+  color: #78918c;
+  font-size: 12px;
+
+  text-align: center;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Close Button
+|--------------------------------------------------------------------------
+*/
+
+.cura-queue-actions-close {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin-top: 12px;
+  padding: 12px;
+
+  border: 1px solid #dfeae6;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #45645e;
+
+  cursor: pointer;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Mobile Responsive Design
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 480px) {
+  .cura-queue-actions-modal {
+    padding: 20px;
+  }
+}

@@ -1,11 +1,10 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  ClipboardList,
-  MoreVertical,
-} from "lucide-react";
+
+import { useState } from "react";
+import { ClipboardList, MoreVertical } from "lucide-react";
 
 import CuraCard from "../../common/CuraCard";
+import StaffQueuePagination from "./StaffQueuePagination";
+import StaffQueueActionsModal from "./StaffQueueActionsModal";
 
 import {
   formatQueueEta,
@@ -25,36 +24,45 @@ const StaffQueueTable = ({
   entries = [],
   selectedEntry,
   setSelectedEntry,
-
   loading,
   error,
-
   pagination,
   onPageChange,
-
   perPage = 20,
   setPerPage,
+  onCallPatient,
+  onStartConsultation,
+  onCompleteConsultation,
+  saving = false,
 }) => {
-  const currentPage =
-    pagination?.current_page || 1;
+  /*
+  |--------------------------------------------------------------------------
+  | Local State
+  |--------------------------------------------------------------------------
+  */
 
-  const lastPage =
-    pagination?.last_page || 1;
+  const [actionEntry, setActionEntry] = useState(null);
 
-  const total =
-    pagination?.total ?? entries.length;
+  const total = pagination?.total ?? entries.length;
 
-  const handlePrevious = () => {
-    if (currentPage > 1) {
-      onPageChange?.(currentPage - 1);
-    }
+  /*
+  |--------------------------------------------------------------------------
+  | Open Queue Actions
+  |--------------------------------------------------------------------------
+  */
+
+  const openActions = (entry) => {
+    if (saving) return;
+
+    setSelectedEntry?.(entry);
+    setActionEntry(entry);
   };
 
-  const handleNext = () => {
-    if (currentPage < lastPage) {
-      onPageChange?.(currentPage + 1);
-    }
-  };
+  /*
+  |--------------------------------------------------------------------------
+  | Render Queue Table
+  |--------------------------------------------------------------------------
+  */
 
   return (
     <CuraCard
@@ -67,7 +75,10 @@ const StaffQueueTable = ({
       }
       className="staff-queue-list-card"
     >
+      {/* QUEUE TABLE */}
+
       <div className="staff-queue-table-wrapper">
+
         {loading ? (
           <div className="staff-queue-empty">
             <ClipboardList size={36} />
@@ -75,9 +86,11 @@ const StaffQueueTable = ({
             <p>Loading queue...</p>
 
             <span>
-              Please wait while CURA retrieves today's queue.
+              Please wait while CURA retrieves
+              today's queue.
             </span>
           </div>
+
         ) : error ? (
           <div className="staff-queue-empty">
             <ClipboardList size={36} />
@@ -86,6 +99,7 @@ const StaffQueueTable = ({
 
             <span>{error}</span>
           </div>
+
         ) : entries.length === 0 ? (
           <div className="staff-queue-empty">
             <ClipboardList size={36} />
@@ -93,9 +107,11 @@ const StaffQueueTable = ({
             <p>No patients in queue</p>
 
             <span>
-              Today's queue will appear here once patients are added.
+              Today's queue will appear here once
+              patients are added.
             </span>
           </div>
+
         ) : (
           <table className="staff-queue-table">
             <thead>
@@ -124,6 +140,8 @@ const StaffQueueTable = ({
                     setSelectedEntry?.(entry)
                   }
                 >
+                  {/* QUEUE NUMBER */}
+
                   <td>
                     <span className="staff-queue-number">
                       {formatQueueNumber(
@@ -132,29 +150,29 @@ const StaffQueueTable = ({
                     </span>
                   </td>
 
+                  {/* PATIENT */}
+
                   <td>
                     <div className="staff-queue-patient">
+
                       <div className="staff-queue-avatar">
-                        {getQueuePatientInitials(
-                          entry
-                        )}
+                        {getQueuePatientInitials(entry)}
                       </div>
 
                       <div>
                         <strong>
-                          {getQueuePatientName(
-                            entry
-                          )}
+                          {getQueuePatientName(entry)}
                         </strong>
 
                         <span>
-                          {getQueuePatientNumber(
-                            entry
-                          )}
+                          {getQueuePatientNumber(entry)}
                         </span>
                       </div>
+
                     </div>
                   </td>
+
+                  {/* APPOINTMENT TYPE */}
 
                   <td>
                     <span
@@ -162,17 +180,17 @@ const StaffQueueTable = ({
                         entry
                       )}`}
                     >
-                      {getQueueTypeLabel(
-                        entry
-                      )}
+                      {getQueueTypeLabel(entry)}
                     </span>
                   </td>
 
+                  {/* TIME IN */}
+
                   <td>
-                    {formatQueueTime(
-                      entry.queued_at
-                    )}
+                    {formatQueueTime(entry.queued_at)}
                   </td>
+
+                  {/* STATUS */}
 
                   <td>
                     <span
@@ -180,17 +198,17 @@ const StaffQueueTable = ({
                         entry.status
                       )}`}
                     >
-                      {formatQueueLabel(
-                        entry.status
-                      )}
+                      {formatQueueLabel(entry.status)}
                     </span>
                   </td>
 
+                  {/* DOCTOR */}
+
                   <td>
-                    {getQueueDoctorName(
-                      entry
-                    )}
+                    {getQueueDoctorName(entry)}
                   </td>
+
+                  {/* ESTIMATED WAIT */}
 
                   <td>
                     {formatQueueEta(
@@ -198,90 +216,56 @@ const StaffQueueTable = ({
                     )}
                   </td>
 
+                  {/* ACTIONS */}
+
                   <td>
                     <button
                       type="button"
                       className="staff-queue-more"
+                      title="Queue Actions"
+                      aria-label={`Open actions for ${getQueuePatientName(
+                        entry
+                      )}`}
+                      disabled={saving}
                       onClick={(event) => {
                         event.stopPropagation();
-
-                        setSelectedEntry?.(
-                          entry
-                        );
+                        openActions(entry);
                       }}
                     >
-                      <MoreVertical
-                        size={16}
-                      />
+                      <MoreVertical size={16} />
                     </button>
                   </td>
+
                 </tr>
               ))}
             </tbody>
           </table>
         )}
+
       </div>
 
-      <div className="staff-queue-pagination">
-        <span>
-          Showing {entries.length} of{" "}
-          {total} patients
-        </span>
+      {/* PAGINATION COMPONENT */}
 
-        <div>
-          <button
-            type="button"
-            disabled={
-              loading ||
-              currentPage <= 1
-            }
-            onClick={handlePrevious}
-          >
-            <ChevronLeft size={15} />
-          </button>
+      <StaffQueuePagination
+        count={entries.length}
+        pagination={pagination}
+        onPageChange={onPageChange}
+        perPage={perPage}
+        setPerPage={setPerPage}
+        loading={loading}
+      />
 
-          <button
-            type="button"
-            className="active"
-            disabled
-          >
-            {currentPage}
-          </button>
+      {/* QUEUE ACTIONS MODAL */}
 
-          <button
-            type="button"
-            disabled={
-              loading ||
-              currentPage >= lastPage
-            }
-            onClick={handleNext}
-          >
-            <ChevronRight size={15} />
-          </button>
-        </div>
+      <StaffQueueActionsModal
+        entry={actionEntry}
+        saving={saving}
+        onCallPatient={onCallPatient}
+        onStartConsultation={onStartConsultation}
+        onCompleteConsultation={onCompleteConsultation}
+        onClose={() => setActionEntry(null)}
+      />
 
-        <select
-          value={perPage}
-          disabled={loading}
-          onChange={(event) =>
-            setPerPage?.(
-              Number(event.target.value)
-            )
-          }
-        >
-          <option value={10}>
-            10 / page
-          </option>
-
-          <option value={20}>
-            20 / page
-          </option>
-
-          <option value={50}>
-            50 / page
-          </option>
-        </select>
-      </div>
     </CuraCard>
   );
 };
