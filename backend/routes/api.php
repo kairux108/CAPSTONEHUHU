@@ -1,8 +1,8 @@
-
 <?php
-
+use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DoctorQueueController;
 use App\Http\Controllers\PatientAppointmentController;
 use App\Http\Controllers\PatientBookingController;
 use App\Http\Controllers\PatientController;
@@ -29,6 +29,56 @@ Route::post('/register', [AuthController::class, 'register']);
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Doctor Consultation - Authenticated Doctor Only
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('role:doctor')->group(function () {
+
+    Route::get(
+        '/doctor/consultations/{queueEntry}',
+        [ConsultationController::class, 'show']
+    );
+
+    Route::put(
+        '/doctor/consultations/{queueEntry}/draft',
+        [ConsultationController::class, 'saveDraft']
+    );
+
+});
+
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Doctor Portal - My Queue & Selected Consultation Patient
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:doctor')->group(function () {
+
+        Route::get(
+            '/doctor/queue',
+            [DoctorQueueController::class, 'index']
+        );
+
+        Route::get(
+            '/doctor/queue/{queueEntry}',
+            [DoctorQueueController::class, 'show']
+        )->whereNumber('queueEntry');
+
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -86,10 +136,11 @@ Route::middleware('auth:sanctum')->group(function () {
             '/patient/booking/availability',
             [PatientBookingController::class, 'availability']
         );
+
         Route::post(
-    '/patient/booking',
-    [PatientBookingController::class, 'store']
-);
+            '/patient/booking',
+            [PatientBookingController::class, 'store']
+        );
 
     });
 
@@ -125,7 +176,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Staff Only - Register Patients
+    | Staff Only - Register Patients + Check Booking Availability
     |--------------------------------------------------------------------------
     */
 
@@ -134,6 +185,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post(
             '/patients',
             [PatientController::class, 'store']
+        );
+
+        Route::get(
+            '/staff/booking/availability',
+            [PatientBookingController::class, 'availability']
         );
 
     });
@@ -260,11 +316,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Admin + Staff + Doctor - View Queue
+    | Admin + Staff - View Clinic-Wide Queue
     |--------------------------------------------------------------------------
     */
 
-    Route::middleware('role:admin,staff,doctor')->group(function () {
+    Route::middleware('role:admin,staff')->group(function () {
 
         Route::get(
             '/queue',
@@ -302,5 +358,31 @@ Route::middleware('auth:sanctum')->group(function () {
         );
 
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Doctor Dashboard
+    |--------------------------------------------------------------------------
+    */
+
+    Route::middleware('role:doctor')->group(function () {
+
+        Route::get(
+            '/doctor/dashboard',
+            [\App\Http\Controllers\DoctorDashboardController::class, 'index']
+        );
+
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    );
 
 });

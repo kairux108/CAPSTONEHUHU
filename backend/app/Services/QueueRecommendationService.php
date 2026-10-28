@@ -12,12 +12,25 @@ class QueueRecommendationService
     | Queue Rules
     |--------------------------------------------------------------------------
     |
-    | Online appointments receive a protected window starting
-    | 10 minutes before their scheduled appointment time.
+    | Online appointments receive a protected window:
+    |
+    | 10 minutes before the scheduled appointment.
+    | 15 minutes after the scheduled appointment.
+    |
+    | Example:
+    |
+    | Appointment: 9:00 AM
+    | Window Start: 8:50 AM
+    | Window End:   9:15 AM
+    |
+    | Outside this window, the appointment does not
+    | automatically receive scheduled priority.
     |
     */
 
     private const EARLY_WINDOW_MINUTES = 10;
+
+    private const LATE_WINDOW_MINUTES = 15;
 
     private const TIMEZONE = 'Asia/Manila';
 
@@ -70,16 +83,17 @@ class QueueRecommendationService
         /*
         |--------------------------------------------------------------------------
         | Rule 1:
-        | Online Patient Whose Appointment Window Is Already Due
+        | Online Appointment Within Protected Window
         |--------------------------------------------------------------------------
         |
         | Example:
         |
         | Appointment = 8:30 AM
-        | Protected window begins = 8:20 AM
+        | Window Start = 8:20 AM
+        | Window End   = 8:45 AM
         |
-        | If current time is already 8:20 AM or later,
-        | the patient becomes eligible for scheduled priority.
+        | Online appointments receive scheduled priority
+        | only while the current time is within this window.
         |
         */
 
@@ -131,8 +145,9 @@ class QueueRecommendationService
         | Longest-Waiting Walk-In Patient
         |--------------------------------------------------------------------------
         |
-        | If no online appointment is currently due,
-        | serve the walk-in patient who entered the queue first.
+        | If no online appointment is currently within
+        | its protected window, recommend the walk-in
+        | patient who entered the queue first.
         |
         */
 
@@ -161,8 +176,12 @@ class QueueRecommendationService
         | Online Patients Only
         |--------------------------------------------------------------------------
         |
-        | If there are no walk-ins waiting and only online
-        | patients remain, recommend the earliest appointment.
+        | If no walk-in patients are waiting,
+        | recommend the online patient with the
+        | earliest scheduled appointment.
+        |
+        | This fallback also covers online appointments
+        | whose protected window has already expired.
         |
         */
 
@@ -205,7 +224,8 @@ class QueueRecommendationService
 
         /*
         |--------------------------------------------------------------------------
-        | Fallback
+        | Fallback:
+        | Longest-Waiting Patient
         |--------------------------------------------------------------------------
         */
 
@@ -222,8 +242,16 @@ class QueueRecommendationService
 
     /*
     |--------------------------------------------------------------------------
-    | Check If Online Appointment Is Due
+    | Check Online Appointment Protected Window
     |--------------------------------------------------------------------------
+    |
+    | Appointment: 9:00 AM
+    |
+    | Window Start: 8:50 AM
+    | Window End:   9:15 AM
+    |
+    | The current time must be within both boundaries.
+    |
     */
 
     private function isOnlineAppointmentDue(
@@ -239,6 +267,11 @@ class QueueRecommendationService
             return false;
         }
 
+        /*
+         * Protected window begins 10 minutes
+         * before the appointment time.
+         */
+
         $protectedWindowStart =
             $appointmentDateTime
                 ->copy()
@@ -246,8 +279,27 @@ class QueueRecommendationService
                     self::EARLY_WINDOW_MINUTES
                 );
 
+        /*
+         * Protected window ends 15 minutes
+         * after the appointment time.
+         */
+
+        $protectedWindowEnd =
+            $appointmentDateTime
+                ->copy()
+                ->addMinutes(
+                    self::LATE_WINDOW_MINUTES
+                );
+
+        /*
+         * Scheduled priority is available
+         * only within the protected window.
+         */
+
         return $now->greaterThanOrEqualTo(
             $protectedWindowStart
+        ) && $now->lessThanOrEqualTo(
+            $protectedWindowEnd
         );
     }
 

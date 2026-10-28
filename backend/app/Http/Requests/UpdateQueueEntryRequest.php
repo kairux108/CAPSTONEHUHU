@@ -6,10 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateQueueEntryRequest extends FormRequest
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Authorization
+    |--------------------------------------------------------------------------
+    */
+
     public function authorize(): bool
     {
         return true;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validation Rules
+    |--------------------------------------------------------------------------
+    */
 
     public function rules(): array
     {
@@ -43,9 +55,15 @@ class UpdateQueueEntryRequest extends FormRequest
                 'max:1440',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Queue Status
+            |--------------------------------------------------------------------------
+            */
+
             'status' => [
                 'sometimes',
-                'in:waiting,cancelled',
+                'in:waiting,called,in_consultation,completed,cancelled',
             ],
         ];
     }

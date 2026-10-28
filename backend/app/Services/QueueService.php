@@ -10,14 +10,19 @@ use Illuminate\Validation\ValidationException;
 
 class QueueService
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Create Queue Entry
+    |--------------------------------------------------------------------------
+    */
+
     public function create(
         array $data,
         User $user
     ): QueueEntry {
-        $appointment =
-            Appointment::findOrFail(
-                $data['appointment_id']
-            );
+        $appointment = Appointment::findOrFail(
+            $data['appointment_id']
+        );
 
         $this->validateAppointment(
             $appointment
@@ -27,9 +32,7 @@ class QueueService
             $appointment
         );
 
-        $priority =
-            $data['priority']
-            ?? 'normal';
+        $priority = $data['priority'] ?? 'normal';
 
         $this->validatePriority(
             $priority,
@@ -63,19 +66,16 @@ class QueueService
                         $priority,
 
                     'priority_reason' =>
-                        $data['priority_reason']
-                        ?? null,
+                        $data['priority_reason'] ?? null,
 
                     'status' =>
                         'waiting',
 
                     'doctor_available_at' =>
-                        $data['doctor_available_at']
-                        ?? null,
+                        $data['doctor_available_at'] ?? null,
 
                     'estimated_wait_minutes' =>
-                        $data['estimated_wait_minutes']
-                        ?? null,
+                        $data['estimated_wait_minutes'] ?? null,
 
                     'queued_at' =>
                         now(),
@@ -88,13 +88,17 @@ class QueueService
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Update Queue Entry
+    |--------------------------------------------------------------------------
+    */
+
     public function update(
         QueueEntry $queueEntry,
         array $data
     ): QueueEntry {
-        $this->validateDoctor(
-            $data
-        );
+        $this->validateDoctor($data);
 
         $priority =
             $data['priority']
@@ -113,14 +117,82 @@ class QueueService
             $data['priority_reason'] = null;
         }
 
-        $queueEntry->update(
-            $data
-        );
+        /*
+        |--------------------------------------------------------------------------
+        | Call Patient
+        |--------------------------------------------------------------------------
+        */
+
+        if (($data['status'] ?? null) === 'called') {
+            if ($queueEntry->status !== 'waiting') {
+                throw ValidationException::withMessages([
+                    'status' =>
+                        'Only waiting patients can be called.',
+                ]);
+            }
+
+            $data['called_at'] = now();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Start Consultation
+        |--------------------------------------------------------------------------
+        */
+
+        if (($data['status'] ?? null) === 'in_consultation') {
+            if ($queueEntry->status !== 'called') {
+                throw ValidationException::withMessages([
+                    'status' =>
+                        'Only called patients can begin consultation.',
+                ]);
+            }
+
+            $data['consultation_started_at'] = now();
+        }
+        
+/*
+|--------------------------------------------------------------------------
+| Complete Consultation
+|--------------------------------------------------------------------------
+*/
+
+if (($data['status'] ?? null) === 'completed') {
+    if ($queueEntry->status !== 'in_consultation') {
+        throw ValidationException::withMessages([
+            'status' =>
+                'Only patients in consultation can be marked completed.',
+        ]);
+    }
+
+    $data['completed_at'] = now();
+}
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save Queue Changes to PostgreSQL
+        |--------------------------------------------------------------------------
+        */
+
+        $queueEntry->update($data);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return Updated Queue Entry
+        |--------------------------------------------------------------------------
+        */
 
         return $this->loadRelationships(
             $queueEntry
         );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Appointment
+    |--------------------------------------------------------------------------
+    */
 
     private function validateAppointment(
         Appointment $appointment
@@ -138,8 +210,7 @@ class QueueService
         }
 
         if (
-            $appointment->status !==
-            'checked_in'
+            $appointment->status !== 'checked_in'
         ) {
             throw ValidationException::withMessages([
                 'appointment_id' =>
@@ -148,14 +219,19 @@ class QueueService
         }
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Prevent Duplicate Queue Entries
+    |--------------------------------------------------------------------------
+    */
+
     private function validateNotAlreadyQueued(
         Appointment $appointment
     ): void {
-        $alreadyQueued =
-            QueueEntry::where(
-                'appointment_id',
-                $appointment->id
-            )->exists();
+        $alreadyQueued = QueueEntry::where(
+            'appointment_id',
+            $appointment->id
+        )->exists();
 
         if ($alreadyQueued) {
             throw ValidationException::withMessages([
@@ -165,14 +241,17 @@ class QueueService
         }
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Doctor
+    |--------------------------------------------------------------------------
+    */
+
     private function validateDoctor(
         array $data
     ): void {
         if (
-            !array_key_exists(
-                'doctor_id',
-                $data
-            )
+            !array_key_exists('doctor_id', $data)
             ||
             $data['doctor_id'] === null
         ) {
@@ -195,6 +274,12 @@ class QueueService
         }
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Queue Priority
+    |--------------------------------------------------------------------------
+    */
+
     private function validatePriority(
         string $priority,
         ?string $reason
@@ -209,9 +294,7 @@ class QueueService
                 true
             )
             &&
-            empty(
-                trim($reason ?? '')
-            )
+            empty(trim($reason ?? ''))
         ) {
             throw ValidationException::withMessages([
                 'priority_reason' =>
@@ -219,6 +302,12 @@ class QueueService
             ]);
         }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load Queue Relationships
+    |--------------------------------------------------------------------------
+    */
 
     private function loadRelationships(
         QueueEntry $queueEntry
@@ -233,26 +322,29 @@ class QueueService
         return $queueEntry;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Generate Queue Number
+    |--------------------------------------------------------------------------
+    */
+
     private function generateQueueNumber(): string
     {
-        $date =
-            now()->format('Ymd');
+        $date = now()->format('Ymd');
 
-        $prefix =
-            "Q-{$date}-";
+        $prefix = "Q-{$date}-";
 
-        $lastQueue =
-            QueueEntry::whereDate(
-                'queue_date',
-                now()->toDateString()
+        $lastQueue = QueueEntry::whereDate(
+            'queue_date',
+            now()->toDateString()
+        )
+            ->where(
+                'queue_number',
+                'like',
+                "{$prefix}%"
             )
-                ->where(
-                    'queue_number',
-                    'like',
-                    "{$prefix}%"
-                )
-                ->orderByDesc('id')
-                ->first();
+            ->orderByDesc('id')
+            ->first();
 
         $nextNumber = 1;
 
