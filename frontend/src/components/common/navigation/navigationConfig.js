@@ -1,6 +1,8 @@
+
 import {
   LayoutDashboard,
   CalendarDays,
+  CalendarClock,
   Stethoscope,
   UsersRound,
   UserRound,
@@ -9,7 +11,24 @@ import {
   Settings,
 } from "lucide-react";
 
+/*
+|--------------------------------------------------------------------------
+| CURA Navigation Configuration
+|--------------------------------------------------------------------------
+|
+| Each role has its own navigation.
+| The shared Sidebar automatically reads the correct group.
+|
+*/
+
 export const navigationConfig = {
+
+  /*
+  |--------------------------------------------------------------------------
+  | Admin Navigation - UNCHANGED
+  |--------------------------------------------------------------------------
+  */
+
   admin: [
     {
       label: "Dashboard",
@@ -43,6 +62,12 @@ export const navigationConfig = {
     },
   ],
 
+  /*
+  |--------------------------------------------------------------------------
+  | Doctor Navigation - UPDATED
+  |--------------------------------------------------------------------------
+  */
+
   doctor: [
     {
       label: "Dashboard",
@@ -50,9 +75,9 @@ export const navigationConfig = {
       icon: LayoutDashboard,
     },
     {
-      label: "Patients",
-      path: "/doctor/patients",
-      icon: UserRound,
+      label: "My Schedule",
+      path: "/doctor/schedule",
+      icon: CalendarClock,
     },
     {
       label: "Appointments",
@@ -60,7 +85,12 @@ export const navigationConfig = {
       icon: CalendarDays,
     },
     {
-      label: "Queue",
+      label: "My Patients",
+      path: "/doctor/patients",
+      icon: UserRound,
+    },
+    {
+      label: "My Queue",
       path: "/doctor/queue",
       icon: ClipboardList,
     },
@@ -75,6 +105,12 @@ export const navigationConfig = {
       icon: FileText,
     },
   ],
+
+  /*
+  |--------------------------------------------------------------------------
+  | Staff Navigation - UNCHANGED
+  |--------------------------------------------------------------------------
+  */
 
   staff: [
     {
@@ -97,6 +133,5 @@ export const navigationConfig = {
       path: "/staff/queue",
       icon: ClipboardList,
     },
-
   ],
 };

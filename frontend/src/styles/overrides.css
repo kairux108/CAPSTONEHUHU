@@ -1,0 +1,39 @@
+/* =========================================================
+   LEVEL 4 — GLOBAL RESPONSIVE SAFETY NET
+   Page-specific breakpoints remain inside their own modules.
+========================================================= */
+
+@media (max-width: 900px) {
+  .cura-header-actions {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .cura-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 650px) {
+  .cura-card-header,
+  .cura-card-body {
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,89 @@
+/* ========================================
+   CURA DOCTOR PORTAL
+======================================== */
+
+/* DOCTOR - GLOBAL */
+.dashboard-doctor {
+  color: #263d3c;
+}
+
+/* ========================================
+   DOCTOR - DASHBOARD
+======================================== */
+
+/* Dashboard-specific styles here */
+
+
+/* ========================================
+   DOCTOR - PATIENTS
+======================================== */
+
+/* Patients-specific styles here */
+
+
+/* ========================================
+   DOCTOR - APPOINTMENTS
+======================================== */
+
+/* Appointments-specific styles here */
+
+
+/* ========================================
+   DOCTOR - MY SCHEDULE
+======================================== */
+
+/* Schedule-specific styles here */
+
+
+/* ========================================
+   DOCTOR - QUEUE
+======================================== */
+
+/* Queue-specific styles here */
+
+
+/* ========================================
+   DOCTOR - CONSULTATION
+======================================== */
+
+.dashboard-doctor .doctor-consultation .cura-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #dceae7;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(47, 82, 77, 0.07);
+}
+
+.dashboard-doctor .doctor-consultation .cura-card-body {
+  padding: 20px;
+}
+
+.dashboard-doctor .doctor-consultation .cura-card-body > section {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.dashboard-doctor .doctor-consultation input,
+.dashboard-doctor .doctor-consultation textarea,
+.dashboard-doctor .doctor-consultation select {
+  background: #f8fbfa;
+  color: #263d3c;
+  border: 1px solid #dceae7;
+  border-radius: 12px;
+}
+
+.dashboard-doctor .doctor-consultation input:focus,
+.dashboard-doctor .doctor-consultation textarea:focus,
+.dashboard-doctor .doctor-consultation select:focus {
+  outline: none;
+  border-color: #18a999;
+}
+
+
+/* ========================================
+   DOCTOR - REPORTS
+======================================== */
+
+/* Reports-specific styles here */

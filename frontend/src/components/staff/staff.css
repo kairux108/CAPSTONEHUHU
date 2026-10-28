@@ -1,0 +1,5313 @@
+/* =========================================================
+   LEVEL 3 — STAFF
+========================================================= */
+
+/* ---------------------------------------------------------
+   STAFF — DASHBOARD
+   LEVEL 4 responsive rules are kept in this module
+--------------------------------------------------------- */
+
+/* =========================================================
+   STAFF DASHBOARD
+========================================================= */
+
+.staff-dashboard {
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+/* =========================================================
+   STAFF SUMMARY CARDS
+========================================================= */
+
+.staff-dashboard-stats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.staff-stat-card {
+  min-height: 100px;
+}
+
+.staff-stat-card .cura-card-body {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 16px;
+}
+
+.staff-stat-content {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.staff-stat-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+}
+
+.staff-stat-icon.patients {
+  background: #e2f3ff;
+  color: #249ee9;
+}
+
+.staff-stat-icon.appointments {
+  background: #ddf7ee;
+  color: #11aa84;
+}
+
+.staff-stat-icon.waiting {
+  background: #fff2da;
+  color: #e99a17;
+}
+
+.staff-stat-icon.completed {
+  background: #eee7ff;
+  color: #8060df;
+}
+
+.staff-stat-content strong {
+  display: block;
+
+  color: #203b48;
+
+  font-size: 23px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.staff-stat-content p {
+  margin: 6px 0 0;
+
+  color: #587370;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   MAIN DASHBOARD GRID
+========================================================= */
+
+.staff-dashboard-main-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(300px, 0.95fr);
+
+  gap: 14px;
+}
+
+.staff-dashboard-large-card {
+  min-height: 285px;
+}
+
+/* =========================================================
+   CARD LINK
+========================================================= */
+
+.staff-card-link {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #149f90;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.staff-card-link:hover {
+  color: #087f73;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.staff-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+.staff-dashboard-table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.staff-dashboard-table thead {
+  background: #f1f7f6;
+}
+
+.staff-dashboard-table th {
+  padding: 10px 12px;
+
+  color: #6f8986;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.staff-dashboard-table td {
+  padding: 11px 12px;
+
+  border-bottom:
+    1px solid #edf3f2;
+
+  color: #405d59;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.staff-empty-state {
+  min-height: 190px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  color: #a0b2b0;
+
+  text-align: center;
+}
+
+.staff-empty-state p {
+  margin: 5px 0 0;
+
+  color: #405d59;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.staff-empty-state span {
+  max-width: 260px;
+
+  color: #8ca19e;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.staff-quick-actions {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.staff-quick-action {
+  min-height: 84px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 14px;
+
+  border: none;
+  border-radius: 13px;
+
+  font-family: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-quick-action:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(49, 84, 80, 0.08);
+}
+
+.staff-quick-action > div {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+}
+
+.staff-quick-action span {
+  min-width: 0;
+}
+
+.staff-quick-action strong {
+  display: block;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.staff-quick-action small {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 9px;
+  font-weight: 500;
+}
+
+/* WALK-IN */
+
+.staff-quick-action.walkin {
+  background: #e3f8f2;
+
+  color: #0a987e;
+}
+
+.staff-quick-action.walkin > div {
+  background: #cef3e7;
+}
+
+/* APPOINTMENT */
+
+.staff-quick-action.appointment {
+  background: #e9f4fd;
+
+  color: #238ed6;
+}
+
+.staff-quick-action.appointment > div {
+  background: #d7edfb;
+}
+
+/* SEARCH */
+
+.staff-quick-action.search {
+  background: #f0eaff;
+
+  color: #7555d4;
+}
+
+.staff-quick-action.search > div {
+  background: #e6dcff;
+}
+
+/* QUEUE */
+
+.staff-quick-action.queue {
+  background: #fff3df;
+
+  color: #df9415;
+}
+
+.staff-quick-action.queue > div {
+  background: #ffe9c2;
+}
+
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.staff-recent-card {
+  min-height: 210px;
+}
+
+.staff-activity-empty {
+  min-height: 120px;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark .staff-stat-content strong,
+.dark .staff-empty-state p {
+  color: #d9e6e4;
+}
+
+.dark .staff-stat-content p,
+.dark .staff-dashboard-table td {
+  color: #9bb0ad;
+}
+
+.dark .staff-dashboard-table thead {
+  background: #1c302f;
+}
+
+.dark .staff-dashboard-table th {
+  color: #89a19e;
+}
+
+.dark .staff-dashboard-table td {
+  border-color: #29413f;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .staff-dashboard-stats {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 1000px) {
+
+  .staff-dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 650px) {
+
+  .staff-dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-quick-actions {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* ---------------------------------------------------------
+   STAFF — PATIENTS
+   LEVEL 4 responsive rules are kept in this module
+--------------------------------------------------------- */
+
+/* =========================================================
+   STAFF - PATIENTS PAGE
+========================================================= */
+
+.staff-patients-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.staff-patients-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.staff-patient-stat-card {
+  min-height: 104px;
+}
+
+.staff-patient-stat-card
+.cura-card-body {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 17px;
+}
+
+.staff-patient-stat-content {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.staff-patient-stat-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+}
+
+.staff-patient-stat-icon.total {
+  background: #ddf6ed;
+  color: #0fa77e;
+}
+
+.staff-patient-stat-icon.active {
+  background: #e2f3ff;
+  color: #279ee7;
+}
+
+.staff-patient-stat-icon.appointment {
+  background: #fff1dc;
+  color: #ea991c;
+}
+
+.staff-patient-stat-icon.new {
+  background: #eee7ff;
+  color: #8062db;
+}
+
+.staff-patient-stat-content strong {
+  display: block;
+
+  color: #203b48;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.staff-patient-stat-content p {
+  margin: 5px 0 0;
+
+  color: #496763;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.staff-patient-stat-content span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #8ca19e;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.staff-patients-content-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(300px, 0.75fr);
+
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+.staff-patients-list-card,
+.staff-patient-details-card {
+  min-height: 590px;
+}
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.staff-patients-toolbar {
+  display: grid;
+
+  grid-template-columns:
+    minmax(260px, 1fr)
+    135px
+    125px
+    145px
+    80px;
+
+  gap: 9px;
+
+  margin-bottom: 14px;
+}
+
+.staff-patients-search {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 13px;
+
+  border:
+    1px solid #dfeae8;
+
+  border-radius: 10px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.76
+    );
+}
+
+.staff-patients-search svg {
+  flex-shrink: 0;
+
+  color: #718d89;
+}
+
+.staff-patients-search input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #3c5955;
+
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.staff-patients-search
+input::placeholder {
+  color: #8ca19e;
+}
+
+.staff-patients-toolbar select {
+  width: 100%;
+  height: 40px;
+
+  padding: 0 11px;
+
+  border:
+    1px solid #dfeae8;
+
+  border-radius: 10px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.76
+    );
+
+  color: #526f6c;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  outline: none;
+}
+
+.staff-patients-search:focus-within,
+.staff-patients-toolbar select:focus {
+  border-color: #18aa96;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.staff-patients-table-wrapper {
+  width: 100%;
+
+  min-height: 410px;
+
+  overflow-x: auto;
+}
+
+.staff-patients-table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.staff-patients-table thead {
+  background: #f1f7f6;
+}
+
+.staff-patients-table th {
+  padding: 11px 10px;
+
+  color: #6e8985;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+
+  text-transform: uppercase;
+}
+
+.staff-patients-table td {
+  padding: 10px;
+
+  border-bottom:
+    1px solid #edf3f2;
+
+  color: #496562;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+}
+
+.staff-patients-table tbody tr {
+  cursor: pointer;
+
+  transition: 0.15s ease;
+}
+
+.staff-patients-table
+tbody tr:hover {
+  background: #f3faf8;
+}
+
+.staff-patients-table
+tbody tr.selected {
+  background: #e6f7f3;
+
+  box-shadow:
+    inset 3px 0 0
+    #14ab97;
+}
+
+/* =========================================================
+   PATIENT NAME
+========================================================= */
+
+.staff-patient-name-cell {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.staff-patient-avatar {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #dff2ff;
+
+  color: #1e93dc;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.staff-patient-name-cell strong {
+  color: #294743;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.staff-patient-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 63px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-transform: capitalize;
+}
+
+.staff-patient-status.active {
+  background: #dcf8eb;
+
+  color: #09966f;
+}
+
+.staff-patient-status.inactive {
+  background: #ffe6e6;
+
+  color: #e55f5f;
+}
+
+.staff-patient-status.default {
+  background: #edf3f2;
+
+  color: #7c9290;
+}
+
+/* =========================================================
+   ACTION
+========================================================= */
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.staff-patients-pagination {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto
+    auto;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding-top: 14px;
+
+  color: #7f9793;
+
+  font-size: 9px;
+}
+
+.staff-patients-pagination-controls {
+  display: flex;
+
+  gap: 5px;
+}
+
+.staff-patients-pagination
+button {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid #dfeae8;
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: #617d79;
+
+  cursor: pointer;
+}
+
+.staff-patients-pagination
+button.active {
+  border-color: #12aa95;
+
+  background: #10a58f;
+
+  color: white;
+}
+
+.staff-patients-pagination
+select {
+  height: 32px;
+
+  padding: 0 10px;
+
+  border:
+    1px solid #dfeae8;
+
+  border-radius: 8px;
+
+  background: white;
+
+  color: #617d79;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   PATIENT DETAILS - EMPTY
+========================================================= */
+
+.staff-patient-details-card
+.cura-card-body {
+  height: 100%;
+}
+
+.staff-patient-details-empty {
+  min-height: 500px;
+
+  text-align: center;
+}
+
+.staff-patient-details-empty-avatar {
+  width: 76px;
+  height: 76px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 6px auto 0;
+
+  border-radius: 50%;
+
+  background: #eef2f4;
+
+  color: #a7b4c2;
+}
+
+.staff-patient-details-empty h3 {
+  margin: 12px 0 0;
+
+  color: #294743;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.staff-patient-details-empty > p {
+  margin: 5px auto 16px;
+
+  max-width: 240px;
+
+  color: #8ca19e;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   PLACEHOLDER SECTIONS
+========================================================= */
+
+.staff-patient-detail-placeholder {
+  border-top:
+    1px solid #edf3f2;
+}
+
+.staff-patient-placeholder-section {
+  padding: 16px 0;
+
+  border-bottom:
+    1px solid #edf3f2;
+
+  text-align: left;
+}
+
+.staff-patient-placeholder-section
+> div {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #6d858f;
+
+  font-size: 10px;
+}
+
+.staff-patient-placeholder-section
+i {
+  display: block;
+
+  height: 13px;
+
+  margin-top: 9px;
+
+  border-radius: 4px;
+
+  background: #edf1f3;
+}
+
+.staff-patient-placeholder-section
+i:nth-child(2) {
+  width: 80%;
+}
+
+.staff-patient-placeholder-section
+i:nth-child(3) {
+  width: 45%;
+}
+
+/* =========================================================
+   SELECTED PATIENT PROFILE
+========================================================= */
+
+.staff-patient-details-profile {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding-bottom: 15px;
+
+  border-bottom:
+    1px solid #e8f0ee;
+}
+
+.staff-patient-details-avatar {
+  width: 56px;
+  height: 56px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #dff2ff;
+
+  color: #178fd6;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.staff-patient-details-heading {
+  min-width: 0;
+}
+
+.staff-patient-details-heading h3 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #294743;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
+}
+
+.staff-patient-details-heading p {
+  margin: 4px 0 0;
+
+  color: #879e9a;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   DETAILS SECTIONS
+========================================================= */
+
+.staff-patient-detail-section {
+  padding: 15px 0;
+
+  border-bottom:
+    1px solid #eaf1ef;
+}
+
+.staff-patient-detail-section:last-child {
+  border-bottom: none;
+}
+
+.staff-patient-detail-section h4 {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0 0 10px;
+
+  color: #526f6c;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.staff-patient-detail-section
+h4 svg {
+  color: #0da28e;
+}
+
+.staff-patient-detail-rows {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.staff-patient-detail-row {
+  display: grid;
+
+  grid-template-columns:
+    110px
+    minmax(0, 1fr);
+
+  gap: 10px;
+}
+
+.staff-patient-detail-row span {
+  color: #8ca19e;
+
+  font-size: 9px;
+}
+
+.staff-patient-detail-row strong {
+  overflow-wrap: anywhere;
+
+  color: #405d59;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark
+.staff-patient-stat-content
+strong,
+.dark
+.staff-patient-name-cell
+strong,
+.dark
+.staff-patient-details-heading
+h3,
+.dark
+.staff-patient-details-empty
+h3 {
+  color: #dce8e6;
+}
+
+.dark
+.staff-patients-search,
+.dark
+.staff-patients-toolbar
+select {
+  border-color: #29413f;
+
+  background: #192929;
+
+  color: #9bb0ad;
+}
+
+.dark
+.staff-patients-table
+thead {
+  background: #172827;
+}
+
+.dark
+.staff-patients-table
+td {
+  border-color: #29413f;
+
+  color: #9db1ae;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .staff-patients-summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .staff-patients-toolbar {
+    grid-template-columns:
+      minmax(220px, 1fr)
+      repeat(
+        2,
+        minmax(110px, 1fr)
+      );
+  }
+
+}
+
+@media (max-width: 1000px) {
+
+  .staff-patients-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-patient-details-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 750px) {
+
+  .staff-patients-toolbar {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .staff-patients-search {
+    grid-column:
+      1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .staff-patients-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-patients-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-patients-search {
+    grid-column: auto;
+  }
+
+  .staff-patients-pagination {
+    grid-template-columns: 1fr;
+
+    justify-items: start;
+  }
+
+  .staff-patient-detail-row {
+    grid-template-columns: 1fr;
+
+    gap: 3px;
+  }
+}
+
+/* ---------------------------------------------------------
+   STAFF — APPOINTMENTS
+   Base styles → modal → current dashboard → final toolbar patches
+   LEVEL 4 responsive rules stay with the module.
+--------------------------------------------------------- */
+
+/* =========================================================
+   STAFF APPOINTMENTS PAGE
+========================================================= */
+
+/* =========================================
+   STAFF APPOINTMENT FILTER TOOLBAR
+========================================= */
+
+.staff-appointment-filter-card .cura-card-body {
+  padding: 18px 20px;
+}
+
+.staff-appointment-toolbar {
+  display: grid;
+  grid-template-columns:
+    minmax(280px, 1.8fr)
+    160px
+    150px
+    170px
+    170px
+    190px;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+}
+
+.staff-appointment-search,
+.staff-appointment-toolbar select,
+.staff-appointment-date,
+.staff-new-appointment-inline {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  border-radius: 16px;
+  font-size: 16px;
+}
+
+.staff-appointment-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  border: 1px solid #c8d7d2;
+  background: #f9fcfb;
+}
+
+.staff-appointment-search svg {
+  color: #7d9390;
+  flex-shrink: 0;
+}
+
+.staff-appointment-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #48615f;
+  font-size: 15px;
+}
+
+.staff-appointment-search input::placeholder {
+  color: #90a3a0;
+}
+
+.staff-appointment-toolbar select,
+.staff-appointment-date {
+  padding: 0 16px;
+  border: 1px solid #c8d7d2;
+  background: #f9fcfb;
+  color: #4e6663;
+  outline: none;
+}
+
+.staff-new-appointment-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: none;
+  background: #2b7d55;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(43, 125, 85, 0.16);
+  transition: 0.2s ease;
+}
+
+.staff-new-appointment-inline:hover {
+  background: #236b49;
+}
+
+/* Laptop */
+@media (max-width: 1280px) {
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      minmax(240px, 1.4fr)
+      145px
+      135px
+      150px
+      155px
+      170px;
+    gap: 12px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .staff-appointment-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .staff-appointment-search {
+    grid-column: 1 / -1;
+  }
+
+  .staff-new-appointment-inline {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-search,
+  .staff-new-appointment-inline {
+    grid-column: auto;
+  }
+}
+
+/* SEARCH - WIDE */
+
+.staff-appointment-search {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 44px !important;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 0 14px !important;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dce7e1;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #72867c;
+}
+
+.staff-appointment-search input {
+  width: 100%;
+  min-width: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  font-size: 13px;
+  color: #30483e;
+}
+
+/* DATE */
+
+.staff-appointment-date {
+  width: 155px !important;
+  height: 44px !important;
+
+  padding: 0 10px !important;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dce7e1;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  font-size: 12px;
+  color: #456157;
+
+  outline: none;
+}
+
+/* FOCUS */
+
+.staff-appointment-search:focus-within,
+.staff-appointment-date:focus {
+  border-color: #78aa8e;
+  box-shadow: 0 0 0 3px rgba(57, 128, 87, 0.08);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      minmax(300px, 2fr)
+      120px
+      115px
+      135px
+      150px !important;
+
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 850px) {
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .staff-appointment-search {
+    grid-column: 1 / -1;
+  }
+
+  .staff-appointment-date {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .staff-appointment-search {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.staff-appointments-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.staff-appointment-stat-card {
+  min-height: 100px;
+}
+
+.staff-appointment-stat-card
+.cura-card-body {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 16px;
+}
+
+.staff-appointment-stat-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+}
+
+.staff-appointment-stat-icon.today {
+  background: #ddf6ed;
+  color: #0fa77e;
+}
+
+.staff-appointment-stat-icon.progress {
+  background: #e2f3ff;
+  color: #249ee7;
+}
+
+.staff-appointment-stat-icon.completed {
+  background: #ddf7eb;
+  color: #0ca977;
+}
+
+.staff-appointment-stat-icon.cancelled {
+  background: #ffe7e7;
+  color: #ef6262;
+}
+
+.staff-appointment-stat-content strong {
+  display: block;
+
+  color: #203b48;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.staff-appointment-stat-content p {
+  margin: 6px 0 0;
+
+  color: #526f6c;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FILTER CARD
+========================================================= */
+
+.staff-appointment-filter-card
+.cura-card-body {
+  padding: 10px;
+}
+
+.staff-appointment-toolbar {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(250px, 1fr)
+    130px
+    160px
+    145px
+    145px
+    70px;
+
+  gap: 9px;
+
+  align-items: center;
+}
+
+.staff-appointment-search {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 0 12px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.75);
+}
+
+.staff-appointment-search svg {
+  color: #718d89;
+}
+
+.staff-appointment-search input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #3f5b58;
+
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.staff-appointment-toolbar
+select,
+.staff-appointment-date {
+  width: 100%;
+  height: 40px;
+
+  padding: 0 10px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.75);
+
+  color: #526f6c;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  outline: none;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.staff-appointment-main-grid {
+  display: grid;
+
+  grid-template-columns:
+    230px
+    minmax(0, 1fr)
+    310px;
+
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+.staff-appointment-calendar-card,
+.staff-appointment-list-card,
+.staff-appointment-detail-card {
+  min-height: 540px;
+}
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+.staff-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 14px;
+}
+
+.staff-calendar-header h3 {
+  margin: 0;
+
+  color: #294743;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-calendar-header > div {
+  display: flex;
+
+  gap: 4px;
+}
+
+.staff-calendar-header button {
+  width: 27px;
+  height: 27px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #dfeae8;
+  border-radius: 8px;
+
+  background: white;
+
+  color: #657f7c;
+
+  cursor: pointer;
+}
+
+.staff-calendar-weekdays,
+.staff-calendar-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, 1fr);
+
+  gap: 4px;
+}
+
+.staff-calendar-weekdays {
+  margin-bottom: 6px;
+}
+
+.staff-calendar-weekdays span {
+  color: #879d9a;
+
+  font-size: 8px;
+
+  text-align: center;
+}
+
+.staff-calendar-grid button {
+  position: relative;
+
+  aspect-ratio: 1;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #526f6c;
+
+  font-size: 9px;
+
+  cursor: pointer;
+}
+
+.staff-calendar-grid button:hover {
+  background: #ecf7f4;
+}
+
+.staff-calendar-grid button.active {
+  background: #10a58f;
+
+  color: white;
+
+  font-weight: 800;
+}
+
+.staff-calendar-grid button i {
+  position: absolute;
+
+  bottom: 3px;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #21aee7;
+}
+
+.staff-calendar-grid
+button.active i {
+  background: white;
+}
+
+.staff-calendar-quick {
+  margin-top: 20px;
+
+  padding-top: 15px;
+
+  border-top: 1px solid #e7efed;
+}
+
+.staff-calendar-quick h4 {
+  margin: 0 0 10px;
+
+  color: #294743;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.staff-calendar-quick button {
+  width: 100%;
+  height: 34px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #e3f7f1;
+
+  color: #0a987f;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.staff-appointment-table-wrapper {
+  width: 100%;
+
+  min-height: 410px;
+
+  overflow-x: auto;
+}
+
+.staff-appointment-table thead {
+  background: #f1f7f6;
+}
+
+.staff-appointment-table th {
+  padding: 10px;
+
+  color: #718986;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.staff-appointment-table td {
+  padding: 9px 10px;
+
+  border-bottom:
+    1px solid #edf3f2;
+
+  color: #496562;
+
+  font-size: 9px;
+
+  vertical-align: middle;
+}
+
+.staff-appointment-table
+tbody tr {
+  cursor: pointer;
+}
+
+.staff-appointment-table
+tbody tr:hover {
+  background: #f5fbf9;
+}
+
+.staff-appointment-table
+tbody tr.selected {
+  background: #e7f8f4;
+
+  box-shadow:
+    inset 3px 0 0 #12aa95;
+}
+
+/* PATIENT */
+
+.staff-appointment-patient {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.staff-appointment-avatar {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #dff2ff;
+
+  color: #1d93dc;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.staff-appointment-patient
+strong {
+  display: block;
+
+  color: #294743;
+
+  font-size: 9px;
+}
+
+.staff-appointment-patient
+span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8ba09d;
+
+  font-size: 8px;
+}
+
+/* TYPE */
+
+.staff-appointment-type {
+  display: inline-flex;
+
+  padding: 5px 8px;
+
+  border-radius: 7px;
+
+  background: #f0f4f6;
+
+  color: #516d69;
+
+  font-size: 8px;
+}
+
+/* STATUS */
+
+.staff-appointment-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 64px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  text-transform: capitalize;
+}
+
+.staff-appointment-status.completed {
+  background: #dcf8eb;
+  color: #09956d;
+}
+
+.staff-appointment-status.progress {
+  background: #dff0ff;
+  color: #168bd2;
+}
+
+.staff-appointment-status.waiting {
+  background: #fff0c9;
+  color: #d88d10;
+}
+
+.staff-appointment-status.scheduled {
+  background: #e1f2ff;
+  color: #148dd6;
+}
+
+.staff-appointment-status.cancelled {
+  background: #ffe5e5;
+  color: #e75e5e;
+}
+
+.staff-appointment-status.default {
+  background: #edf3f2;
+  color: #718986;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.staff-appointment-pagination {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding-top: 13px;
+
+  color: #809794;
+
+  font-size: 9px;
+}
+
+.staff-appointment-pagination
+> div {
+  display: flex;
+
+  gap: 4px;
+}
+
+.staff-appointment-pagination
+button {
+  width: 29px;
+  height: 29px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #dfeae8;
+  border-radius: 7px;
+
+  background: white;
+
+  color: #617c79;
+
+  cursor: pointer;
+}
+
+.staff-appointment-pagination
+button.active {
+  background: #0fa58f;
+
+  color: white;
+}
+
+.staff-appointment-pagination
+select {
+  height: 30px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 7px;
+
+  color: #617c79;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   DETAILS PANEL
+========================================================= */
+
+.staff-appointment-detail-empty {
+  min-height: 455px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #9aacab;
+
+  text-align: center;
+}
+
+.staff-appointment-detail-empty
+h3 {
+  margin: 10px 0 0;
+
+  color: #405d59;
+
+  font-size: 12px;
+}
+
+.staff-appointment-detail-empty
+p {
+  max-width: 220px;
+
+  margin: 5px 0 0;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+/* PROFILE */
+
+.staff-appointment-detail-profile {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding-bottom: 17px;
+
+  border-bottom:
+    1px solid #e8f0ee;
+}
+
+.staff-appointment-detail-avatar {
+  width: 55px;
+  height: 55px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #dff2ff;
+
+  color: #198fd6;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.staff-appointment-detail-profile
+h3 {
+  margin: 0;
+
+  color: #294743;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-appointment-detail-profile
+p {
+  margin: 4px 0 0;
+
+  color: #879e9a;
+
+  font-size: 9px;
+}
+
+/* DETAILS */
+
+.staff-appointment-detail-list {
+  padding-top: 12px;
+}
+
+.staff-appointment-detail-row {
+  display: grid;
+
+  grid-template-columns:
+    105px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  padding: 11px 0;
+
+  border-bottom:
+    1px solid #edf3f2;
+}
+
+.staff-appointment-detail-row
+span {
+  color: #879d9a;
+
+  font-size: 9px;
+}
+
+.staff-appointment-detail-row
+strong {
+  color: #405d59;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* DETAIL ACTIONS */
+
+.staff-appointment-detail-actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+.staff-appointment-detail-actions
+button {
+  min-height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.staff-appointment-detail-actions
+.complete {
+  background: #e1f8f0;
+
+  color: #07966e;
+}
+
+.staff-appointment-detail-actions
+.reschedule {
+  background: #e5f3ff;
+
+  color: #138cd5;
+}
+
+.staff-appointment-detail-actions
+.cancel {
+  background: #ffe8e8;
+
+  color: #df5f5f;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark
+.staff-appointment-stat-content
+strong,
+.dark
+.staff-calendar-header h3,
+.dark
+.staff-appointment-patient
+strong,
+.dark
+.staff-appointment-detail-profile
+h3 {
+  color: #dce8e6;
+}
+
+.dark
+.staff-appointment-search,
+.dark
+.staff-appointment-toolbar
+select,
+.dark
+.staff-appointment-date {
+  border-color: #29413f;
+
+  background: #192929;
+
+  color: #9bb0ad;
+}
+
+.dark
+.staff-appointment-table
+thead {
+  background: #172827;
+}
+
+.dark
+.staff-appointment-table
+td {
+  border-color: #29413f;
+
+  color: #9db1ae;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 1300px) {
+
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+
+  .staff-appointment-main-grid {
+    grid-template-columns:
+      220px
+      minmax(0, 1fr);
+  }
+
+  .staff-appointment-detail-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1000px) {
+
+  .staff-appointments-summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .staff-appointment-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-detail-card {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-search {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .staff-appointments-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-pagination {
+    grid-template-columns: 1fr;
+
+    justify-items: start;
+  }
+
+  .staff-appointment-detail-row {
+    grid-template-columns: 1fr;
+
+    gap: 3px;
+  }
+}
+
+/* =========================================================
+   STAFF APPOINTMENT MODAL
+========================================================= */
+
+.staff-appointment-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.staff-appointment-modal {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+}
+
+.staff-appointment-modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e8eee9;
+}
+
+.staff-appointment-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #173a2b;
+}
+
+.staff-appointment-modal-header p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: #728078;
+}
+
+.staff-appointment-modal-header > button {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: #f3f7f4;
+  color: #456154;
+}
+
+.staff-appointment-modal-body {
+  padding: 22px 24px;
+  overflow-y: auto;
+}
+
+.staff-appointment-form-section {
+  margin-bottom: 24px;
+}
+
+.staff-appointment-form-section h3 {
+  margin: 0 0 13px;
+  color: #244b39;
+  font-size: 15px;
+}
+
+.staff-appointment-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.staff-appointment-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #44564d;
+}
+
+.staff-appointment-form-grid label.full {
+  grid-column: 1 / -1;
+}
+
+.staff-appointment-form-grid input,
+.staff-appointment-form-grid select,
+.staff-appointment-form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d9e4dd;
+  border-radius: 10px;
+  background: #fff;
+  padding: 11px 12px;
+  font: inherit;
+  font-weight: 400;
+  color: #1f352a;
+  outline: none;
+}
+
+.staff-appointment-form-grid input:focus,
+.staff-appointment-form-grid select:focus,
+.staff-appointment-form-grid textarea:focus {
+  border-color: #70a989;
+}
+
+.staff-appointment-patient-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  height: 44px;
+  border: 1px solid #d9e4dd;
+  border-radius: 11px;
+  background: #fff;
+}
+
+.staff-appointment-patient-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.staff-appointment-patient-results {
+  margin-top: 8px;
+  border: 1px solid #e1e9e3;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.staff-appointment-patient-results button {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #edf2ee;
+  background: #fff;
+  padding: 12px 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.staff-appointment-patient-results button:last-child {
+  border-bottom: none;
+}
+
+.staff-appointment-patient-results button:hover {
+  background: #f5faf7;
+}
+
+.staff-appointment-patient-results strong,
+.staff-appointment-patient-results span {
+  display: block;
+}
+
+.staff-appointment-patient-results strong {
+  color: #244b39;
+}
+
+.staff-appointment-patient-results span {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #7b887f;
+}
+
+.staff-appointment-selected-patient {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 15px;
+  border: 1px solid #d7e8dc;
+  border-radius: 12px;
+  background: #f3faf5;
+}
+
+.staff-appointment-selected-patient strong,
+.staff-appointment-selected-patient span {
+  display: block;
+}
+
+.staff-appointment-selected-patient span {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #708078;
+}
+
+.staff-appointment-selected-patient button,
+.staff-appointment-register-toggle {
+  border: none;
+  background: transparent;
+  color: #27734d;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.staff-appointment-register-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 0;
+}
+
+.staff-appointment-register-patient {
+  margin-top: 14px;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  background: #e9f5ed;
+  color: #216944;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.staff-appointment-form-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #748178;
+}
+
+.staff-appointment-form-error {
+  margin-bottom: 16px;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: #fff1f1;
+  color: #b42318;
+  font-size: 13px;
+}
+
+.staff-appointment-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid #e8eee9;
+}
+
+.staff-appointment-modal-footer button {
+  min-width: 110px;
+  height: 42px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.staff-appointment-modal-footer .secondary {
+  border: 1px solid #dce5df;
+  background: #fff;
+  color: #526158;
+}
+
+.staff-appointment-modal-footer .primary {
+  border: none;
+  background: #2d7a51;
+  color: #fff;
+}
+
+.staff-appointment-reason {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 11px;
+  background: #f7faf8;
+}
+
+.staff-appointment-reason span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #758279;
+}
+
+.staff-appointment-reason p {
+  margin: 0;
+  line-height: 1.55;
+  color: #30463a;
+}
+
+.staff-appointment-next-step {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 11px;
+  background: #edf8f1;
+  color: #276546;
+}
+
+.staff-appointment-next-step p {
+  margin: 3px 0 0;
+  font-size: 12px;
+}
+
+@media (max-width: 650px) {
+  .staff-appointment-modal-backdrop {
+    padding: 10px;
+  }
+
+  .staff-appointment-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-form-grid label.full {
+    grid-column: auto;
+  }
+}
+
+/* =========================================================
+   CURA STAFF APPOINTMENTS - NEW DASHBOARD DESIGN
+========================================================= */
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.staff-appointments-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.staff-appointment-stat-card .cura-card-body {
+  padding: 18px !important;
+}
+
+.staff-appointment-stat-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.staff-appointment-stat-icon {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+}
+
+.staff-appointment-stat-icon.today {
+  color: #15845c;
+  background: #e5f7ef;
+}
+
+.staff-appointment-stat-icon.scheduled {
+  color: #2781c5;
+  background: #e7f3fb;
+}
+
+.staff-appointment-stat-icon.checked {
+  color: #178258;
+  background: #e7f6ed;
+}
+
+.staff-appointment-stat-icon.walkin {
+  color: #c88616;
+  background: #fff5dc;
+}
+
+.staff-appointment-stat-icon.online {
+  color: #7958cb;
+  background: #f0eafb;
+}
+
+.staff-appointment-stat-info {
+  min-width: 0;
+}
+
+.staff-appointment-stat-info strong {
+  display: block;
+  margin: 2px 0 1px;
+  font-size: 27px;
+  line-height: 1;
+  color: #193c31;
+}
+
+.staff-appointment-stat-label {
+  display: block;
+  font-size: 13px;
+  color: #5e7067;
+  font-weight: 600;
+}
+
+.staff-appointment-stat-info small {
+  display: block;
+  margin-top: 6px;
+  color: #8a9890;
+  font-size: 11px;
+}
+
+/* =========================================================
+   FILTER BAR
+========================================================= */
+
+.staff-appointment-filter-card .cura-card-body {
+  padding: 13px 16px !important;
+}
+
+.staff-appointment-toolbar {
+  display: grid;
+  grid-template-columns:
+    auto
+    minmax(240px, 1.7fr)
+    minmax(130px, .8fr)
+    minmax(130px, .8fr)
+    minmax(145px, .9fr)
+    minmax(150px, .95fr)
+    auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.staff-appointment-search {
+  height: 44px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 13px;
+  box-sizing: border-box;
+  border: 1px solid #dce7e1;
+  border-radius: 11px;
+  background: #fff;
+  color: #789087;
+}
+
+.staff-appointment-search input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+}
+
+.staff-appointment-toolbar select,
+.staff-appointment-date {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: 1px solid #dce7e1;
+  border-radius: 11px;
+  background: #fff;
+  color: #456157;
+  outline: none;
+}
+
+/* =========================================================
+   MAIN 3 COLUMN LAYOUT
+========================================================= */
+
+.staff-appointment-main-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(245px, 0.85fr)
+    minmax(520px, 1.9fr)
+    minmax(300px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.staff-appointment-calendar-card,
+.staff-appointment-list-card,
+.staff-appointment-detail-card {
+  min-width: 0;
+}
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+.staff-appointment-calendar-card .cura-card-body {
+  padding: 18px !important;
+}
+
+.staff-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.staff-calendar-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #213f35;
+}
+
+.staff-calendar-header > div {
+  display: flex;
+  gap: 6px;
+}
+
+.staff-calendar-header button {
+  width: 31px;
+  height: 31px;
+  border: 1px solid #e0e8e3;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #51685e;
+  cursor: pointer;
+}
+
+.staff-calendar-weekdays,
+.staff-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.staff-calendar-weekdays {
+  margin-bottom: 7px;
+}
+
+.staff-calendar-weekdays span {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #85958d;
+}
+
+.staff-calendar-grid button {
+  position: relative;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #324d42;
+  cursor: pointer;
+}
+
+.staff-calendar-grid button:hover {
+  background: #edf6f1;
+}
+
+.staff-calendar-grid button.active {
+  background: #297a55;
+  color: #fff;
+  font-weight: 700;
+}
+
+.staff-calendar-grid button i {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #36a46f;
+}
+
+.staff-calendar-grid button.active i {
+  background: #fff;
+}
+
+.staff-calendar-quick {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e9efeb;
+}
+
+.staff-calendar-quick h4 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: #61746b;
+}
+
+.staff-calendar-quick > button {
+  width: 100%;
+  height: 38px;
+  border: 1px solid #bfd6c8;
+  border-radius: 9px;
+  background: #fff;
+  color: #26714e;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =========================================================
+   APPOINTMENT TABLE
+========================================================= */
+
+.staff-appointment-list-card .cura-card-body {
+  padding: 0 !important;
+}
+
+.staff-appointment-table-wrapper {
+  overflow-x: auto;
+}
+
+.staff-appointment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staff-appointment-table th {
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5ece8;
+  background: #f8faf9;
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #76867d;
+}
+
+.staff-appointment-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #edf1ee;
+  font-size: 12px;
+  color: #41584d;
+}
+
+.staff-appointment-table tbody tr {
+  cursor: pointer;
+  transition: .16s ease;
+}
+
+.staff-appointment-table tbody tr:hover {
+  background: #f7fbf8;
+}
+
+.staff-appointment-table tbody tr.selected {
+  background: #edf8f2;
+}
+
+.staff-appointment-patient {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.staff-appointment-avatar {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #daf0e4;
+  color: #287153;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.staff-appointment-patient strong,
+.staff-appointment-patient span {
+  display: block;
+}
+
+.staff-appointment-patient strong {
+  color: #213f35;
+  font-size: 12px;
+}
+
+.staff-appointment-patient span {
+  margin-top: 2px;
+  color: #87958e;
+  font-size: 10px;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.staff-appointment-type,
+.staff-appointment-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 25px;
+  padding: 0 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.staff-appointment-type {
+  background: #fff3d5;
+  color: #aa7114;
+}
+
+.staff-appointment-status.scheduled {
+  background: #e8f3ff;
+  color: #2877b7;
+}
+
+.staff-appointment-status.progress {
+  background: #e4f6eb;
+  color: #238053;
+}
+
+.staff-appointment-status.completed {
+  background: #e6f6ec;
+  color: #1e7a4e;
+}
+
+.staff-appointment-status.cancelled {
+  background: #feeaea;
+  color: #c24444;
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.staff-appointment-detail-card .cura-card-body {
+  padding: 18px !important;
+}
+
+.staff-appointment-detail-profile {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 11px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #e8eeea;
+}
+
+.staff-appointment-detail-avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #d9f0e4;
+  color: #287553;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.staff-appointment-detail-profile h3 {
+  margin: 0;
+  color: #183c30;
+  font-size: 15px;
+}
+
+.staff-appointment-detail-profile p {
+  margin: 4px 0 0;
+  color: #8a9891;
+  font-size: 11px;
+}
+
+.staff-appointment-detail-list {
+  padding: 13px 0;
+}
+
+.staff-appointment-detail-row {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  gap: 8px;
+  padding: 7px 0;
+}
+
+.staff-appointment-detail-row span {
+  color: #7f8d86;
+  font-size: 11px;
+}
+
+.staff-appointment-detail-row strong {
+  color: #344d42;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.staff-appointment-reason {
+  margin-top: 5px;
+  padding: 13px;
+  border-radius: 10px;
+  background: #f5f9f6;
+}
+
+.staff-appointment-reason span {
+  display: block;
+  margin-bottom: 6px;
+  color: #78877f;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.staff-appointment-reason p {
+  margin: 0;
+  color: #354e42;
+  line-height: 1.5;
+  font-size: 12px;
+}
+
+.staff-appointment-detail-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.staff-appointment-detail-actions button {
+  min-height: 39px;
+  padding: 0 10px;
+  border-radius: 9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.staff-appointment-detail-actions .complete {
+  border: none;
+  background: #2b7d55;
+  color: #fff;
+}
+
+.staff-appointment-detail-actions .reschedule {
+  border: 1px solid #bcd4c5;
+  background: #fff;
+  color: #347154;
+}
+
+.staff-appointment-detail-actions .cancel {
+  border: 1px solid #f0bcbc;
+  background: #fff7f7;
+  color: #bb4242;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 1450px) {
+  .staff-appointment-main-grid {
+    grid-template-columns:
+      260px
+      minmax(480px, 1fr)
+      310px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .staff-appointments-summary {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .staff-appointment-toolbar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .staff-appointment-search {
+    grid-column: span 2;
+  }
+
+  .staff-appointment-main-grid {
+    grid-template-columns: 280px 1fr;
+  }
+
+  .staff-appointment-detail-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 800px) {
+  .staff-appointments-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .staff-appointment-search {
+    grid-column: 1 / -1;
+  }
+
+  .staff-appointment-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-detail-card {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .staff-appointments-summary,
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-appointment-search {
+    grid-column: auto;
+  }
+}
+.staff-appointments-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.staff-appointment-stat-icon.online {
+  color: #7357c9;
+  background: #f0eafb;
+
+}
+
+/* =========================================================
+   STAFF APPOINTMENT FILTERS - EVEN FINAL LAYOUT
+========================================================= */
+
+.staff-appointment-filter-card .cura-card-body {
+  padding: 12px 16px !important;
+}
+
+/* Use flex so everything aligns perfectly */
+/* =========================================================
+ SEARCH - TAKES REMAINING SPACE
+========================================================= */
+
+.staff-appointment-search {
+  flex: 1 1 auto !important;
+  min-width: 280px !important;
+  height: 44px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+
+  padding: 0 14px !important;
+
+  border: 1px solid #d8e4de !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+
+  box-sizing: border-box !important;
+}
+
+.staff-appointment-search svg {
+  flex: 0 0 auto;
+  color: #71877d;
+}
+
+.staff-appointment-search input {
+  flex: 1;
+  min-width: 0;
+
+  height: 100%;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  font-size: 13px !important;
+  line-height: 1 !important;
+  color: #344b41 !important;
+}
+
+.staff-appointment-search input::placeholder {
+  color: #98a69f;
+}
+
+/* =========================================================
+   DATE
+========================================================= */
+
+.staff-appointment-date {
+  flex: 0 0 170px !important;
+
+  width: 170px !important;
+  height: 44px !important;
+
+  margin: 0 !important;
+  padding: 0 13px !important;
+
+  border: 1px solid #d8e4de !important;
+  border-radius: 12px !important;
+
+  background: #ffffff !important;
+
+  font-size: 13px !important;
+  line-height: 44px !important;
+  color: #455f55 !important;
+
+  box-sizing: border-box !important;
+  outline: none !important;
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.staff-appointment-search:focus-within,
+.staff-appointment-date:focus {
+  border-color: #79a98d !important;
+  box-shadow: 0 0 0 2px rgba(45, 128, 89, 0.08) !important;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 650px) {
+  .staff-appointment-search,
+  .staff-appointment-date {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+}
+
+/* =========================================================
+   STAFF APPOINTMENT TOP ACTION - TIGHT SPACING
+========================================================= */
+
+.staff-appointments-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* =========================================================
+  /* =========================================================
+   APPOINTMENT TOOLBAR - FIT EVERYTHING
+========================================================= */
+
+.staff-appointment-filter-card .cura-card-body {
+  padding: 12px 14px !important;
+}
+
+.staff-appointment-toolbar {
+  width: 100% !important;
+  min-width: 0 !important;
+
+  display: grid !important;
+
+  grid-template-columns:
+    minmax(220px, 1.7fr)
+    minmax(110px, 0.72fr)
+    minmax(110px, 0.72fr)
+    minmax(130px, 0.85fr)
+    minmax(145px, 1fr)
+    minmax(155px, 1.05fr) !important;
+
+  gap: 10px !important;
+  align-items: center !important;
+
+  box-sizing: border-box !important;
+}
+
+/* ALL ITEMS MUST BE ALLOWED TO SHRINK */
+
+.staff-appointment-search,
+.staff-appointment-toolbar select,
+.staff-appointment-date,
+.staff-new-appointment-inline {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 46px !important;
+
+  box-sizing: border-box !important;
+}
+
+/* SEARCH */
+
+.staff-appointment-search {
+  padding: 0 13px !important;
+}
+
+/* SELECTS */
+
+.staff-appointment-toolbar select {
+  padding: 0 36px 0 13px !important;
+  font-size: 13px !important;
+}
+
+/* DATE */
+
+.staff-appointment-date {
+  padding: 0 12px !important;
+  font-size: 13px !important;
+}
+
+/* ADD APPOINTMENT BUTTON */
+
+.staff-new-appointment-inline {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 7px !important;
+
+  padding: 0 12px !important;
+
+  border: none !important;
+  border-radius: 12px !important;
+
+  background: #2b7d55 !important;
+  color: #ffffff !important;
+
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+
+  white-space: nowrap !important;
+
+  overflow: visible !important;
+  cursor: pointer;
+}
+
+.staff-new-appointment-inline svg {
+  flex-shrink: 0;
+}
+
+/* SMALLER LAPTOP */
+
+@media (max-width: 1150px) {
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      minmax(220px, 1.5fr)
+      110px
+      110px
+      130px
+      145px
+      155px !important;
+
+    gap: 8px !important;
+  }
+}
+
+/* TABLET */
+
+@media (max-width: 950px) {
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .staff-appointment-search {
+    grid-column: span 2;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+  .staff-appointment-toolbar {
+    grid-template-columns:
+      1fr 1fr !important;
+  }
+
+  .staff-appointment-search,
+  .staff-new-appointment-inline {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-appointment-toolbar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .staff-appointment-search,
+  .staff-new-appointment-inline {
+    grid-column: auto;
+  }
+}
+
+/* ---------------------------------------------------------
+   STAFF — QUEUE
+   LEVEL 4 responsive rules are kept in this module
+--------------------------------------------------------- */
+
+/* =========================================================
+   STAFF QUEUE PAGE
+========================================================= */
+
+.staff-queue-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.staff-queue-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.staff-queue-stat-card {
+  min-height: 100px;
+}
+
+.staff-queue-stat-card
+.cura-card-body {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+
+  padding: 16px;
+}
+
+.staff-queue-stat-content {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+.staff-queue-stat-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 15px;
+}
+
+.staff-queue-stat-icon.total {
+  background: #ddf6ed;
+  color: #0fa77e;
+}
+
+.staff-queue-stat-icon.waiting {
+  background: #e2f3ff;
+  color: #269ee8;
+}
+
+.staff-queue-stat-icon.consulting {
+  background: #fff0da;
+  color: #e99a17;
+}
+
+.staff-queue-stat-icon.completed {
+  background: #eee7ff;
+  color: #805fdf;
+}
+
+.staff-queue-stat-content strong {
+  display: block;
+
+  color: #203b48;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  line-height: 1;
+}
+
+.staff-queue-stat-content p {
+  margin: 6px 0 0;
+
+  color: #526f6c;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.staff-queue-stat-content span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #8da29f;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.staff-queue-main-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.7fr)
+    minmax(300px, 0.65fr);
+
+  gap: 14px;
+
+  align-items: stretch;
+}
+
+.staff-queue-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.staff-queue-controls-card
+.cura-card-body {
+  padding: 0;
+}
+
+.staff-queue-controls {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(220px, 1fr)
+    145px;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 9px 12px;
+}
+
+/* TABS */
+
+.staff-queue-tabs {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.staff-queue-tabs button {
+  min-height: 40px;
+
+  padding: 0 18px;
+
+  border: none;
+  border-bottom:
+    2px solid transparent;
+
+  background: transparent;
+
+  color: #647f7c;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.staff-queue-tabs button.active {
+  border-color: #10a58f;
+
+  color: #0b9a84;
+}
+
+/* SEARCH */
+
+.staff-queue-search {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 13px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,0.75);
+}
+
+.staff-queue-search svg {
+  color: #718d89;
+}
+
+.staff-queue-search input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #3f5b58;
+
+  font-family: inherit;
+  font-size: 10px;
+}
+
+/* FILTER */
+
+.staff-queue-filter {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 0 10px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 10px;
+
+  background:
+    rgba(255,255,255,0.75);
+
+  color: #6c8783;
+}
+
+.staff-queue-filter select {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #526f6c;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   QUEUE TABLE
+========================================================= */
+
+.staff-queue-list-card {
+  min-height: 530px;
+}
+
+.staff-queue-live {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #def8ed;
+
+  color: #09956f;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.staff-queue-live i {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #0caf82;
+}
+
+.staff-queue-table-wrapper {
+  width: 100%;
+
+  min-height: 390px;
+
+  overflow-x: auto;
+}
+
+.staff-queue-table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.staff-queue-table thead {
+  background: #f1f7f6;
+}
+
+.staff-queue-table th {
+  padding: 10px;
+
+  color: #708986;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.staff-queue-table td {
+  padding: 10px;
+
+  border-bottom:
+    1px solid #edf3f2;
+
+  color: #496562;
+
+  font-size: 9px;
+
+  vertical-align: middle;
+}
+
+.staff-queue-table
+tbody tr {
+  cursor: pointer;
+}
+
+.staff-queue-table
+tbody tr:hover {
+  background: #f4faf9;
+}
+
+.staff-queue-table
+tbody tr.selected {
+  background: #e6f8f3;
+
+  box-shadow:
+    inset 3px 0 0 #11aa95;
+}
+
+/* QUEUE NUMBER */
+
+.staff-queue-number {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 7px;
+
+  background: #edf2f6;
+
+  color: #405d59;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* PATIENT */
+
+.staff-queue-patient {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.staff-queue-avatar {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #ddf2fb;
+
+  color: #158dcf;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.staff-queue-patient strong {
+  display: block;
+
+  color: #294743;
+
+  font-size: 9px;
+}
+
+.staff-queue-patient span {
+  display: block;
+
+  margin-top: 2px;
+
+  color: #8b9f9c;
+
+  font-size: 8px;
+}
+
+/* TYPE */
+
+.staff-queue-type {
+  display: inline-flex;
+
+  padding: 5px 9px;
+
+  border-radius: 8px;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.staff-queue-type.walkin {
+  background: #dff8ef;
+
+  color: #099576;
+}
+
+.staff-queue-type.scheduled {
+  background: #dff1ff;
+
+  color: #158ed6;
+}
+
+/* STATUS */
+
+.staff-queue-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 68px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  text-transform: capitalize;
+}
+
+.staff-queue-status.waiting {
+  background: #fff0cf;
+
+  color: #d48b0e;
+}
+
+.staff-queue-status.consulting {
+  background: #ffedc5;
+
+  color: #d87900;
+}
+
+.staff-queue-status.completed {
+  background: #ddf8ec;
+
+  color: #07986f;
+}
+
+.staff-queue-status.scheduled {
+  background: #def1ff;
+
+  color: #128dd7;
+}
+
+.staff-queue-status.default {
+  background: #edf3f2;
+
+  color: #718986;
+}
+
+/* ACTION */
+
+.staff-queue-more {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #dfebe9;
+  border-radius: 8px;
+
+  background: white;
+
+  color: #718986;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.staff-queue-empty {
+  min-height: 340px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #95a8a5;
+
+  text-align: center;
+}
+
+.staff-queue-empty p {
+  margin: 9px 0 0;
+
+  color: #496562;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-queue-empty span {
+  max-width: 240px;
+
+  margin-top: 4px;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.staff-queue-pagination {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding-top: 14px;
+
+  color: #809794;
+
+  font-size: 9px;
+}
+
+.staff-queue-pagination
+> div {
+  display: flex;
+
+  gap: 5px;
+}
+
+.staff-queue-pagination button {
+  width: 29px;
+  height: 29px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #dfeae8;
+  border-radius: 7px;
+
+  background: white;
+
+  color: #617c79;
+
+  cursor: pointer;
+}
+
+.staff-queue-pagination
+button.active {
+  background: #0fa58f;
+
+  color: white;
+}
+
+.staff-queue-pagination select {
+  height: 30px;
+
+  border: 1px solid #dfeae8;
+  border-radius: 7px;
+
+  color: #617c79;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.staff-queue-detail-card {
+  min-height: 590px;
+}
+
+.staff-queue-detail-empty {
+  min-height: 500px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #9aacab;
+
+  text-align: center;
+}
+
+.staff-queue-detail-empty h3 {
+  margin: 10px 0 0;
+
+  color: #405d59;
+
+  font-size: 12px;
+}
+
+.staff-queue-detail-empty p {
+  max-width: 220px;
+
+  margin: 5px 0 0;
+
+  font-size: 9px;
+}
+
+/* PROFILE */
+
+.staff-queue-detail-profile {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding-bottom: 15px;
+
+  border-bottom:
+    1px solid #e8f0ee;
+}
+
+.staff-queue-detail-avatar {
+  width: 56px;
+  height: 56px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #dff2ff;
+
+  color: #168fd6;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.staff-queue-detail-profile h3 {
+  margin: 0;
+
+  color: #294743;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.staff-queue-detail-profile p {
+  margin: 4px 0 0;
+
+  color: #879d9a;
+
+  font-size: 9px;
+}
+
+/* DETAIL SECTION */
+
+.staff-queue-detail-section {
+  padding: 14px 0;
+
+  border-bottom:
+    1px solid #eaf1ef;
+}
+
+.staff-queue-detail-section h4 {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0 0 10px;
+
+  color: #0b9e89;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.staff-queue-detail-row {
+  display: grid;
+
+  grid-template-columns:
+    105px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  padding: 5px 0;
+}
+
+.staff-queue-detail-row span {
+  color: #879d9a;
+
+  font-size: 9px;
+}
+
+.staff-queue-detail-row strong {
+  overflow-wrap: anywhere;
+
+  color: #405d59;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.staff-queue-notes {
+  margin: 0;
+
+  color: #607b78;
+
+  font-size: 9px;
+
+  line-height: 1.6;
+}
+
+/* ACTIONS */
+
+.staff-queue-detail-actions {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+
+  margin-top: 16px;
+}
+
+.staff-queue-detail-actions button {
+  min-height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border: none;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.staff-queue-detail-actions
+.transfer {
+  background: #e5f3ff;
+
+  color: #138cd5;
+}
+
+.staff-queue-detail-actions
+.complete {
+  background: #e0f8ef;
+
+  color: #07966e;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.dark
+.staff-queue-stat-content
+strong,
+.dark
+.staff-queue-patient
+strong,
+.dark
+.staff-queue-detail-profile
+h3 {
+  color: #dce8e6;
+}
+
+.dark
+.staff-queue-search,
+.dark
+.staff-queue-filter {
+  border-color: #29413f;
+
+  background: #192929;
+}
+
+.dark
+.staff-queue-table thead {
+  background: #172827;
+}
+
+.dark
+.staff-queue-table td {
+  border-color: #29413f;
+
+  color: #9db1ae;
+}
+
+/* =========================================================
+   LEVEL 4 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .staff-queue-summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .staff-queue-controls {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .staff-queue-tabs {
+    grid-column:
+      1 / -1;
+  }
+}
+
+@media (max-width: 1000px) {
+
+  .staff-queue-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-queue-detail-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 650px) {
+
+  .staff-queue-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-queue-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-queue-tabs {
+    grid-column: auto;
+
+    overflow-x: auto;
+  }
+
+  .staff-queue-tabs button {
+    flex-shrink: 0;
+  }
+
+  .staff-queue-pagination {
+    grid-template-columns: 1fr;
+
+    justify-items: start;
+  }
+
+  .staff-queue-detail-row {
+    grid-template-columns: 1fr;
+
+    gap: 3px;
+  }
+}
+
+/* =========================================================
+   STAFF - VITAL SIGNS MODAL
+========================================================= */
+
+.staff-vitals-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(10, 35, 31, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.staff-vitals-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+
+  background: #ffffff;
+  border: 1px solid #dcebe6;
+  border-radius: 20px;
+
+  box-shadow: 0 20px 60px rgba(13, 63, 52, 0.18);
+
+  color: #173f36;
+  color-scheme: light;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.staff-vitals-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 22px 24px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5efec;
+}
+
+.staff-vitals-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.staff-vitals-modal-title svg {
+  color: #15966f;
+}
+
+.staff-vitals-modal-title h2 {
+  margin: 0;
+
+  color: #173f36;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.staff-vitals-modal-header p {
+  margin: 6px 0 0;
+
+  color: #789088;
+  font-size: 13px;
+}
+
+.staff-vitals-modal-close {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #dfeae7;
+  border-radius: 10px;
+
+  background: #f7fbfa;
+  color: #6c827b;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.staff-vitals-modal-close:hover {
+  background: #edf7f4;
+  color: #167d61;
+}
+
+.staff-vitals-modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.staff-vitals-form {
+  padding: 24px;
+}
+
+.staff-vitals-section {
+  margin-bottom: 20px;
+}
+
+.staff-vitals-section h3 {
+  margin: 0 0 12px;
+
+  color: #294f45;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   BLOOD PRESSURE
+========================================================= */
+
+.staff-vitals-bp-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  padding: 16px;
+
+  background: #f4fbf8;
+  border: 1px solid #dceee8;
+  border-radius: 14px;
+}
+
+/* =========================================================
+   OTHER VITALS GRID
+========================================================= */
+
+.staff-vitals-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px;
+}
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.staff-vitals-form label,
+.staff-vitals-bp-grid label {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  color: #49675f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   INPUT WITH UNIT
+========================================================= */
+
+.staff-vitals-input-unit {
+  display: flex;
+  align-items: center;
+
+  min-height: 46px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #d6e5e1;
+  border-radius: 11px;
+
+  transition: border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-vitals-input-unit:focus-within {
+  border-color: #25a87e;
+  box-shadow: 0 0 0 3px rgba(37, 168, 126, 0.1);
+}
+
+.staff-vitals-input-unit input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+
+  padding: 0 12px;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: #173f36;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.staff-vitals-input-unit input::placeholder {
+  color: #a5b6b1;
+}
+
+.staff-vitals-input-unit span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  align-self: stretch;
+
+  min-width: 60px;
+
+  padding: 0 10px;
+
+  background: #edf7f4;
+  border-left: 1px solid #dcebe6;
+
+  color: #548076;
+  font-size: 12px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* REMOVE NUMBER INPUT ARROWS - CHROME */
+
+.staff-vitals-input-unit input::-webkit-outer-spin-button,
+.staff-vitals-input-unit input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.staff-vitals-note {
+  margin-top: 20px;
+
+  padding: 13px 15px;
+
+  background: #f7faf9;
+  border: 1px solid #e2ece9;
+  border-radius: 11px;
+
+  color: #738a83;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.staff-vitals-error {
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
+
+  background: #fff2f2;
+  border: 1px solid #f3cccc;
+  border-radius: 10px;
+
+  color: #b54d4d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.staff-vitals-loading {
+  min-height: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  color: #729088;
+  font-size: 14px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.staff-vitals-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 24px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e5efec;
+}
+
+.staff-vitals-cancel-btn,
+.staff-vitals-save-btn {
+  min-height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.staff-vitals-cancel-btn {
+  background: #ffffff;
+  border: 1px solid #d5e3df;
+
+  color: #5f756f;
+}
+
+.staff-vitals-cancel-btn:hover {
+  background: #f3f8f6;
+}
+
+.staff-vitals-save-btn {
+  background: #188964;
+  border: 1px solid #188964;
+
+  color: #ffffff;
+}
+
+.staff-vitals-save-btn:hover {
+  background: #147557;
+  border-color: #147557;
+}
+
+.staff-vitals-cancel-btn:disabled,
+.staff-vitals-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+  .staff-vitals-modal-overlay {
+    align-items: flex-end;
+
+    padding: 10px;
+  }
+
+  .staff-vitals-modal {
+    width: 100%;
+    max-height: 92vh;
+
+    border-radius: 18px 18px 12px 12px;
+  }
+
+  .staff-vitals-modal-header {
+    padding: 18px;
+  }
+
+  .staff-vitals-form {
+    padding: 18px;
+  }
+
+  .staff-vitals-bp-grid,
+  .staff-vitals-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-vitals-modal-overlay {
+    padding: 0;
+  }
+
+  .staff-vitals-modal {
+    max-height: 100vh;
+    min-height: 100vh;
+
+    border-radius: 0;
+  }
+
+  .staff-vitals-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .staff-vitals-cancel-btn,
+  .staff-vitals-save-btn {
+    width: 100%;
+  }
+}
+/* =========================================================
+   STAFF - APPOINTMENT VITAL SIGNS SUMMARY
+========================================================= */
+
+.staff-appointment-vitals-loading {
+  padding: 16px;
+  text-align: center;
+  color: #789088;
+  font-size: 13px;
+}
+
+.staff-appointment-vitals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-top: 16px;
+  padding: 14px 15px;
+
+  background: #eef9f5;
+  border: 1px solid #d8ece5;
+  border-radius: 12px;
+
+  color: #17775d;
+}
+
+.staff-appointment-vitals-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.staff-appointment-vitals-icon {
+  width: 36px;
+  height: 36px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #dff3eb;
+  border-radius: 10px;
+
+  color: #178463;
+}
+
+.staff-appointment-vitals-title strong {
+  display: block;
+
+  color: #24564a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.staff-appointment-vitals-title p {
+  margin: 3px 0 0;
+
+  color: #7a918a;
+  font-size: 11px;
+}
+
+.staff-appointment-vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+
+  margin-top: 10px;
+}
+
+.staff-appointment-vital-row {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+
+  padding: 11px 12px;
+
+  background: #f8fbfa;
+  border: 1px solid #e2ece9;
+  border-radius: 10px;
+}
+
+.staff-appointment-vital-row span {
+  color: #839790;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.staff-appointment-vital-row strong {
+  color: #284f45;
+  font-size: 12px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+.staff-appointment-vitals-recorder {
+  margin-top: 10px;
+  padding: 10px 12px;
+
+  background: #fafcfc;
+  border: 1px solid #e6eeec;
+  border-radius: 9px;
+
+  color: #7a8e88;
+  font-size: 11px;
+}
+
+.staff-appointment-vitals-recorder strong {
+  color: #42665d;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1250px) {
+  .staff-appointment-vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .staff-appointment-vitals-header {
+    padding: 12px;
+  }
+
+  .staff-appointment-vitals-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .staff-appointment-vitals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* =========================================================
+   STAFF APPOINTMENTS - EQUAL MAIN CARD HEIGHT
+========================================================= */
+
+@media (min-width: 1000px) {
+  .staff-appointment-main-grid {
+    align-items: stretch;
+  }
+
+  .staff-appointment-main-grid > .cura-card {
+    height: 540px;
+    min-height: 540px;
+    max-height: 540px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+  }
+
+  .staff-appointment-main-grid > .cura-card > .cura-card-body {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Appointment details scrolls internally */
+  .staff-appointment-detail-card .cura-card-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-thumb {
+  background: #c9ddd7;
+  border-radius: 20px;
+}
+
+.staff-appointment-detail-card .cura-card-body::-webkit-scrollbar-thumb:hover {
+  background: #9fc5b9;
+}
+/* =========================================================
+   STAFF QUEUE - NEXT RECOMMENDED PATIENT
+   ========================================================= */
+
+.staff-queue-next-card {
+  margin-bottom: 16px;
+}
+
+.staff-queue-next-card .cura-card-body {
+  padding: 18px 20px;
+}
+
+/* HEADER */
+
+.staff-queue-next-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.staff-queue-next-header > div:first-child {
+  min-width: 0;
+}
+
+.staff-queue-next-label {
+  display: block;
+  margin-bottom: 7px;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #13966f;
+}
+
+.staff-queue-next-header h3 {
+  margin: 0;
+
+  font-size: 19px;
+  font-weight: 750;
+  line-height: 1.25;
+
+  color: #22342f;
+  text-transform: capitalize;
+}
+
+.staff-queue-next-header p {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  color: #7d8d87;
+}
+
+/* QUEUE NUMBER */
+
+.staff-queue-next-number {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 72px;
+  padding: 10px 16px;
+
+  border: 1px solid #ccecdf;
+  border-radius: 12px;
+
+  background: #ebf9f3;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  color: #11865f;
+}
+
+/* PATIENT INFO BADGES */
+
+.staff-queue-next-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+.staff-queue-next-info > div {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  min-height: 32px;
+  padding: 6px 10px;
+
+  border: 1px solid #e2ece7;
+  border-radius: 9px;
+
+  background: #f8fbfa;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #53665f;
+}
+
+.staff-queue-next-info svg {
+  flex-shrink: 0;
+
+  width: 15px;
+  height: 15px;
+
+  color: #179a72;
+}
+
+/* REASON */
+
+.staff-queue-next-reason {
+  margin-top: 12px;
+
+  padding: 11px 13px;
+
+  border-left: 3px solid #18a77a;
+  border-radius: 8px;
+
+  background: #f6faf8;
+}
+
+.staff-queue-next-reason strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 12px;
+  font-weight: 750;
+
+  color: #31463f;
+}
+
+.staff-queue-next-reason p {
+  margin: 0;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #66766f;
+}
+
+/* EMPTY STATE */
+
+.staff-queue-next-empty {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-height: 56px;
+}
+
+.staff-queue-next-empty svg {
+  flex-shrink: 0;
+
+  width: 22px;
+  height: 22px;
+
+  color: #8ba29a;
+}
+
+.staff-queue-next-empty strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #31443e;
+}
+
+.staff-queue-next-empty p {
+  margin: 0;
+
+  font-size: 12px;
+
+  color: #82918c;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .staff-queue-next-card .cura-card-body {
+    padding: 16px;
+  }
+
+  .staff-queue-next-header {
+    align-items: flex-start;
+  }
+
+  .staff-queue-next-header h3 {
+    font-size: 17px;
+  }
+
+  .staff-queue-next-number {
+    min-width: 64px;
+    padding: 8px 12px;
+
+    font-size: 13px;
+  }
+
+  .staff-queue-next-info {
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .staff-queue-next-header {
+    flex-direction: column;
+  }
+
+  .staff-queue-next-number {
+    align-self: flex-start;
+  }
+
+  .staff-queue-next-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .staff-queue-next-info > div {
+    width: 100%;
+  }
+}

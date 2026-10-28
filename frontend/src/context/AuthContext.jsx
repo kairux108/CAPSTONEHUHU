@@ -5,9 +5,9 @@ import {
 } from "react";
 
 import AuthContext from "./authContext";
-import authService from "../services/authService";
-import { setUnauthorizedHandler } from "../services/api";
-import { normalizeRole } from "../utils/authUtils";
+import authService from "../shared/services/authService";
+import { setUnauthorizedHandler } from "../shared/services/api";
+import { normalizeRole } from "../shared/utils/authUtils";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

@@ -1,12 +1,13 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import "./Login.css";
+import "../../styles/auth.css";
+import LoadingSpinner from "../common/LoadingSpinner";
 import { useAuth } from "../../context/useAuth";
-import authService from "../../services/authService";
+import authService from "../../shared/services/authService";
 import {
   getRoleLandingPath,
   normalizeRole,
-} from "../../utils/authUtils";
+} from "../../shared/utils/authUtils";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +28,7 @@ function Login() {
   const landingPath = getRoleLandingPath(user?.role);
 
   if (authLoading) {
-    return null;
+    return <LoadingSpinner text="Checking your session..." />;
   }
 
   if (isAuthenticated && landingPath) {

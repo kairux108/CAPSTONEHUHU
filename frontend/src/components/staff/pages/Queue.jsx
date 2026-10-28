@@ -1,11 +1,11 @@
 
-import useStaffQueueController from "../../../hooks/useStaffQueueController";
+import useStaffQueueController from "../hooks/useStaffQueueController";
 
-import StaffQueueStats from "../queue/StaffQueueStats";
-import StaffQueueNextPatient from "../queue/StaffQueueNextPatient";
-import StaffQueueControls from "../queue/StaffQueueControls";
-import StaffQueueTable from "../queue/StaffQueueTable";
-import StaffQueueDetails from "../queue/StaffQueueDetails";
+import StaffQueueStats from "../components/queue/StaffQueueStats";
+import StaffQueueNextPatient from "../components/queue/StaffQueueNextPatient";
+import StaffQueueControls from "../components/queue/StaffQueueControls";
+import StaffQueueTable from "../components/queue/StaffQueueTable";
+import StaffQueueDetails from "../components/queue/StaffQueueDetails";
 
 /*
 |--------------------------------------------------------------------------

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 
-import useStaffAppointments from "../../../hooks/useStaffAppointments";
-import useVitalSigns from "../../../hooks/useVitalSigns";
-import useQueue from "../../../hooks/useQueue";
+import useStaffAppointments from "../hooks/useStaffAppointments";
+import useVitalSigns from "../hooks/useVitalSigns";
+import useQueue from "../hooks/useQueue";
 
-import StaffAppointmentStats from "../appointments/StaffAppointmentStats";
-import StaffAppointmentFilters from "../appointments/StaffAppointmentFilters";
-import StaffAppointmentCalendar from "../appointments/StaffAppointmentCalendar";
-import StaffAppointmentTable from "../appointments/StaffAppointmentTable";
-import StaffAppointmentDetails from "../appointments/StaffAppointmentDetails";
-import StaffAppointmentFormModal from "../appointments/StaffAppointmentFormModal";
-import StaffVitalSignsModal from "../appointments/StaffVitalSignsModal";
+import StaffAppointmentStats from "../components/appointments/StaffAppointmentStats";
+import StaffAppointmentFilters from "../components/appointments/StaffAppointmentFilters";
+import StaffAppointmentCalendar from "../components/appointments/StaffAppointmentCalendar";
+import StaffAppointmentTable from "../components/appointments/StaffAppointmentTable";
+import StaffAppointmentDetails from "../components/appointments/StaffAppointmentDetails";
+import StaffAppointmentFormModal from "../components/appointments/StaffAppointmentFormModal";
+import StaffVitalSignsModal from "../components/appointments/StaffVitalSignsModal";
 
 const Appointments = () => {
   const {

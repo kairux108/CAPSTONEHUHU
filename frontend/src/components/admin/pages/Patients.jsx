@@ -1,4 +1,4 @@
-import usePatients from "../../../hooks/usePatients";
+import usePatients from "../../../shared/hooks/usePatients";
 
 import {
   getPatientFullName,
@@ -6,12 +6,12 @@ import {
   getPatientAge,
   getPatientAddress,
   getPatientStatusClass,
-} from "../../../utils/patientUtils";
+} from "../../../shared/utils/patientUtils";
 
-import PatientStats from "../patients/PatientStats";
-import PatientFilters from "../patients/PatientFilters";
-import PatientTable from "../patients/PatientTable";
-import PatientDetails from "../patients/PatientDetails";
+import PatientStats from "../components/patients/PatientStats";
+import PatientFilters from "../components/patients/PatientFilters";
+import PatientTable from "../components/patients/PatientTable";
+import PatientDetails from "../components/patients/PatientDetails";
 
 const Patients = () => {
   const {

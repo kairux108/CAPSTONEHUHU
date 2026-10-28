@@ -1,10 +1,10 @@
-import useAppointments from "../../../hooks/useAppointments";
+import useAppointments from "../hooks/useAppointments";
 
-import AppointmentStats from "../appointments/AppointmentStats";
-import AppointmentFilters from "../appointments/AppointmentFilters";
-import AppointmentTable from "../appointments/AppointmentTable";
-import AppointmentCalendar from "../appointments/AppointmentCalendar";
-import AppointmentDetails from "../appointments/AppointmentDetails";
+import AppointmentStats from "../components/appointments/AppointmentStats";
+import AppointmentFilters from "../components/appointments/AppointmentFilters";
+import AppointmentTable from "../components/appointments/AppointmentTable";
+import AppointmentCalendar from "../components/appointments/AppointmentCalendar";
+import AppointmentDetails from "../components/appointments/AppointmentDetails";
 
 const Appointments = () => {
   const {

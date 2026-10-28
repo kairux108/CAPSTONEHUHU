@@ -1,16 +1,16 @@
-import usePatients from "../../../hooks/usePatients";
+import usePatients from "../../../shared/hooks/usePatients";
 import {
   getPatientAddress,
   getPatientAge,
   getPatientFullName,
   getPatientInitials,
   getPatientStatusClass,
-} from "../../../utils/patientUtils";
+} from "../../../shared/utils/patientUtils";
 
-import StaffPatientDetails from "../patients/StaffPatientDetails";
-import StaffPatientFilters from "../patients/StaffPatientFilters";
-import StaffPatientStats from "../patients/StaffPatientStats";
-import StaffPatientTable from "../patients/StaffPatientTable";
+import StaffPatientDetails from "../components/patients/StaffPatientDetails";
+import StaffPatientFilters from "../components/patients/StaffPatientFilters";
+import StaffPatientStats from "../components/patients/StaffPatientStats";
+import StaffPatientTable from "../components/patients/StaffPatientTable";
 
 const Patients = () => {
   const {

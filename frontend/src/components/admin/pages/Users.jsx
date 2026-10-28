@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import useUsers from "../../../hooks/useUsers";
-import { getUserInitials, getUserStatusClass } from "../../../utils/userUtils";
+import useUsers from "../hooks/useUsers";
+import { getUserInitials, getUserStatusClass } from "../utils/userUtils";
 
-import UserStats from "../users/UserStats";
-import UserFilters from "../users/UserFilters";
-import UserTable from "../users/UserTable";
-import UserDetails from "../users/UserDetails";
-import UserFormModal from "../users/UserFormModal";
+import UserStats from "../components/users/UserStats";
+import UserFilters from "../components/users/UserFilters";
+import UserTable from "../components/users/UserTable";
+import UserDetails from "../components/users/UserDetails";
+import UserFormModal from "../components/users/UserFormModal";
 
 const Users = () => {
   // ======================================================
