@@ -26,7 +26,7 @@ class VitalSignController extends Controller
             ->latest();
 
         if (!empty($validated['patient_id'])) {
-            $query->where('patient_id', $validated['patient_id']);
+                 $query->where('patient_id', $validated['patient_id']);
         }
 
         if (!empty($validated['appointment_id'])) {

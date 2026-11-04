@@ -1,4 +1,6 @@
+
 <?php
+
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
@@ -31,54 +33,65 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
 
 
-
 /*
 |--------------------------------------------------------------------------
-| Doctor Consultation - Authenticated Doctor Only
+| Doctor Portal - My Queue & Consultation
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('role:doctor')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Doctor Queue
+    |--------------------------------------------------------------------------
+    */
+
+    // View today's assigned queue.
+    Route::get(
+        '/doctor/queue',
+        [DoctorQueueController::class, 'index']
+    );
+
+    // View selected queue entry.
+    Route::get(
+        '/doctor/queue/{queueEntry}',
+        [DoctorQueueController::class, 'show']
+    )->whereNumber('queueEntry');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Doctor Consultation
+    |--------------------------------------------------------------------------
+    */
+
+    // Load saved consultation.
     Route::get(
         '/doctor/consultations/{queueEntry}',
         [ConsultationController::class, 'show']
     );
 
+    // Save consultation draft.
     Route::put(
         '/doctor/consultations/{queueEntry}/draft',
         [ConsultationController::class, 'saveDraft']
     );
 
+    // Start consultation.
+    Route::post(
+        '/doctor/consultations/{queueEntry}/start',
+        [ConsultationController::class, 'start']
+    );
+
+    // Complete consultation.
+    Route::post(
+        '/doctor/consultations/{queueEntry}/complete',
+        [ConsultationController::class, 'complete']
+    );
+
 });
 
-
-
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Doctor Portal - My Queue & Selected Consultation Patient
-    |--------------------------------------------------------------------------
-    */
-
-    Route::middleware('role:doctor')->group(function () {
-
-        Route::get(
-            '/doctor/queue',
-            [DoctorQueueController::class, 'index']
-        );
-
-        Route::get(
-            '/doctor/queue/{queueEntry}',
-            [DoctorQueueController::class, 'show']
-        )->whereNumber('queueEntry');
-
-    });
 
     /*
     |--------------------------------------------------------------------------
@@ -372,17 +385,6 @@ Route::middleware('role:doctor')->group(function () {
             [\App\Http\Controllers\DoctorDashboardController::class, 'index']
         );
 
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    );
+    });
 
 });

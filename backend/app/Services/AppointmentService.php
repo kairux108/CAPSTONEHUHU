@@ -141,7 +141,42 @@ class AppointmentService
         return $this->loadRelationships(
             $appointment
         );
+
     }
+
+/*
+|--------------------------------------------------------------------------
+| Complete Appointment
+|--------------------------------------------------------------------------
+|
+| Called after a doctor successfully completes
+| the associated consultation and queue.
+|
+*/
+
+public function complete(
+    Appointment $appointment
+): Appointment {
+
+    // Only checked-in appointments can be completed.
+    if ($appointment->status !== 'checked_in') {
+        throw ValidationException::withMessages([
+            'status' =>
+                'Only checked-in appointments can be completed.',
+        ]);
+    }
+
+    // Update the appointment status.
+    $appointment->update([
+        'status' => 'completed',
+    ]);
+
+    // Return the updated appointment.
+    return $this->loadRelationships(
+        $appointment
+    );
+}
+
 
     /*
     |--------------------------------------------------------------------------

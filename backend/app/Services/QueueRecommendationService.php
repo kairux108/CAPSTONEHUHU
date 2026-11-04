@@ -82,6 +82,58 @@ class QueueRecommendationService
 
         /*
         |--------------------------------------------------------------------------
+        | Rule 0: Emergency Priority
+        |--------------------------------------------------------------------------
+        |
+        | Give staff-flagged emergency entries priority over routine
+        | online and walk-in recommendations. Waiting patients are
+        | ordered by queued_at, so the earliest emergency is selected.
+        |
+        | This is a recommendation, not a replacement for clinical triage.
+        |
+        */
+
+        $emergencyPatient = $waitingPatients->first(
+            fn ($entry) => $entry->priority === 'emergency'
+        );
+
+        if ($emergencyPatient) {
+            return $this->buildRecommendation(
+                entry: $emergencyPatient,
+                type: 'emergency_priority',
+                reason: 'A staff-flagged emergency patient requires priority assessment.'
+            );
+        }
+
+/*
+|--------------------------------------------------------------------------
+| Rule 0.5: Regular Priority Patients
+|--------------------------------------------------------------------------
+|
+| Emergency patients are checked first.
+| Staff-flagged priority patients are recommended
+| before normal online appointments and walk-ins.
+|
+| Among priority patients, recommend the
+| longest-waiting patient first.
+|
+*/
+
+$priorityPatient = $waitingPatients->first(
+    fn ($entry) => $entry->priority === 'priority'
+);
+
+if ($priorityPatient) {
+    return $this->buildRecommendation(
+        entry: $priorityPatient,
+        type: 'priority_patient',
+        reason: 'A staff-flagged priority patient requires priority assistance.'
+    );
+}
+
+
+        /*
+        |--------------------------------------------------------------------------
         | Rule 1:
         | Online Appointment Within Protected Window
         |--------------------------------------------------------------------------

@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Consultation;
 use App\Models\QueueEntry;
+use App\Services\AppointmentService;
+use App\Services\QueueService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+
 
 class ConsultationController extends Controller
 {
@@ -50,7 +54,7 @@ class ConsultationController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | GET - Load Saved Consultation Draft
+    | GET - Load Saved Consultation
     |--------------------------------------------------------------------------
     */
 
@@ -106,10 +110,18 @@ class ConsultationController extends Controller
             );
 
             $data = $request->validate([
-                'subjective' => ['sometimes', 'nullable', 'string', 'max:20000'],
-                'objective' => ['sometimes', 'nullable', 'string', 'max:20000'],
-                'assessment' => ['sometimes', 'nullable', 'string', 'max:20000'],
-                'plan' => ['sometimes', 'nullable', 'string', 'max:20000'],
+                'subjective' => [
+                    'sometimes', 'nullable', 'string', 'max:20000',
+                ],
+                'objective' => [
+                    'sometimes', 'nullable', 'string', 'max:20000',
+                ],
+                'assessment' => [
+                    'sometimes', 'nullable', 'string', 'max:20000',
+                ],
+                'plan' => [
+                    'sometimes', 'nullable', 'string', 'max:20000',
+                ],
 
                 'care_instructions' => [
                     'sometimes', 'nullable', 'string', 'max:20000',
@@ -201,6 +213,7 @@ class ConsultationController extends Controller
                 ])
             );
 
+
             $consultation->save();
 
             /*
@@ -286,4 +299,251 @@ class ConsultationController extends Controller
             'consultation' => $result,
         ]);
     }
+
+
+/*
+|--------------------------------------------------------------------------
+| POST - Complete Consultation and Queue
+|--------------------------------------------------------------------------
+*/
+
+public function complete(
+    Request $request,
+    QueueEntry $queueEntry,
+    QueueService $queueService,
+    AppointmentService $appointmentService
+): JsonResponse {
+
+    // Require explicit confirmation from the doctor.
+    $request->validate([
+        'confirm_completion' => ['required', 'accepted'],
+    ]);
+
+    $result = DB::transaction(function () use (
+         $request,
+    $queueEntry,
+    $queueService,
+    $appointmentService
+    ) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Assigned Doctor and Lock Queue Entry
+        |--------------------------------------------------------------------------
+        */
+
+        $entry = $this->assignedEntry(
+            $request,
+            $queueEntry,
+            true
+        );
+
+        // The patient must already be in consultation.
+        abort_unless(
+            $entry->status === 'in_consultation',
+            409,
+            'The patient must be in consultation before completion.'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Retrieve and Lock Consultation
+        |--------------------------------------------------------------------------
+        */
+
+        $consultation = Consultation::query()
+            ->where('queue_entry_id', $entry->id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Verify Consultation Ownership
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            (int) $consultation->doctor_id ===
+            (int) $request->user()->id,
+            403
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Only Draft Consultations Can Be Completed
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $consultation->status === 'draft',
+            409,
+            'This consultation is no longer a draft.'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | Require Complete SOAP Notes
+        |--------------------------------------------------------------------------
+        */
+
+        foreach (
+            ['subjective', 'objective', 'assessment', 'plan']
+            as $field
+        ) {
+            if (
+                trim((string) $consultation->{$field}) === ''
+            ) {
+                throw ValidationException::withMessages([
+                    $field =>
+                        'Complete this SOAP field before finalizing.',
+                ]);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Require Reviewed Diagnosis
+        |--------------------------------------------------------------------------
+        */
+
+        $diagnosis = $consultation->diagnosis;
+
+        if (
+            !$diagnosis ||
+            trim((string) $diagnosis->name) === '' ||
+            !(bool) $diagnosis->reviewed
+        ) {
+            throw ValidationException::withMessages([
+                'diagnosis' =>
+                    'A reviewed diagnosis is required before completion.',
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Complete Consultation
+        |--------------------------------------------------------------------------
+        */
+
+        $consultation->status = 'completed';
+        $consultation->completed_at = now('Asia/Manila');
+
+        $consultation->save();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Complete Patient Queue
+        |--------------------------------------------------------------------------
+        |
+        | Reuse the existing QueueService.
+        | Both operations share the database transaction.
+        |
+        */
+
+        $updatedQueue = $queueService->update(
+            $entry,
+            ['status' => 'completed']
+
+
+        );
+        $appointment = Appointment::query()
+            ->whereKey($entry->appointment_id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        $updatedAppointment = $appointmentService->complete(
+            $appointment
+        );
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Return Updated Records
+|--------------------------------------------------------------------------
+*/
+
+        return [
+            'consultation' => $consultation->load([
+                'diagnosis',
+                'prescription.items',
+                'prescription.issuingDoctor:id,name',
+            ]),
+            'queue_entry' => $updatedQueue,
+            'appointment' => $updatedAppointment,
+        ];
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Return JSON Response
+    |--------------------------------------------------------------------------
+    */
+
+    return response()->json([
+        'message' => 'Consultation, queue, and appointment completed successfully.',
+        'consultation' => $result['consultation'],
+        'queue_entry' => $result['queue_entry'],
+        'appointment' => $result['appointment'],
+    ]);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| POST - Start Doctor Consultation
+|--------------------------------------------------------------------------
+*/
+
+public function start(
+    Request $request,
+    QueueEntry $queueEntry,
+    QueueService $queueService
+): JsonResponse {
+    $entry = DB::transaction(function () use (
+        $request,
+        $queueEntry,
+        $queueService
+    ) {
+        // Verify the assigned doctor and lock the queue entry.
+        $entry = $this->assignedEntry(
+            $request,
+            $queueEntry,
+            true
+        );
+
+        // A consultation must be called before it can start.
+        abort_unless(
+            $entry->status === 'called',
+            409,
+            'Only called patients can begin consultation.'
+        );
+
+        // Prevent reopening an already completed consultation.
+        $alreadyCompleted = Consultation::query()
+            ->where('queue_entry_id', $entry->id)
+            ->where('status', 'completed')
+            ->exists();
+
+        abort_if(
+            $alreadyCompleted,
+            409,
+            'A completed consultation cannot be restarted.'
+        );
+
+        // Reuse the existing queue transition rules.
+        return $queueService->update(
+            $entry,
+            ['status' => 'in_consultation']
+        );
+    });
+
+    return response()->json([
+        'message' => 'Consultation started successfully.',
+        'queue_entry' => $entry,
+    ]);
+}
+
+
+
 }

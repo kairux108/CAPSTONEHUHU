@@ -9,7 +9,7 @@ use App\Models\QueueEntry;
 use App\Services\QueueQueryService;
 use App\Services\QueueRecommendationService;
 use App\Services\QueueService;
-
+use Illuminate\Validation\ValidationException;
 class QueueEntryController extends Controller
 {
     public function index(
@@ -75,23 +75,58 @@ class QueueEntryController extends Controller
         ], 201);
     }
 
-    public function update(
-        UpdateQueueEntryRequest $request,
-        QueueEntry $queueEntry,
-        QueueService $queueService
-    ) {
-        $queueEntry =
-            $queueService->update(
-                $queueEntry,
-                $request->validated()
-            );
 
-        return response()->json([
-            'message' =>
-                'Queue entry updated successfully.',
 
-            'queue_entry' =>
-                $queueEntry,
+public function update(
+    UpdateQueueEntryRequest $request,
+    QueueEntry $queueEntry,
+    QueueService $queueService
+) {
+    $data = $request->validated();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Prevent Staff From Bypassing Doctor Consultation
+    |--------------------------------------------------------------------------
+    |
+    | Only the assigned doctor can start or complete
+    | consultations through the doctor consultation API.
+    |
+    */
+
+    if (in_array(
+        $data['status'] ?? null,
+        ['in_consultation', 'completed'],
+        true
+    )) {
+        throw ValidationException::withMessages([
+            'status' =>
+                'Only the assigned doctor can start or complete a consultation.',
         ]);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update Queue Entry
+    |--------------------------------------------------------------------------
+    */
+
+    $queueEntry = $queueService->update(
+        $queueEntry,
+        $data
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Return Updated Queue
+    |--------------------------------------------------------------------------
+    */
+
+    return response()->json([
+        'message' => 'Queue entry updated successfully.',
+        'queue_entry' => $queueEntry,
+    ]);
+}
+
+
 }
