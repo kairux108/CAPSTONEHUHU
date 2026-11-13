@@ -71,6 +71,14 @@ class AppointmentService
         Appointment $appointment,
         array $data
     ): Appointment {
+        // Only the doctor consultation workflow may complete appointments.
+        if (($data['status'] ?? null) === 'completed') {
+            throw ValidationException::withMessages([
+                'status' =>
+                    'Appointments can only be completed through the doctor consultation workflow.',
+            ]);
+        }
+
         $doctorId = array_key_exists(
             'doctor_id',
             $data

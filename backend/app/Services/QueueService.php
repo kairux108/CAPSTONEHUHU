@@ -88,24 +88,50 @@ class QueueService
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Update Queue Entry
-    |--------------------------------------------------------------------------
-    */
 
-    public function update(
-        QueueEntry $queueEntry,
-        array $data
+public function update(
+    QueueEntry $queueEntry,
+    array $data
+): QueueEntry {
+    return DB::transaction(function () use (
+        $queueEntry,
+        $data
     ): QueueEntry {
+        $isCalling = ($data['status'] ?? null) === 'called';
+
+        /*
+        |--------------------------------------------------------------------------
+        | Lock Doctor Before Calling
+        |--------------------------------------------------------------------------
+        |
+        | Staff and Doctor calling actions must acquire
+        | the same doctor lock to coordinate requests.
+        |
+        */
+
+        $doctorId = $isCalling
+            ? (int) $queueEntry->doctor_id
+            : null;
+
+        if ($isCalling) {
+            User::query()
+                ->whereKey($doctorId)
+                ->lockForUpdate()
+                ->firstOrFail();
+        }
+
+        // Reload the latest queue state under a lock.
+        $queueEntry = QueueEntry::query()
+            ->whereKey($queueEntry->id)
+            ->lockForUpdate()
+            ->firstOrFail();
+
         $this->validateDoctor($data);
 
-        $priority =
-            $data['priority']
+        $priority = $data['priority']
             ?? $queueEntry->priority;
 
-        $priorityReason =
-            $data['priority_reason']
+        $priorityReason = $data['priority_reason']
             ?? $queueEntry->priority_reason;
 
         $this->validatePriority(
@@ -119,15 +145,52 @@ class QueueService
 
         /*
         |--------------------------------------------------------------------------
-        | Call Patient
+        | Call Patient - Shared Availability Protection
         |--------------------------------------------------------------------------
         */
 
-        if (($data['status'] ?? null) === 'called') {
+        if ($isCalling) {
+            // Do not combine doctor reassignment and calling.
+            if (
+                (int) $queueEntry->doctor_id !== $doctorId
+                ||
+                (
+                    array_key_exists('doctor_id', $data)
+                    &&
+                    (int) $data['doctor_id'] !== $doctorId
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    'doctor_id' =>
+                        'Doctor assignment changed. Refresh the queue before calling.',
+                ]);
+            }
+
             if ($queueEntry->status !== 'waiting') {
                 throw ValidationException::withMessages([
                     'status' =>
                         'Only waiting patients can be called.',
+                ]);
+            }
+
+            // Check the doctor's queue for the same date.
+            $doctorIsBusy = QueueEntry::query()
+                ->where('doctor_id', $doctorId)
+                ->whereDate(
+                    'queue_date',
+                    $queueEntry->queue_date->toDateString()
+                )
+                ->where('id', '!=', $queueEntry->id)
+                ->whereIn('status', [
+                    'called',
+                    'in_consultation',
+                ])
+                ->exists();
+
+            if ($doctorIsBusy) {
+                throw ValidationException::withMessages([
+                    'status' =>
+                        'The doctor already has a called patient or an active consultation.',
                 ]);
             }
 
@@ -150,43 +213,36 @@ class QueueService
 
             $data['consultation_started_at'] = now();
         }
-        
-/*
-|--------------------------------------------------------------------------
-| Complete Consultation
-|--------------------------------------------------------------------------
-*/
-
-if (($data['status'] ?? null) === 'completed') {
-    if ($queueEntry->status !== 'in_consultation') {
-        throw ValidationException::withMessages([
-            'status' =>
-                'Only patients in consultation can be marked completed.',
-        ]);
-    }
-
-    $data['completed_at'] = now();
-}
-
 
         /*
         |--------------------------------------------------------------------------
-        | Save Queue Changes to PostgreSQL
+        | Complete Consultation
+        |--------------------------------------------------------------------------
+        */
+
+        if (($data['status'] ?? null) === 'completed') {
+            if ($queueEntry->status !== 'in_consultation') {
+                throw ValidationException::withMessages([
+                    'status' =>
+                        'Only patients in consultation can be marked completed.',
+                ]);
+            }
+
+            $data['completed_at'] = now();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Save Queue Changes
         |--------------------------------------------------------------------------
         */
 
         $queueEntry->update($data);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Return Updated Queue Entry
-        |--------------------------------------------------------------------------
-        */
+        return $this->loadRelationships($queueEntry);
+    }, 3);
+}
 
-        return $this->loadRelationships(
-            $queueEntry
-        );
-    }
 
     /*
     |--------------------------------------------------------------------------

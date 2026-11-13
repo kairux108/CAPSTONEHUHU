@@ -1,15 +1,18 @@
-
 import {
   AlertCircle,
   ClipboardList,
+  Megaphone,
   RefreshCw,
   Stethoscope,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
+import { useRef, useState } from "react";
 import CuraCard from "../../common/CuraCard";
 import useDoctorQueue from "../hooks/useDoctorQueue";
+import doctorQueueService from "../services/doctorQueueService";
+
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +78,71 @@ const Queue = () => {
   const stats = queueData?.stats || {};
   const pagination = queueData?.pagination || {};
 
+  // CURA - Doctor-Controlled Smart Queue
+  const [callingNext, setCallingNext] = useState(false);
+  const [callMessage, setCallMessage] = useState("");
+  const [callError, setCallError] = useState("");
+
+  const callingRef = useRef(false);
+
+  const canCallNext =
+    Boolean(queueData) &&
+    !loading &&
+    !error &&
+    Number(stats.waiting ?? 0) > 0 &&
+    Number(stats.called ?? 0) === 0 &&
+    Number(stats.in_consultation ?? 0) === 0;
+
+  const handleCallNext = async () => {
+    if (!canCallNext || callingRef.current) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Are you ready to call the next waiting patient?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    callingRef.current = true;
+    setCallingNext(true);
+    setCallMessage("");
+    setCallError("");
+
+    try {
+      const response =
+        await doctorQueueService.callNextPatient();
+
+      if (response?.queue_entry?.status !== "called") {
+        throw new Error(
+          "The server did not confirm the patient was called."
+        );
+      }
+
+      const queueNumber =
+        response.queue_entry.queue_number ||
+        "the next patient";
+
+      setCallMessage(
+        `${queueNumber} has been called successfully.`
+      );
+
+      refreshQueue();
+    } catch (err) {
+      setCallError(
+        err?.message || "Unable to call the next patient."
+      );
+
+      refreshQueue();
+    } finally {
+      callingRef.current = false;
+      setCallingNext(false);
+    }
+  };
+
+  // KEEP YOUR EXISTING SUMMARY ARRAY BELOW
   const summary = [
     {
       label: "Total Patients",
@@ -101,6 +169,7 @@ const Queue = () => {
       value: stats.emergency ?? 0,
     },
   ];
+
 
   return (
     <div className="doctor-queue space-y-5">
@@ -178,6 +247,64 @@ const Queue = () => {
           </CuraCard>
         ))}
       </div>
+
+      {/* DOCTOR-CONTROLLED SMART QUEUE */}
+      <CuraCard>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-bold text-[#263d3c]">
+              Smart Queue Management
+            </h3>
+
+            <p className="mt-1 text-xs text-[#78908e]">
+              Call the next eligible waiting patient when you are ready.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCallNext}
+            disabled={!canCallNext || callingNext}
+            className="inline-flex items-center gap-2 rounded-xl bg-[#18a999] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#138f83] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Megaphone size={17} />
+
+            {callingNext
+              ? "Calling Patient..."
+              : "Call Next Patient"}
+          </button>
+        </div>
+
+        {callMessage && (
+          <p
+            role="status"
+            className="mt-4 rounded-xl bg-emerald-50 p-3 text-sm font-medium text-emerald-700"
+          >
+            {callMessage}
+          </p>
+        )}
+
+        {callError && (
+          <p
+            role="alert"
+            className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700"
+          >
+            {callError}
+          </p>
+        )}
+
+        {!callMessage && !callError && queueData && (
+          <p className="mt-3 text-xs text-[#78908e]">
+            {Number(stats.called ?? 0) > 0 ||
+            Number(stats.in_consultation ?? 0) > 0
+              ? "Finish the current patient before calling another."
+              : Number(stats.waiting ?? 0) === 0
+                ? "No waiting patients are available."
+                : "A waiting patient is available to call."}
+          </p>
+        )}
+      </CuraCard>
+
 
       {/* QUEUE LIST */}
 
@@ -312,26 +439,32 @@ const Queue = () => {
                       {/* OPEN CONSULTATION */}
 
                       <td className="px-4 py-4">
-                        <button
-                          type="button"
-                          disabled={
-                            loading ||
-                            !entry.patient ||
-                            !["called", "in_consultation"].includes(entry.status)
-                          }
-                          onClick={() =>
-                            navigate(`/doctor/consultation/${entry.id}`)
-                          }
-                          title={
-                            ["called", "in_consultation"].includes(entry.status)
-                              ? "Open this patient's consultation"
-                              : "Available after the patient is called"
-                          }
-                          className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#18a999] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#138f83] disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          <Stethoscope size={14} />
-                          Open Consultation
-                        </button>
+
+                              <button
+                                type="button"
+                                disabled={
+                                  loading ||
+                                  !entry.patient ||
+                                  !["called", "in_consultation", "completed"].includes(
+                                    entry.status
+                                  )
+                                }
+                                onClick={() =>
+                                  navigate(`/doctor/consultation/${entry.id}`)
+                                }
+                                title={
+                                  entry.status === "completed"
+                                    ? "View completed consultation and prescription"
+                                    : ["called", "in_consultation"].includes(entry.status)
+                                      ? "Open this patient's consultation"
+                                      : "Available after the patient is called"
+                                }
+                                className="inline-flex items-center gap-2 whitespace-nowrap rounded-xl bg-[#18a999] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#138f83] disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                <Stethoscope size={14} />
+                                Open Consultation
+                              </button>
+
                       </td>
                     </tr>
                   ))}

@@ -147,7 +147,7 @@ class ConsultationController extends Controller
                     'sometimes', 'array', 'max:20',
                 ],
                 'prescription_items.*' => [
-                    'array:medicine,strength,dosage,frequency,duration_days,duration,instructions',
+                    'array:medicine,strength,dosage,frequency,duration_days,duration,instructions,schedule_type,as_needed,administration_times,interval_hours,interval_scope,meal_relation,timing_instructions',
                 ],
                 'prescription_items.*.medicine' => [
                     'required', 'string', 'max:255',
@@ -170,7 +170,110 @@ class ConsultationController extends Controller
                 'prescription_items.*.instructions' => [
                     'nullable', 'string', 'max:10000',
                 ],
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Flexible Medication Scheduling
+                |--------------------------------------------------------------------------
+                |
+                | PRN use is independent of the primary schedule type.
+                | Existing prescription drafts may omit these fields.
+                |
+                */
+
+                // Primary schedule type
+                'prescription_items.*.schedule_type' => [
+                    'nullable',
+                    'in:fixed,interval,meal,custom',
+                ],
+
+                // As-needed medication (PRN)
+                'prescription_items.*.as_needed' => [
+                    'sometimes',
+                    'boolean',
+                ],
+
+                // Fixed administration times
+
+                'prescription_items.*.administration_times' => [
+                    'required_if:prescription_items.*.schedule_type,fixed',
+                    'prohibited_unless:prescription_items.*.schedule_type,fixed',
+                    'nullable',
+                    'array',
+                    'min:1',
+                    'max:12',
+                ],
+
+
+                'prescription_items.*.administration_times.*' => [
+                    'required',
+                    'date_format:H:i',
+                    'distinct:strict',
+                ],
+
+                // Hourly interval
+
+                'prescription_items.*.interval_hours' => [
+                    'required_if:prescription_items.*.schedule_type,interval',
+                    'prohibited_unless:prescription_items.*.schedule_type,interval',
+                    'nullable',
+                    'integer',
+                    'min:1',
+                    'max:168',
+                ],
+
+                // Interval context
+
+                'prescription_items.*.interval_scope' => [
+                    'required_if:prescription_items.*.schedule_type,interval',
+                    'prohibited_unless:prescription_items.*.schedule_type,interval',
+                    'nullable',
+                    'in:around_clock,while_awake',
+                ],
+
+
+                // Relationship to meals
+                'prescription_items.*.meal_relation' => [
+                    'required_if:prescription_items.*.schedule_type,meal',
+                    'nullable',
+                    'in:before,with,after',
+                ],
+
+                // Additional doctor-provided instructions
+                'prescription_items.*.timing_instructions' => [
+                    'required_if:prescription_items.*.schedule_type,custom',
+                    'nullable',
+                    'string',
+                    'max:10000',
+                ],
+
             ]);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent PRN and Recurring Interval Conflicts
+                |--------------------------------------------------------------------------
+                |
+                | PRN medication is taken only when needed.
+                | An interval schedule represents recurring doses.
+                |
+                | Minimum intervals for PRN medication must be represented
+                | separately from recurring medication schedules.
+                */
+
+                foreach (($data['prescription_items'] ?? []) as $index => $item) {
+                    $asNeeded = (bool) ($item['as_needed'] ?? false);
+                    $scheduleType = $item['schedule_type'] ?? null;
+
+                    if ($asNeeded && $scheduleType === 'interval') {
+                        throw ValidationException::withMessages([
+                            "prescription_items.{$index}.schedule_type" =>
+                                'As-needed (PRN) medication cannot use a recurring interval schedule.',
+                        ]);
+                    }
+                }
+
 
             $consultation = Consultation::query()
                 ->where('queue_entry_id', $entry->id)

@@ -1,6 +1,8 @@
-
 <?php
 
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\LabTestCatalogController;
+use App\Http\Controllers\LabRequestController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
@@ -14,6 +16,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VitalSignController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PatientMedicalHistoryController;
+use App\Http\Controllers\DoctorPatientController;
+use App\Http\Controllers\PatientMedicalRecordsController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +47,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('role:doctor')->group(function () {
 
+
+// Doctor - View authorized patient medical history.
+Route::get(
+    '/doctor/patients/{patient}/medical-history',
+    [PatientMedicalHistoryController::class, 'show']
+)->whereNumber('patient');
+
+
     /*
     |--------------------------------------------------------------------------
     | Doctor Queue
@@ -53,11 +67,19 @@ Route::middleware('role:doctor')->group(function () {
         [DoctorQueueController::class, 'index']
     );
 
+    // Doctor-controlled Smart Queue:
+    // Call the next eligible waiting patient.
+    Route::post(
+        '/doctor/queue/call-next',
+        [DoctorQueueController::class, 'callNext']
+    );
+
     // View selected queue entry.
     Route::get(
         '/doctor/queue/{queueEntry}',
         [DoctorQueueController::class, 'show']
     )->whereNumber('queueEntry');
+
 
 
     /*
@@ -84,13 +106,63 @@ Route::middleware('role:doctor')->group(function () {
         [ConsultationController::class, 'start']
     );
 
+
     // Complete consultation.
     Route::post(
         '/doctor/consultations/{queueEntry}/complete',
         [ConsultationController::class, 'complete']
     );
 
+    // Issue digital prescription after consultation completion.
+    Route::post(
+        '/doctor/consultations/{queueEntry}/prescription/issue',
+        [PrescriptionController::class, 'issue']
+    )->whereNumber('queueEntry');
+
+// Doctor - View active laboratory and diagnostic examinations.
+Route::get(
+    '/doctor/lab-tests',
+    [LabTestCatalogController::class, 'index']
+);
+
+
+/*
+|--------------------------------------------------------------------------
+| Doctor - Laboratory Request Management
+|--------------------------------------------------------------------------
+|
+| All routes require Sanctum authentication and the doctor role.
+|
+*/
+
+// Retrieve saved laboratory requests (draft and issued).
+Route::get(
+    '/doctor/consultations/{queueEntry}/lab-requests',
+    [LabRequestController::class, 'index']
+)->whereNumber('queueEntry');
+
+// Create a new laboratory request draft.
+Route::post(
+    '/doctor/consultations/{queueEntry}/lab-requests/draft',
+    [LabRequestController::class, 'storeDraft']
+)->whereNumber('queueEntry');
+
+// Update an existing laboratory request draft.
+Route::put(
+    '/doctor/consultations/{queueEntry}/lab-requests/{labRequest}/draft',
+    [LabRequestController::class, 'updateDraft']
+)->whereNumber('queueEntry')
+  ->whereNumber('labRequest');
+
+// Issue a laboratory request after consultation completion.
+Route::post(
+    '/doctor/consultations/{queueEntry}/lab-requests/{labRequest}/issue',
+    [LabRequestController::class, 'issue']
+)->whereNumber('queueEntry')
+  ->whereNumber('labRequest');
+
 });
+
 
 
     /*
@@ -166,26 +238,29 @@ Route::middleware('role:doctor')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::apiResource('users', UserController::class);
     });
+        /*
+        |--------------------------------------------------------------------------
+        | Admin + Staff - View Clinic Patients
+        |--------------------------------------------------------------------------
+        |
+        | Doctors must use the doctor-specific patient APIs.
+        |
+        */
 
-    /*
-    |--------------------------------------------------------------------------
-    | Admin + Staff + Doctor - View Patients
-    |--------------------------------------------------------------------------
-    */
+        Route::middleware('role:admin,staff')->group(function () {
 
-    Route::middleware('role:admin,staff,doctor')->group(function () {
+            Route::get(
+                '/patients',
+                [PatientController::class, 'index']
+            );
 
-        Route::get(
-            '/patients',
-            [PatientController::class, 'index']
-        );
+            Route::get(
+                '/patients/{patient}',
+                [PatientController::class, 'show']
+            );
 
-        Route::get(
-            '/patients/{patient}',
-            [PatientController::class, 'show']
-        );
+        });
 
-    });
 
     /*
     |--------------------------------------------------------------------------
@@ -207,25 +282,7 @@ Route::middleware('role:doctor')->group(function () {
 
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Doctor Only - Edit Patients
-    |--------------------------------------------------------------------------
-    */
 
-    Route::middleware('role:doctor')->group(function () {
-
-        Route::put(
-            '/patients/{patient}',
-            [PatientController::class, 'update']
-        );
-
-        Route::patch(
-            '/patients/{patient}',
-            [PatientController::class, 'update']
-        );
-
-    });
 
     /*
     |--------------------------------------------------------------------------
@@ -372,9 +429,10 @@ Route::middleware('role:doctor')->group(function () {
 
     });
 
+
     /*
     |--------------------------------------------------------------------------
-    | Doctor Dashboard
+    | Doctor Dashboard and Patients
     |--------------------------------------------------------------------------
     */
 
@@ -385,6 +443,26 @@ Route::middleware('role:doctor')->group(function () {
             [\App\Http\Controllers\DoctorDashboardController::class, 'index']
         );
 
+        Route::get(
+            '/doctor/patients',
+            [DoctorPatientController::class, 'index']
+        );
+
     });
+        /*
+        |--------------------------------------------------------------------------
+        | Patient Mobile - Medical Records
+        |--------------------------------------------------------------------------
+        */
+
+        Route::middleware('role:patient')->group(function () {
+
+            Route::get(
+                '/patient/medical-records',
+                [PatientMedicalRecordsController::class, 'index']
+            );
+
+        });
+
 
 });

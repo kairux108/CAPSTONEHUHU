@@ -45,4 +45,11 @@ class Consultation extends Model
     {
         return $this->hasOne(Prescription::class);
     }
+
+    // A consultation may have multiple laboratory requests.
+    public function labRequests()
+    {
+        return $this->hasMany(LabRequest::class);
+    }
+
 }

@@ -1,15 +1,18 @@
+
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 
-import EditProfileForm from '../components/EditProfileForm';
-import ProfileHeader from '../components/ProfileHeader';
-import ProfileInfo from '../components/ProfileInfo';
+import EditProfileForm from './EditProfileForm';
+import ProfileHeader from './ProfileHeader';
+import ProfileInfo from './ProfileInfo';
 
 import { Colors } from '../../../constants/colors';
 
@@ -17,6 +20,8 @@ import useAuth from '../../auth/hooks/useAuth';
 import usePatient from '../hooks/usePatient';
 
 export default function ProfileScreen() {
+  const router = useRouter();
+
   const {
     patient,
     loading,
@@ -25,11 +30,51 @@ export default function ProfileScreen() {
     savePatient,
   } = usePatient();
 
-  const { refreshUser } = useAuth();
+  const { refreshUser, logout } = useAuth();
 
-  const [editing, setEditing] =
-    useState(false);
+  const [editing, setEditing] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
+  const handleLogout = async () => {
+    if (signingOut) return;
+
+    setSigningOut(true);
+
+    try {
+      await logout();
+
+      router.replace('/(auth)/login');
+    } catch {
+      setSigningOut(false);
+
+      Alert.alert(
+        'Logout Failed',
+        'Unable to log out. Please try again.'
+      );
+    }
+  };
+
+  const confirmLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out of CURA?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: () => {
+            void handleLogout();
+          },
+        },
+      ]
+    );
+  };
+
+  // Wait until patient data has loaded.
   if (loading) {
     return (
       <View style={styles.center}>
@@ -45,12 +90,12 @@ export default function ProfileScreen() {
     );
   }
 
+  // Prevent undefined patient data from reaching ProfileInfo.
   if (!patient) {
     return (
       <View style={styles.center}>
         <Text style={styles.error}>
-          {error ??
-            'Patient profile not found.'}
+          {error ?? 'Patient profile not found.'}
         </Text>
       </View>
     );
@@ -61,9 +106,7 @@ export default function ProfileScreen() {
       <ProfileHeader
         patient={patient}
         editing={editing}
-        onEdit={() =>
-          setEditing(true)
-        }
+        onEdit={() => setEditing(true)}
       />
 
       {editing ? (
@@ -71,9 +114,7 @@ export default function ProfileScreen() {
           patient={patient}
           saving={saving}
           onSave={savePatient}
-          onCancel={() =>
-            setEditing(false)
-          }
+          onCancel={() => setEditing(false)}
           onSaved={async () => {
             await refreshUser();
             setEditing(false);
@@ -82,6 +123,8 @@ export default function ProfileScreen() {
       ) : (
         <ProfileInfo
           patient={patient}
+          onLogout={confirmLogout}
+          signingOut={signingOut}
         />
       )}
     </View>
@@ -91,16 +134,14 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:
-      Colors.background,
+    backgroundColor: Colors.background,
   },
 
   center: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor:
-      Colors.background,
+    backgroundColor: Colors.background,
     paddingHorizontal: 30,
   },
 

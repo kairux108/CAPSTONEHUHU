@@ -57,7 +57,6 @@ class UpdateAppointmentRequest extends FormRequest
                 'sometimes',
                 Rule::in([
                     'scheduled',
-                    'completed',
                     'cancelled',
                     'no_show',
                 ]),

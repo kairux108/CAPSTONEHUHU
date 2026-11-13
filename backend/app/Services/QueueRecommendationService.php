@@ -40,9 +40,12 @@ class QueueRecommendationService
     |--------------------------------------------------------------------------
     */
 
-    public function getNextRecommended(
-        ?string $date = null
-    ): ?array {
+
+public function getNextRecommended(
+    ?string $date = null,
+    ?int $doctorId = null
+): ?array {
+
         $now = Carbon::now(
             self::TIMEZONE
         );
@@ -57,28 +60,37 @@ class QueueRecommendationService
         |--------------------------------------------------------------------------
         */
 
-        $waitingPatients = QueueEntry::query()
-            ->with([
-                'appointment.patient',
-                'appointment.doctor:id,name',
-                'doctor:id,name',
-            ])
-            ->whereDate(
-                'queue_date',
-                $queueDate
-            )
-            ->where(
-                'status',
-                'waiting'
-            )
-            ->orderBy(
-                'queued_at'
-            )
-            ->get();
 
-        if ($waitingPatients->isEmpty()) {
-            return null;
-        }
+            $waitingPatients = QueueEntry::query()
+                ->with([
+                    'appointment.patient',
+                    'appointment.doctor:id,name',
+                    'doctor:id,name',
+                ])
+                ->whereDate(
+                    'queue_date',
+                    $queueDate
+                )
+                ->where(
+                    'status',
+                    'waiting'
+                )
+                ->when($doctorId !== null, function ($query) use ($doctorId) {
+                    $query
+                        ->where('doctor_id', $doctorId)
+                        ->whereHas('appointment', function ($appointmentQuery) use ($doctorId) {
+                            $appointmentQuery->where('doctor_id', $doctorId);
+                        });
+                })
+                ->orderBy(
+                    'queued_at'
+                )
+                ->get();
+
+            if ($waitingPatients->isEmpty()) {
+                return null;
+            }
+
 
         /*
         |--------------------------------------------------------------------------

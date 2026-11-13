@@ -89,15 +89,19 @@ const DoctorDiagnosisForm = ({
         {diagnosis.reviewed && (
           <span className="flex items-center gap-2 text-xs font-bold text-[#118b80]">
             <CheckCircle2 size={16} />
-            Reviewed locally
+            Marked as Reviewed
           </span>
         )}
 
       </div>
 
       <p className="mt-3 text-xs text-[#78908e]">
-        Review status is only held in browser memory.
-        It is not a signed or saved clinical diagnosis.
+      <p className="mt-3 text-xs text-[#78908e]">
+  Diagnosis review status is saved when you click
+  Save Draft. A reviewed diagnosis is required before
+  completing the consultation. This review flag is
+  not an electronic signature.
+</p>
       </p>
 
     </section>

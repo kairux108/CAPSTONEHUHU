@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\QueueEntry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Services\QueueService;
+use Illuminate\Support\Facades\DB;
+use App\Services\QueueRecommendationService;
 
 class DoctorQueueController extends Controller
 {
@@ -164,6 +168,118 @@ class DoctorQueueController extends Controller
 
 
     }
+
+/*
+|--------------------------------------------------------------------------
+| Doctor - Call Next Patient
+|--------------------------------------------------------------------------
+|
+| Select the next eligible waiting patient assigned to
+| the authenticated doctor.
+|
+*/
+
+public function callNext(
+    Request $request,
+    QueueService $queueService,
+    QueueRecommendationService $queueRecommendationService
+): JsonResponse {
+
+    $doctorId = (int) $request->user()->id;
+    $date = now('Asia/Manila')->toDateString();
+
+
+$nextPatient = DB::transaction(function () use (
+    $doctorId,
+    $date,
+    $queueService,
+    $queueRecommendationService
+) {
+
+        // Serialize simultaneous call-next requests
+        // from the same doctor.
+        User::query()
+            ->whereKey($doctorId)
+            ->lockForUpdate()
+            ->firstOrFail();
+
+        // Consider only today's queue entries
+        // assigned to this doctor.
+        $baseQuery = QueueEntry::query()
+            ->where('doctor_id', $doctorId)
+            ->whereDate('queue_date', $date)
+            ->whereHas('appointment', function ($query) use ($doctorId) {
+                $query->where('doctor_id', $doctorId);
+            });
+
+        // Do not call another patient if one is already
+        // called or currently in consultation.
+        $hasActivePatient = (clone $baseQuery)
+            ->whereIn('status', [
+                'called',
+                'in_consultation',
+            ])
+            ->exists();
+
+        abort_if(
+            $hasActivePatient,
+            409,
+            'Finish the current patient before calling the next patient.'
+        );
+
+        // Select by priority, then queue arrival order.
+
+        // Use CURA's existing appointment-aware
+        // Smart Queue recommendation algorithm.
+        $recommendation = $queueRecommendationService
+            ->getNextRecommended(
+                $date,
+                $doctorId
+            );
+
+        $recommendedEntry =
+            $recommendation['queue_entry'] ?? null;
+
+        abort_unless(
+            $recommendedEntry,
+            409,
+            'No waiting patients are available to call.'
+        );
+
+        // Recheck the recommended patient under a row lock.
+        // Another request may have changed its status.
+        $next = (clone $baseQuery)
+            ->whereKey($recommendedEntry->id)
+            ->where('status', 'waiting')
+            ->lockForUpdate()
+            ->first();
+
+        abort_unless(
+            $next,
+            409,
+            'The recommended patient is no longer waiting. Refresh the queue and try again.'
+        );
+
+        // Preserve the existing queue transition rules.
+        return $queueService->update(
+            $next,
+            ['status' => 'called']
+        );
+
+    }, 3);
+
+    return response()->json([
+        'message' => 'Next patient called successfully.',
+        'queue_entry' => [
+            'id' => $nextPatient->id,
+            'queue_number' => $nextPatient->queue_number,
+            'status' => $nextPatient->status,
+            'doctor_id' => $nextPatient->doctor_id,
+            'called_at' => $nextPatient->called_at,
+        ],
+    ]);
+}
+
     
 /*
 |--------------------------------------------------------------------------
