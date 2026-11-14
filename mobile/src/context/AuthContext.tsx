@@ -1,3 +1,4 @@
+
 import {
   createContext,
   ReactNode,
@@ -6,6 +7,7 @@ import {
 } from 'react';
 
 import { AuthUser } from '../features/auth/types/auth';
+
 import {
   getStoredToken,
   logout as logoutRequest,
@@ -40,18 +42,19 @@ export function AuthProvider({
   const [loading, setLoading] =
     useState(true);
 
+  // Manually refresh the authenticated user.
   const refreshUser = async () => {
     try {
-      const token =
-        await getStoredToken();
+      const token = await getStoredToken();
 
       if (!token) {
         setUser(null);
         return;
       }
 
-      const response =
-        await api.get('/user');
+      const response = await api.get<{
+        user: AuthUser;
+      }>('/user');
 
       setUser(response.data.user);
     } catch {
@@ -62,13 +65,55 @@ export function AuthProvider({
     }
   };
 
+  // Remove the stored authentication token.
   const logout = async () => {
     await logoutRequest();
     setUser(null);
   };
 
+  // Restore the patient session when CURA opens.
   useEffect(() => {
-    refreshUser();
+    let active = true;
+
+    void getStoredToken()
+      .then(async (token) => {
+        if (!token) {
+          return null;
+        }
+
+        const response = await api.get<{
+          user: AuthUser;
+        }>('/user');
+
+        return response.data.user;
+      })
+      .then((restoredUser) => {
+        if (!active) return;
+
+        setUser(restoredUser);
+      })
+      .catch(async () => {
+        if (!active) return;
+
+        setUser(null);
+
+        await logoutRequest();
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      })
+      .catch((error: unknown) => {
+        console.warn(
+          'Unable to complete session cleanup:',
+          error
+        );
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (

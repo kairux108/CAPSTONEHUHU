@@ -111,7 +111,8 @@ export default function ProfileScreen() {
 
       {editing ? (
         <EditProfileForm
-          patient={patient}
+        key={patient.id}
+        patient={patient}
           saving={saving}
           onSave={savePatient}
           onCancel={() => setEditing(false)}

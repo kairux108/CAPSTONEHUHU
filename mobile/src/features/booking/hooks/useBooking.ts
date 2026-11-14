@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 
 import type {
   BookingDoctor,
@@ -52,7 +52,7 @@ type BookingApiError = {
 */
 
 function getSubmissionError(error: unknown): string {
-  if (axios.isAxiosError(error)) {
+  if (isAxiosError(error)) {
     const status = error.response?.status;
 
     const data = error.response?.data as
@@ -197,7 +197,7 @@ export function useBooking() {
       }
     }
 
-    loadDoctors();
+    void loadDoctors();
 
     return () => {
       active = false;
@@ -217,13 +217,7 @@ export function useBooking() {
     let active = true;
 
     if (!doctorId || !selectedDate) {
-      setSlots([]);
-      setSlotsError(null);
-      setLoadingSlots(false);
-
-      return () => {
-        active = false;
-      };
+      return;
     }
 
     async function loadSlots() {
@@ -260,7 +254,7 @@ export function useBooking() {
       }
     }
 
-    loadSlots();
+    void loadSlots();
 
     return () => {
       active = false;
@@ -315,6 +309,8 @@ export function useBooking() {
     }));
 
     setSlots([]);
+    setSlotsError(null);
+    setLoadingSlots(false);
     setSubmitError(null);
   }, []);
 
@@ -328,6 +324,8 @@ export function useBooking() {
       }));
 
       setSlots([]);
+      setSlotsError(null);
+      setLoadingSlots(false);
       setSubmitError(null);
     },
     []
@@ -348,6 +346,8 @@ export function useBooking() {
       }));
 
       setSlots([]);
+      setSlotsError(null);
+      setLoadingSlots(false);
       setSubmitError(null);
     },
     []
@@ -423,8 +423,7 @@ export function useBooking() {
 
   const submitBooking = useCallback(
     async (): Promise<BookingConfirmation | null> => {
-
-      // Prevent rapid duplicate submissions.
+      // Prevent duplicate submissions.
       if (submittingRef.current) {
         return null;
       }
@@ -457,20 +456,13 @@ export function useBooking() {
             reason_for_visit: draft.reason.trim(),
           });
 
-        /*
-         * Save the real appointment confirmation
-         * returned from Laravel.
-         */
+        // Save confirmed appointment details.
         setBookingConfirmation(confirmation);
 
-        /*
-         * Only proceed to Step 4 after the API
-         * confirms successful appointment creation.
-         */
+        // Step 4 requires successful API confirmation.
         setStep(4);
 
         return confirmation;
-
       } catch (error) {
         console.error(
           'Booking submission failed:',
@@ -482,12 +474,10 @@ export function useBooking() {
         );
 
         return null;
-
       } finally {
         submittingRef.current = false;
         setSubmitting(false);
       }
-
     },
     [
       draft,
@@ -505,7 +495,7 @@ export function useBooking() {
 
   const next = useCallback(() => {
     setStep(current => {
-      // Step 4 is reserved for confirmed bookings.
+      // Step 4 is only for confirmed bookings.
       if (current >= 3) {
         return current;
       }
@@ -540,6 +530,8 @@ export function useBooking() {
     setSpecialty('All');
 
     setSlots([]);
+    setSlotsError(null);
+    setLoadingSlots(false);
 
     setBookingConfirmation(null);
 

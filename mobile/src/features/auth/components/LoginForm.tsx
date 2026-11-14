@@ -119,7 +119,7 @@ export default function LoginForm() {
 
       <View style={styles.registerRow}>
         <Text style={styles.normalText}>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
         </Text>
 
         <TouchableOpacity

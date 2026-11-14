@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { useState } from 'react';
 
 import {
@@ -108,7 +108,7 @@ export default function useRegister() {
 
         return response;
       } catch (err) {
-        if (axios.isAxiosError(err)) {
+        if (isAxiosError(err)) {
           const responseMessage =
             err.response?.data?.message;
 

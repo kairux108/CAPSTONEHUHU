@@ -182,7 +182,7 @@ loading,
         </View>
 
         <Text style={styles.termsText}>
-          I agree to CURA's Terms of Service and Privacy Policy
+         I agree to CURA&apos;s Terms of Service and Privacy Policy
         </Text>
       </TouchableOpacity>
 

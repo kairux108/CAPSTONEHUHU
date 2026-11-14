@@ -57,7 +57,7 @@ export default function QueueStatusCard({
         </View>
 
         <Text style={styles.subtitle}>
-          You're #{queue.position} · {waitText}
+          You&apos;re #{queue.position} · {waitText}
         </Text>
 
         {queue.patientsAhead !== null ? (

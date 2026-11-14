@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import {
   useCallback,
   useEffect,
@@ -99,7 +99,7 @@ export default function usePatient() {
     } catch (err) {
       setPatient(null);
 
-      if (axios.isAxiosError(err)) {
+      if (isAxiosError(err)) {
         setError(
           getApiErrorMessage(
             err.response?.data,
@@ -144,7 +144,7 @@ export default function usePatient() {
         let message = 'Unable to update your profile.';
         let fieldErrors: ProfileFieldErrors | undefined;
 
-        if (axios.isAxiosError(err)) {
+        if (isAxiosError(err)) {
           message = getApiErrorMessage(
             err.response?.data,
             message
@@ -170,10 +170,44 @@ export default function usePatient() {
     },
     []
   );
+useEffect(() => {
+  let active = true;
 
-  useEffect(() => {
-    void loadPatient();
-  }, [loadPatient]);
+  void getPatientProfile()
+    .then((profile) => {
+      if (!active) return;
+
+      setPatient(profile);
+    })
+    .catch((err: unknown) => {
+      if (!active) return;
+
+      setPatient(null);
+
+      if (isAxiosError(err)) {
+        setError(
+          getApiErrorMessage(
+            err.response?.data,
+            'Unable to load your patient profile.'
+          )
+        );
+      } else {
+        setError(
+          'Something went wrong while loading your profile.'
+        );
+      }
+    })
+    .finally(() => {
+      if (active) {
+        setLoading(false);
+      }
+    });
+
+  return () => {
+    active = false;
+  };
+}, []);
+
 
   return {
     patient,

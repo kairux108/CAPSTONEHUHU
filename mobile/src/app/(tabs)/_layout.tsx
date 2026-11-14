@@ -1,3 +1,4 @@
+
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
@@ -9,11 +10,8 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
 
-        tabBarActiveTintColor:
-          Colors.primary,
-
-        tabBarInactiveTintColor:
-          Colors.muted,
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.muted,
 
         tabBarHideOnKeyboard: true,
 
@@ -29,14 +27,12 @@ export default function TabsLayout() {
           borderRadius: 22,
           borderTopWidth: 0,
 
-          backgroundColor:
-            'rgba(255,255,255,0.97)',
+          backgroundColor: 'rgba(255,255,255,0.97)',
 
           paddingTop: 7,
           paddingBottom: 7,
 
-          shadowColor:
-            'rgba(11,110,98,0.18)',
+          shadowColor: 'rgba(11,110,98,0.18)',
 
           shadowOffset: {
             width: 0,
@@ -55,91 +51,96 @@ export default function TabsLayout() {
         },
       }}
     >
+      {/* HOME */}
       <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
-
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="home-outline"
               size={size}
-              color={color}
+              color={
+                typeof color === 'string'
+                  ? color
+                  : '#6B7280'
+              }
             />
           ),
         }}
       />
 
+      {/* BOOK */}
       <Tabs.Screen
         name="book"
         options={{
           title: 'Book',
-
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="calendar-outline"
               size={size}
-              color={color}
+              color={
+                typeof color === 'string'
+                  ? color
+                  : '#6B7280'
+              }
             />
           ),
         }}
       />
 
+      {/* RECORDS */}
       <Tabs.Screen
         name="records"
         options={{
           title: 'Records',
-
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="document-text-outline"
               size={size}
-              color={color}
+              color={
+                typeof color === 'string'
+                  ? color
+                  : '#6B7280'
+              }
             />
           ),
         }}
       />
 
+      {/* MEDICINE */}
       <Tabs.Screen
         name="medicine"
         options={{
           title: 'Medicine',
-
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="medkit-outline"
               size={size}
-              color={color}
+              color={
+                typeof color === 'string'
+                  ? color
+                  : '#6B7280'
+              }
             />
           ),
         }}
       />
 
+      {/* PROFILE */}
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-
-          tabBarIcon: ({
-            color,
-            size,
-          }) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="person-outline"
               size={size}
-              color={color}
+              color={
+                typeof color === 'string'
+                  ? color
+                  : '#6B7280'
+              }
             />
           ),
         }}

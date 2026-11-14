@@ -1,9 +1,9 @@
 import {
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from 'react';
+
 
 import { validateProfile } from '../validation/profileValidation';
 import type {
@@ -82,10 +82,7 @@ export default function useProfileForm({
   const [errors, setErrors] = useState<ProfileFieldErrors>({});
   const submittingRef = useRef(false);
 
-  useEffect(() => {
-    setForm(createForm(patient));
-    setErrors({});
-  }, [patient]);
+
 
   const updateField = useCallback(
     <Field extends keyof ProfileFormValues>(
