@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PatientMedicationController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\LabTestCatalogController;
 use App\Http\Controllers\LabRequestController;
@@ -463,6 +464,15 @@ Route::post(
             );
 
         });
-
-
+            /*
+            |--------------------------------------------------------------------------
+            | Patient Mobile - Medication Schedule
+            |--------------------------------------------------------------------------
+            | Authenticated patients only.
+            | Temporary response for the first TDD security test.
+            */
+            Route::middleware('role:patient')->get(
+                '/patient/medications',
+                [PatientMedicationController::class, 'index']
+            );
 });
