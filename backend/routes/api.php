@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PatientMedicationController;
+use App\Http\Controllers\PatientMedicationDoseController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\LabTestCatalogController;
 use App\Http\Controllers\LabRequestController;
@@ -475,4 +476,14 @@ Route::post(
                 '/patient/medications',
                 [PatientMedicationController::class, 'index']
             );
+            // Patient-reported medication dose confirmation.
+    Route::middleware('role:patient')->post(
+        '/patient/medication-doses',
+        [PatientMedicationDoseController::class, 'store']
+    );
+        // Patient's own medication dose history.
+    Route::middleware('role:patient')->get(
+        '/patient/medication-doses',
+        [PatientMedicationDoseController::class, 'index']
+    );
 });
