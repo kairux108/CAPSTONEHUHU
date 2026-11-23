@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -28,6 +29,31 @@ class MedicationDoseLog extends Model
 
     /*
     |--------------------------------------------------------------------------
+    | Store Patient-Reported Time With Explicit UTC Offset
+    |--------------------------------------------------------------------------
+    |
+    | PostgreSQL uses TIMESTAMPTZ for taken_at.
+    |
+    | Laravel normally formats database timestamps without
+    | a timezone offset. On a PostgreSQL connection using
+    | UTC+8, a UTC timestamp can then be interpreted as
+    | Philippine local time.
+    |
+    | Preserve the explicit +00:00 offset when writing so
+    | PostgreSQL stores the correct instant.
+    */
+
+    public function setTakenAtAttribute($value): void
+    {
+        $this->attributes['taken_at'] =
+            CarbonImmutable::parse($value)
+                ->utc()
+                ->startOfSecond()
+                ->format('Y-m-d H:i:sP');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
@@ -39,9 +65,7 @@ class MedicationDoseLog extends Model
 
     public function prescriptionItem(): BelongsTo
     {
-        return $this->belongsTo(
-            PrescriptionItem::class
-        );
+        return $this->belongsTo(PrescriptionItem::class);
     }
 
     public function recordedByUser(): BelongsTo

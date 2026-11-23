@@ -541,6 +541,30 @@ public function test_mobile_timestamp_with_milliseconds_can_be_retried(): void
     $this->assertDatabaseCount('medication_dose_logs', 1);
 }
 
+public function test_medication_dose_model_preserves_explicit_utc_offset(): void
+{
+    $log = new MedicationDoseLog();
+
+    // JavaScript ISO timestamp with milliseconds.
+    $log->taken_at = '2026-11-21T06:22:29.487Z';
+
+    $this->assertSame(
+        '2026-11-21 06:22:29+00:00',
+        $log->getAttributes()['taken_at']
+    );
+
+    // Equivalent timestamp supplied in Philippine time.
+    $log->taken_at = '2026-11-21T14:22:29.487+08:00';
+
+    $this->assertSame(
+        '2026-11-21 06:22:29+00:00',
+        $log->getAttributes()['taken_at']
+    );
+
+    // The test must not create medication records.
+    $this->assertDatabaseCount('medication_dose_logs', 0);
+}
+
     private function createPatient(User $user): Patient
     {
         return Patient::create([
